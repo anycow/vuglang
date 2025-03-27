@@ -1,10 +1,10 @@
-# Vuglang
+# Vug
 
-Vuglang is a small toy programming language whose purpose is demonstration basic interpretation/compilation technics.
+Vug is a small toy programming language whose purpose is demonstration of basic interpretation/compilation techniques.
 
 ## Realisation
 
-Vuglang implement a compiler interpreter in 6 stages:
+Vuglang implement a compiling interpreter (meaning explicitly building an attributed AST) in 6 stages:
 
 1) Lexer (source &rarr; tokens)
 2) [LL(1)](https://en.wikipedia.org/wiki/LL_parser) parsing (tokens &rarr; [AST](https://en.wikipedia.org/wiki/AST))
