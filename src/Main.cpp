@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
         input.resize(std::filesystem::file_size(argv[1]));
         inputFile.read(input.data(), static_cast<std::streamsize>(input.size()));
     } else {
-        std::getline(std::cin, input);
+        throw std::logic_error("Path to source file not provided");
     }
 
     auto lex = Lexer(input);
