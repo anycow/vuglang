@@ -1,0 +1,6 @@
+add_subdirectory(AST)
+add_subdirectory(Evaluator)
+add_subdirectory(Lexing)
+add_subdirectory(Misc)
+add_subdirectory(Parsing)
+add_subdirectory(Semantic)
