@@ -15,7 +15,7 @@ public:
         return booleanValue;
     }
 
-    [[nodiscard]] std::unique_ptr<Object> binaryOperationType(LexemType opType, const Object& rhs) const override {
+    [[nodiscard]] std::unique_ptr<Object> binaryOperation(LexemType opType, const Object& rhs) const override {
         switch (opType) {
             case LexemType::LogicAnd:
                 return std::make_unique<BooleanObject>(booleanValue &&
@@ -27,7 +27,7 @@ public:
                 throw std::logic_error("Unsupported operation");
         }
     }
-    [[nodiscard]] std::unique_ptr<Object> prefixOperationType(LexemType opType) const override {
+    [[nodiscard]] std::unique_ptr<Object> prefixOperation(LexemType opType) const override {
         switch (opType) {
             case LexemType::Not:
                 return std::make_unique<BooleanObject>(!booleanValue);

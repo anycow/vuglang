@@ -128,7 +128,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const BinaryOperation& nod
     auto left = evaluateExpression(*node.left);
     auto right = evaluateExpression(*node.right);
 
-    return left->binaryOperationType(node.op, *right);
+    return left->binaryOperation(node.op, *right);
 }
 std::unique_ptr<Object> Evaluator::evaluateExpression(const CallFunction& node) {
     stackGuard();
@@ -157,7 +157,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const PrefixOperation& nod
 
     auto right = evaluateExpression(*node.right);
 
-    return right->prefixOperationType(node.op);
+    return right->prefixOperation(node.op);
 }
 std::unique_ptr<Object> Evaluator::callFunction(const FunctionSymbol& functionSymbol, std::vector<std::unique_ptr<Object>> arguments) {
     stackGuard();
