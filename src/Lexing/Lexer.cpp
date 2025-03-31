@@ -25,7 +25,7 @@ Token Lexer::getToken() {
                 if (peek() == '>') {
                     return {LexemType::Arrow};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::Minus};
                 }
             case '*':
@@ -38,21 +38,21 @@ Token Lexer::getToken() {
                 if (peek() == '=') {
                     return {LexemType::Unequal};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::Not};
                 }
             case '|':
                 if (peek() == '|') {
                     return {LexemType::LogicOr};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::BitOr};
                 }
             case '&':
                 if (peek() == '&') {
                     return {LexemType::LogicAnd};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::BitAnd};
                 }
             case '^':
@@ -61,21 +61,21 @@ Token Lexer::getToken() {
                 if (peek() == '=') {
                     return {LexemType::LessEqual};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::Less};
                 }
             case '>':
                 if (peek() == '=') {
                     return {LexemType::GreaterEqual};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::Greater};
                 }
             case '=':
                 if (peek() == '=') {
                     return {LexemType::Equal};
                 } else {
-                    --pos;
+                    --_pos;
                     return {LexemType::Assign};
                 }
             case ',':
@@ -110,7 +110,7 @@ void Lexer::getTokens(std::vector<Token>& tokens) {
         tokens.emplace_back(token);
 
         if (token.getType() == LexemType::EndOfFile) {
-            pos = 0;
+            _pos = 0;
             return;
         }
     }
@@ -144,7 +144,7 @@ Token Lexer::getIdentifier(char firstChar) {
         char c = peek();
 
         if (!isalpha(c) && !isdigit(c)) {
-            pos--;
+            _pos--;
             break;
         }
 
@@ -167,7 +167,7 @@ Token Lexer::getNumber(char firstChar) {
         char c = peek();
 
         if (!isdigit(c)) {
-            pos--;
+            _pos--;
             break;
         }
 

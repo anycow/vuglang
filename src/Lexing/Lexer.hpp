@@ -26,16 +26,16 @@ public:
                                                 _source(source) {}
 
     inline char peek() {
-        pos++;
-        if (pos <= _source.size()) {
-            return _source[pos - 1];
+        _pos++;
+        if (_pos <= _source.size()) {
+            return _source[_pos - 1];
         }
         return '\0';
     }
 
     inline char peekCurrent() {
-        if (pos <= _source.size()) {
-            return _source[pos - 1];
+        if (_pos <= _source.size()) {
+            return _source[_pos - 1];
         }
         return '\0';
     }
@@ -50,8 +50,7 @@ public:
 
 protected:
     std::unordered_map<std::string, LexemType> _keywords;
-
-    size_t pos = 0;
+    size_t _pos = 0;
     const std::string& _source;
 
     Token getString();

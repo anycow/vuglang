@@ -50,7 +50,7 @@ public:
 protected:
     Lexer& _lexer;
     Token _current;
-    uint32_t loopNestingDepth = 0;
+    uint32_t _loopNestingDepth = 0;
 };
 
 #endif//VUG_PARSER_HPP
