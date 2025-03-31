@@ -122,7 +122,7 @@ Token Lexer::getString() {
         char c = peek();
 
         if (c == '\0') {
-            throw std::logic_error("BAD LEXING");
+            throw std::logic_error("Bad lexing");
         }
         if (c == '\r') {
             continue;
@@ -154,7 +154,7 @@ Token Lexer::getIdentifier(char firstChar) {
     auto keyword = _keywords.find(string);
 
     if (keyword != _keywords.end()) {
-        return {(*keyword).second};
+        return {keyword->second};
     } else {
         return {LexemType::Identifier, std::move(string)};
     }
