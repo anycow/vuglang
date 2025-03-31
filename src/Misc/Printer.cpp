@@ -19,7 +19,7 @@ void Printer::visit(Node& node) {
 
 void Printer::visit(FunctionDeclaration& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -34,11 +34,11 @@ void Printer::visit(FunctionDeclaration& node) {
 
     visit(*node.definition);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(FunctionParameter& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -46,11 +46,11 @@ void Printer::visit(FunctionParameter& node) {
               << node.type << ' '
               << node.name << std::endl;
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(ModuleDeclaration& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -58,22 +58,22 @@ void Printer::visit(ModuleDeclaration& node) {
 
     visit(*node.body);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(DeclarationsBlock& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     for (const auto& declaration: node.declarations) {
         visit(*declaration);
     }
 
-    _currentDepth--;
+    --_currentDepth;
 }
 
 void Printer::visit(Assign& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -81,11 +81,11 @@ void Printer::visit(Assign& node) {
 
     visit(*node.value);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(Number& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -95,11 +95,11 @@ void Printer::visit(Number& node) {
               << node.number
               << std::endl;
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(Identifier& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -109,11 +109,11 @@ void Printer::visit(Identifier& node) {
               << node.name
               << std::endl;
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(BinaryOperation& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -126,11 +126,11 @@ void Printer::visit(BinaryOperation& node) {
     visit(*node.left);
     visit(*node.right);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(PrefixOperation& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -142,11 +142,11 @@ void Printer::visit(PrefixOperation& node) {
 
     visit(*node.right);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(LocalVariableDeclaration& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -156,11 +156,11 @@ void Printer::visit(LocalVariableDeclaration& node) {
         visit(*node.value);
     }
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(StatementsBlock& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -170,21 +170,21 @@ void Printer::visit(StatementsBlock& node) {
         visit(*item);
     }
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(Break& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
     std::cout << spaces << "Break: " << std::endl;
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(CallFunction& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -194,11 +194,11 @@ void Printer::visit(CallFunction& node) {
         visit(*argument);
     }
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(If& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -211,11 +211,11 @@ void Printer::visit(If& node) {
         visit(*node.elseThen);
     }
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(While& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -224,11 +224,11 @@ void Printer::visit(While& node) {
     visit(*node.condition);
     visit(*node.body);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(Print& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -236,11 +236,11 @@ void Printer::visit(Print& node) {
 
     visit(*node.expression);
 
-    _currentDepth--;
+    --_currentDepth;
 }
 void Printer::visit(Return& node) {
     stackGuard();
-    _currentDepth++;
+    ++_currentDepth;
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
@@ -248,5 +248,5 @@ void Printer::visit(Return& node) {
 
     visit(*node.returnExpression);
 
-    _currentDepth--;
+    --_currentDepth;
 }
