@@ -202,9 +202,9 @@ std::unique_ptr<While> Parser::whileStmt() {
                 advance();
 
                 if (_current == LexemType::LeftCurlyBracket) {
-                    loopNestingDepth++;
+                    ++loopNestingDepth;
                     auto body = stmtBlock();
-                    loopNestingDepth--;
+                    ++loopNestingDepth;
 
                     return std::make_unique<While>(std::move(condition), std::move(body));
                 }

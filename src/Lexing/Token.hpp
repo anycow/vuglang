@@ -66,6 +66,7 @@ inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
         {LexemType::Number, "Number"},
         {LexemType::String, "String"},
         {LexemType::Mod, "Module"},
+        {LexemType::Var, "Var"},
         {LexemType::Func, "Function"},
         {LexemType::Type, "Type"},
         {LexemType::Decl, "Declare"},

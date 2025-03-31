@@ -13,8 +13,8 @@ class Object {
 public:
     virtual ~Object() = default;
 
-    [[nodiscard]] virtual std::unique_ptr<Object> binaryOperationType(LexemType opType, const Object& rhs) const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Object> prefixOperationType(LexemType opType) const = 0;
+    [[nodiscard]] virtual std::unique_ptr<Object> binaryOperation(LexemType opType, const Object& rhs) const = 0;
+    [[nodiscard]] virtual std::unique_ptr<Object> prefixOperation(LexemType opType) const = 0;
 
     template<typename T>
     [[nodiscard]] T to() const {
