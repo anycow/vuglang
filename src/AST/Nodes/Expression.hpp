@@ -18,11 +18,9 @@ struct Expression : public Node {
     explicit Expression(Kind nodeType)
         : Node(nodeType) {}
 
-    bool isExpression() override {
-        return true;
-    }
+    bool isExpression() override { return true; }
 
-    virtual std::unique_ptr<Object> evaluate(Evaluator& evaluator) = 0;
+    virtual std::unique_ptr<Object> evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
 };
 
 

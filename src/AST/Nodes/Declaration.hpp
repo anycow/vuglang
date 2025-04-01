@@ -17,11 +17,9 @@ struct Declaration : public Node {
         return true;
     }
 
-    [[nodiscard]] virtual Symbol* getSymbolPtr() const {
-        return nullptr;
-    }
+    [[nodiscard]] virtual Symbol* getSymbolPtr() const { return nullptr; }
 
-    virtual void evaluate(Evaluator& evaluator) = 0;
+    virtual void evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
 };
 
 #endif//VUG_DECLARATION_HPP

@@ -190,7 +190,7 @@ void Printer::visit(CallFunction& node) {
 
     std::cout << spaces << "Call: " << node.name << std::endl;
 
-    for (const auto& argument: node.arguments){
+    for (const auto& argument: node.arguments) {
         visit(*argument);
     }
 

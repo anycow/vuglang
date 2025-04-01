@@ -41,6 +41,7 @@ protected:
     uint32_t _currentDepth = 0;
     uint32_t _tabSize = 0;
 
+
     void visit(Node& node) override;
 };
 

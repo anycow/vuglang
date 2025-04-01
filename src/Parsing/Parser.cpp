@@ -488,9 +488,9 @@ std::unique_ptr<Expression> Parser::primary() {
     } else if (_current == LexemType::Identifier) {
         auto name = _current.getValue();
         advance();
-        if(_current != LexemType::LeftRoundBracket){
+        if (_current != LexemType::LeftRoundBracket) {
             return std::make_unique<Identifier>(std::move(name));
-        } else{
+        } else {
             advance();
             std::vector<std::unique_ptr<Expression>> arguments;
             while (_current != LexemType::RightRoundBracket) {

@@ -11,11 +11,9 @@
 struct Statement : public Node {
     explicit Statement(Kind nodeType) : Node(nodeType) {}
 
-    bool isStatement() override {
-        return true;
-    }
+    bool isStatement() override { return true; }
 
-    virtual StmtResult evaluate(Evaluator& evaluator) = 0;
+    virtual StmtResult evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
 };
 
 #endif//VUG_STATEMENT_HPP

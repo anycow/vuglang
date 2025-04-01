@@ -13,8 +13,8 @@
 #include "AST/Nodes/Declarations/ModuleDeclaration.hpp"
 
 #include "AST/Nodes/Expression.hpp"
-#include "AST/Nodes/Expressions/CallFunction.hpp"
 #include "AST/Nodes/Expressions/BinaryOperation.hpp"
+#include "AST/Nodes/Expressions/CallFunction.hpp"
 #include "AST/Nodes/Expressions/Identifier.hpp"
 #include "AST/Nodes/Expressions/Number.hpp"
 

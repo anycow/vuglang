@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 
+#include "Diagnostic/DiagnosticPrinter.hpp"
 #include "Evaluator/Evaluator.hpp"
 #include "Lexing/Lexer.hpp"
 #include "Misc/Printer.hpp"
@@ -20,6 +21,8 @@
 int main(int argc, char* argv[]) {
     setStackBottom();
 
+    auto diag = DiagnosticPrinter<DiagnosticLevel::Verbose>();
+
     std::string input;
 
     if (argc > 1) {
@@ -33,7 +36,7 @@ int main(int argc, char* argv[]) {
         input.resize(std::filesystem::file_size(argv[1]));
         inputFile.read(input.data(), static_cast<std::streamsize>(input.size()));
     } else {
-        throw std::logic_error("Path to source file not provided");
+        diag.log<DiagnosticLevel::Fatal>("Path to source file not provided");
     }
 
     auto lex = Lexer(input);

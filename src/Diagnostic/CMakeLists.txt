@@ -1,0 +1,1 @@
+target_sources(Vug PRIVATE DiagnosticPrinter.hpp)
