@@ -10,7 +10,7 @@ Vuglang implement a compiling interpreter (meaning explicitly building an attrib
 2) [LL(1)](https://en.wikipedia.org/wiki/LL_parser) parsing (tokens &rarr; [AST](https://en.wikipedia.org/wiki/AST))
 3) Module Definition Pass (declare all module and module members)
 4) Global Scope Pass (define all symbols)
-5) Local Scope Pass (process type semantic in function)
+5) Local Scope Pass (process type semantic in functions)
 6) Evaluator (walk on attributed AST and make computation)
 
 ## TODO
