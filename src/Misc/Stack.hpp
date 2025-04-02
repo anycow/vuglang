@@ -23,6 +23,7 @@ inline bool checkStackCapacity() {
     return true;
 }
 
+#ifdef _WIN32
 inline void stackGuard(std::source_location location = std::source_location::current()) {
     if (!checkStackCapacity()) {
         std::cerr << "Stack Overflow at "
@@ -33,6 +34,10 @@ inline void stackGuard(std::source_location location = std::source_location::cur
         throw std::overflow_error(("Stack overflow"));
     }
 }
+#endif
+#ifndef _WIN32
+inline void stackGuard(std::source_location location = std::source_location::current()) {}
+#endif
 
 
 #endif//VUG_STACK_HPP
