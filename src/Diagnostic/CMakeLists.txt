@@ -1,1 +1,1 @@
-target_sources(Vug PRIVATE DiagnosticPrinter.hpp)
+target_sources(Vug PRIVATE Logger.hpp)

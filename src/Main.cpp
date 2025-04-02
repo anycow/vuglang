@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include "Diagnostic/DiagnosticPrinter.hpp"
+#include "Diagnostic/Logger.hpp"
 #include "Evaluator/Evaluator.hpp"
 #include "Lexing/Lexer.hpp"
 #include "Misc/Printer.hpp"
@@ -21,7 +21,7 @@
 int main(int argc, char* argv[]) {
     setStackBottom();
 
-    auto diag = DiagnosticPrinter<DiagnosticLevel::Verbose>();
+    auto diag = Logger<LogLevel::Verbose>();
 
     std::string input;
 
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
         input.resize(std::filesystem::file_size(argv[1]));
         inputFile.read(input.data(), static_cast<std::streamsize>(input.size()));
     } else {
-        diag.log<DiagnosticLevel::Fatal>("Path to source file not provided");
+        diag.log<LogLevel::Fatal>("Path to source file not provided");
     }
 
     auto lex = Lexer(input);
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 
     auto ast = parse.program();
 
-    auto printer = Printer(ast, 2);
+    auto printer = Printer(*ast, 2);
     printer.print();
 
     auto symbolTable = SymbolTable();

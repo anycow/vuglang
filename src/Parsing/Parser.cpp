@@ -20,6 +20,18 @@ std::unique_ptr<Node> Parser::program() {
     return program;
 }
 
+std::unique_ptr<Declaration> Parser::declaration() {
+    stackGuard();
+
+    switch (_current.getType()) {
+        case LexemType::Mod:
+            return moduleDeclaration();
+        case LexemType::Func:
+            return functionDeclaration();
+        default:
+            throw std::logic_error("Syntax error");
+    }
+}
 std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
     auto node = std::make_unique<DeclarationsBlock>();
     if (_current == LexemType::LeftCurlyBracket) {
@@ -36,18 +48,6 @@ std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
         throw std::logic_error("Syntax error");
     }
     return node;
-}
-std::unique_ptr<Declaration> Parser::declaration() {
-    stackGuard();
-
-    switch (_current.getType()) {
-        case LexemType::Mod:
-            return moduleDeclaration();
-        case LexemType::Func:
-            return functionDeclaration();
-        default:
-            throw std::logic_error("Syntax error");
-    }
 }
 std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
     stackGuard();

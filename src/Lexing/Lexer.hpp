@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Diagnostic/Logger.hpp"
 #include "Token.hpp"
 
 class Lexer {
@@ -26,14 +27,14 @@ public:
                                                 _source(source) {}
 
     inline char peek() {
-        _pos++;
+        ++_pos;
+        ++_column;
         if (_pos <= _source.size()) {
             return _source[_pos - 1];
         }
         return '\0';
     }
-
-    inline char peekCurrent() {
+    [[nodiscard]] inline char peekCurrent() const {
         if (_pos <= _source.size()) {
             return _source[_pos - 1];
         }
@@ -45,12 +46,13 @@ public:
     }
 
     Token getToken();
-
     void getTokens(std::vector<Token>& tokens);
 
 protected:
     std::unordered_map<std::string, LexemType> _keywords;
-    size_t _pos = 0;
+    size_t _pos{0};
+    size_t _line{1};
+    size_t _column{0};
     const std::string& _source;
 
     Token getString();
@@ -58,6 +60,10 @@ protected:
     Token getIdentifier(char firstChar);
 
     Token getNumber(char firstChar);
+
+    inline size_t getPrevPos() const {
+        return _pos - 1;
+    }
 };
 
 

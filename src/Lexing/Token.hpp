@@ -101,15 +101,84 @@ inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
         {LexemType::EndOfFile, "EOF"},
 };
 
-class Token {
-private:
-    LexemType _type;
-    std::string _value;
-
+class SourceLocation {
 public:
-    Token(LexemType type = LexemType::EndOfFile,
-          const std::string&& value = "") : _type(type), _value(value) {}
+    SourceLocation(size_t absoluteStart,
+                   size_t absoluteEnd,
+                   size_t startLine,
+                   size_t endLine,
+                   size_t startColumn,
+                   size_t endColumn)
+        : _absoluteStart(absoluteStart),
+          _absoluteEnd(absoluteEnd),
+          _startLine(startLine),
+          _endLine(endLine),
+          _startColumn(startColumn),
+          _endColumn(endColumn),
+          _isValid(true) {}
 
+    SourceLocation()
+        : _absoluteStart(-1),
+          _absoluteEnd(-1),
+          _startLine(-1),
+          _endLine(-1),
+          _startColumn(-1),
+          _endColumn(-1),
+          _isValid(false) {}
+
+    [[nodiscard]] inline size_t getAbsoluteStart() const {
+        return _absoluteStart;
+    }
+    [[nodiscard]] inline size_t getAbsoluteEnd() const {
+        return _absoluteEnd;
+    }
+    [[nodiscard]] inline size_t getStartLine() const {
+        return _startLine;
+    }
+    [[nodiscard]] inline size_t getEndLine() const {
+        return _endLine;
+    }
+    [[nodiscard]] inline size_t getStartColumn() const {
+        return _startColumn;
+    }
+    [[nodiscard]] inline size_t getEndColumn() const {
+        return _endColumn;
+    }
+    [[nodiscard]] inline bool isValid() const {
+        return _isValid;
+    }
+
+    [[nodiscard]] inline std::string toString() const {
+        if (_isValid) {
+            return std::to_string(_absoluteStart) + ", " +
+                   std::to_string(_absoluteEnd) + ", " +
+                   std::to_string(_startLine) + ", " +
+                   std::to_string(_endLine) + ", " +
+                   std::to_string(_startColumn) + ", " +
+                   std::to_string(_endColumn);
+        } else {
+            return "Invalid location";
+        }
+    }
+
+protected:
+    size_t _absoluteStart;
+    size_t _absoluteEnd;
+    size_t _startLine;
+    size_t _endLine;
+    size_t _startColumn;
+    size_t _endColumn;
+    bool _isValid;
+};
+
+class Token {
+public:
+    Token(LexemType type,
+          SourceLocation sourceLocation,
+          const std::string&& value = "")
+        : _type(type),
+          _sourceLocation(sourceLocation),
+          _value(value) {}
 
     [[nodiscard]] LexemType getType() const {
         return _type;
@@ -120,7 +189,9 @@ public:
     }
 
     [[nodiscard]] inline std::string toString() const {
-        return "Type: " + TokenTypeNames[_type] + " Value: " + (!_value.empty() ? _value : "Empty");
+        return "Type: " + TokenTypeNames[_type] +
+               " Value: " + (!_value.empty() ? _value : "Empty") +
+               " Location: (" + _sourceLocation.toString() + ")";
     }
 
     bool operator==(const LexemType& type) const {
@@ -137,6 +208,11 @@ public:
     bool operator!=(const Token& rhs) const {
         return !(rhs == *this);
     }
+
+protected:
+    LexemType _type;
+    SourceLocation _sourceLocation;
+    std::string _value;
 };
 
 #endif// VUG_TOKEN_HPP

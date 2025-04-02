@@ -9,7 +9,7 @@
 void Printer::print() {
     stackGuard();
 
-    _ast->accept(*this);
+    _ast.accept(*this);
 }
 void Printer::visit(Node& node) {
     stackGuard();

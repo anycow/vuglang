@@ -1,14 +1,14 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef VUG_DIAGNOSTICPRINTER_HPP
-#define VUG_DIAGNOSTICPRINTER_HPP
+#ifndef VUG_LOGGER_HPP
+#define VUG_LOGGER_HPP
 
 #include <cstdint>
 #include <iostream>
 #include <string>
 
-enum class DiagnosticLevel : uint32_t {
+enum class LogLevel : uint32_t {
     Fatal,
     Error,
     Warning,
@@ -16,36 +16,36 @@ enum class DiagnosticLevel : uint32_t {
     Verbose,
 };
 
-template<DiagnosticLevel MaxLevel>
-class DiagnosticPrinter {
+template<LogLevel MaxLevel>
+class Logger {
 public:
-    DiagnosticPrinter() = default;
+    Logger() = default;
 
-    template<DiagnosticLevel Level>
+    template<LogLevel Level>
     inline void log(const std::string& message) const {
         if constexpr (Level <= MaxLevel) {
             std::cout << levelToString(Level) << ": "
                       << message
                       << std::endl;
 
-            if constexpr (Level == DiagnosticLevel::Fatal) {
+            if constexpr (Level == LogLevel::Fatal) {
                 std::exit(EXIT_FAILURE);
             }
         }
     }
 
 protected:
-    [[nodiscard]] inline constexpr const char* levelToString(DiagnosticLevel level) const {
+    [[nodiscard]] inline constexpr const char* levelToString(LogLevel level) const {
         switch (level) {
-            case DiagnosticLevel::Fatal:
+            case LogLevel::Fatal:
                 return "Fatal";
-            case DiagnosticLevel::Error:
+            case LogLevel::Error:
                 return "Error";
-            case DiagnosticLevel::Warning:
+            case LogLevel::Warning:
                 return "Warning";
-            case DiagnosticLevel::Note:
+            case LogLevel::Note:
                 return "Note";
-            case DiagnosticLevel::Verbose:
+            case LogLevel::Verbose:
                 return "Verbose";
             default:
                 return "Unknown";
@@ -54,4 +54,4 @@ protected:
 };
 
 
-#endif//VUG_DIAGNOSTICPRINTER_HPP
+#endif//VUG_LOGGER_HPP

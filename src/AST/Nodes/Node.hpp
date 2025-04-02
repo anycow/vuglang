@@ -57,5 +57,4 @@ struct Node {
 };
 
 
-
 #endif//VUG_NODE_HPP

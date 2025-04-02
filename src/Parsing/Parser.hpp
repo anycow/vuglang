@@ -49,8 +49,12 @@ public:
 
 protected:
     Lexer& _lexer;
-    Token _current;
+    Token _current{LexemType::EndOfFile, SourceLocation()};
     uint32_t _loopNestingDepth = 0;
+};
+
+class ParsingException : public std::exception {
+public:
 };
 
 #endif//VUG_PARSER_HPP
