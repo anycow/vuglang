@@ -9,7 +9,7 @@
 #include <iostream>
 #include <source_location>
 
-inline uintptr_t stackBottom = 0;
+thread_local inline uintptr_t stackBottom = 0;
 constexpr size_t stackEpsilon = 128 * 1024;
 
 void setStackBottom();
