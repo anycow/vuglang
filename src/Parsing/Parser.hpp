@@ -13,7 +13,8 @@ class Parser {
 public:
     explicit Parser(Lexer& lexer) : _lexer(lexer) { advance(); }
 
-    Token advance() {
+    inline Token advance() {
+        _previous = _current;
         return (_current = _lexer.getToken());
     }
 
@@ -30,7 +31,7 @@ public:
     std::unique_ptr<While> whileStmt();
     std::unique_ptr<Break> breakStmt();
     std::unique_ptr<Return> returnStmt();
-    std::unique_ptr<LocalVariableDeclaration> localVarDeclaration();
+    std::unique_ptr<LocalVariableDeclaration> localVariableDeclaration();
     std::unique_ptr<Statement> varAssignOrCallStmt();
     std::unique_ptr<StatementsBlock> stmtBlock();
 
@@ -49,7 +50,10 @@ public:
 
 protected:
     Lexer& _lexer;
+
     Token _current{LexemType::EndOfFile, SourceLocation()};
+    Token _previous{LexemType::EndOfFile, SourceLocation()};
+
     uint32_t _loopNestingDepth = 0;
 };
 

@@ -33,14 +33,14 @@ struct Node {
         Number,
         PrefixOperation,
 
-        BlockStatement,
+        StatementBlock,
         Break,
         CallFunction,
-        IfStatement,
+        If,
         Print,
         Return,
-        VarDeclaration,
-        WhileStatement,
+        LocalVarDeclaration,
+        While,
     };
 
     const Kind kind;

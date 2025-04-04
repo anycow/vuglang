@@ -42,11 +42,7 @@ int main(int argc, char* argv[]) {
     auto lex = Lexer(input);
 
     std::vector<Token> tokens;
-    lex.getTokens(tokens);
 
-    for (const auto& item: tokens) {
-        std::cout << item.toString() << std::endl;
-    }
     auto parse = Parser(lex);
 
     auto ast = parse.program();
@@ -73,7 +69,5 @@ int main(int argc, char* argv[]) {
     std::chrono::duration<double> duration = end - start;
 
     std::wcout << "Run time: " << duration.count() << std::endl;
-
-    system("pause");
     return 0;
 }

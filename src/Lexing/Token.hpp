@@ -117,6 +117,16 @@ public:
           _endColumn(endColumn),
           _isValid(true) {}
 
+    SourceLocation(const SourceLocation& start,
+                   const SourceLocation& end)
+        : _absoluteStart(start._absoluteStart),
+          _absoluteEnd(end._absoluteEnd),
+          _startLine(start._startLine),
+          _endLine(end._endLine),
+          _startColumn(start._startColumn),
+          _endColumn(end._endColumn),
+          _isValid(true) {}
+
     explicit SourceLocation()
         : _absoluteStart(-1),
           _absoluteEnd(-1),
@@ -161,7 +171,7 @@ public:
         }
     }
 
-protected:
+private:
     size_t _absoluteStart;
     size_t _absoluteEnd;
     size_t _startLine;
@@ -182,6 +192,10 @@ public:
 
     [[nodiscard]] LexemType getType() const {
         return _type;
+    }
+
+    [[nodiscard]] const SourceLocation& getSourceLocation() const {
+        return _sourceLocation;
     }
 
     [[nodiscard]] const std::string& getValue() const {

@@ -13,7 +13,7 @@ struct StatementsBlock : public Statement {
 
     explicit StatementsBlock(std::vector<std::unique_ptr<Statement>> statements,
                              SourceLocation sourceLocation)
-        : Statement(Kind::BlockStatement, sourceLocation),
+        : Statement(Kind::StatementBlock, sourceLocation),
           statements(std::move(statements)) {}
 
     void accept(ASTWalker& walker) override {

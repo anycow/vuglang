@@ -18,7 +18,7 @@ struct If : public Statement {
        std::unique_ptr<StatementsBlock> then,
        std::unique_ptr<Statement> elseThen,
        SourceLocation sourceLocation)
-        : Statement(Kind::IfStatement, sourceLocation),
+        : Statement(Kind::If, sourceLocation),
           condition(std::move(condition)),
           then(std::move(then)),
           elseThen(std::move(elseThen)) {}
