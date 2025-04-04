@@ -194,7 +194,7 @@ void LocalScopePass::visit(StatementsBlock& node) {
     stackGuard();
 
     for (const auto& stmt: node.statements) {
-        if (stmt->kind == Node::Kind::BlockStatement) {
+        if (stmt->kind == Node::Kind::StatementBlock) {
             _context.getSymbolTable().openScope();
             visit(*stmt);
             _context.getSymbolTable().closeScope();
