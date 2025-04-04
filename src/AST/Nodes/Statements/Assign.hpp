@@ -16,8 +16,12 @@ struct Assign : public Statement {
 
     LocalVariableSymbol* symbolRef{nullptr};
 
-    Assign(std::string name, std::unique_ptr<Expression> value)
-        : Statement(Kind::Assign), name(std::move(name)), value(std::move(value)) {}
+    Assign(std::string name,
+           std::unique_ptr<Expression> value,
+           SourceLocation sourceLocation)
+        : Statement(Kind::Assign, sourceLocation),
+          name(std::move(name)),
+          value(std::move(value)) {}
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);

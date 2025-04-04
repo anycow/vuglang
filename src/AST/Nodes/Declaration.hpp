@@ -11,7 +11,8 @@
 class Symbol;
 
 struct Declaration : public Node {
-    explicit Declaration(Kind nodeType) : Node(nodeType) {}
+    explicit Declaration(Kind nodeType, SourceLocation sourceLocation)
+        : Node(nodeType, sourceLocation) {}
 
     bool isDeclaration() override {
         return true;

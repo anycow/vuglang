@@ -16,8 +16,9 @@ struct ModuleDeclaration : public Declaration {
     ModuleSymbol* symbolRef{nullptr};
 
     ModuleDeclaration(std::string name,
-                      std::unique_ptr<DeclarationsBlock> body = nullptr)
-        : Declaration(Kind::ModuleDeclaration),
+                      std::unique_ptr<DeclarationsBlock> body,
+                      SourceLocation sourceLocation)
+        : Declaration(Kind::ModuleDeclaration, sourceLocation),
           name(std::move(name)),
           body(std::move(body)) {}
 

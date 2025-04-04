@@ -11,8 +11,9 @@
 struct StatementsBlock : public Statement {
     std::vector<std::unique_ptr<Statement>> statements;
 
-    explicit StatementsBlock(std::vector<std::unique_ptr<Statement>> statements = {})
-        : Statement(Kind::BlockStatement),
+    explicit StatementsBlock(std::vector<std::unique_ptr<Statement>> statements,
+                             SourceLocation sourceLocation)
+        : Statement(Kind::BlockStatement, sourceLocation),
           statements(std::move(statements)) {}
 
     void accept(ASTWalker& walker) override {

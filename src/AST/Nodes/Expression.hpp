@@ -15,8 +15,9 @@ class Object;
 struct Expression : public Node {
     const Type* exprType = nullptr;
 
-    explicit Expression(Kind nodeType)
-        : Node(nodeType) {}
+    explicit Expression(Kind nodeType,
+                        SourceLocation sourceLocation)
+        : Node(nodeType, sourceLocation) {}
 
     bool isExpression() override { return true; }
 

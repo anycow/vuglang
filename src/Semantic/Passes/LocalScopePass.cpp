@@ -138,7 +138,7 @@ void LocalScopePass::visit(BinaryOperation& node) {
     visit(*node.right);
 
     auto checkResult =
-            node.left->exprType->binaryOperationType(node.op, *node.right->exprType);
+            node.left->exprType->binaryOperationType(node.operationType, *node.right->exprType);
 
     if (checkResult.isTypesCorrect) {
         node.exprType = checkResult.resultType;
@@ -153,7 +153,7 @@ void LocalScopePass::visit(PrefixOperation& node) {
     visit(*node.right);
 
     auto checkResult =
-            node.right->exprType->prefixOperationType(node.op);
+            node.right->exprType->prefixOperationType(node.operationType);
 
     if (checkResult.isTypesCorrect) {
         node.exprType = checkResult.resultType;

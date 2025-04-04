@@ -120,7 +120,7 @@ void Printer::visit(BinaryOperation& node) {
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "BinOp: "
-              << TokenTypeNames[node.op]
+              << TokenTypeNames[node.operationType]
               << std::endl;
 
     visit(*node.left);
@@ -137,7 +137,7 @@ void Printer::visit(PrefixOperation& node) {
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "PrefixOp: "
-              << TokenTypeNames[node.op]
+              << TokenTypeNames[node.operationType]
               << std::endl;
 
     visit(*node.right);

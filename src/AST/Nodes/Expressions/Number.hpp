@@ -12,8 +12,9 @@
 struct Number : public Expression {
     std::string number;
 
-    explicit Number(std::string num)
-        : Expression(Kind::Number),
+    explicit Number(std::string num,
+                    SourceLocation sourceLocation)
+        : Expression(Kind::Number, sourceLocation),
           number(std::move(num)) {}
 
     void accept(ASTWalker& walker) override {

@@ -9,7 +9,8 @@
 #include "Evaluator/Evaluator.hpp"
 
 struct Statement : public Node {
-    explicit Statement(Kind nodeType) : Node(nodeType) {}
+    explicit Statement(Kind nodeType, SourceLocation sourceLocation)
+        : Node(nodeType, sourceLocation) {}
 
     bool isStatement() override { return true; }
 

@@ -14,8 +14,11 @@ struct If : public Statement {
     std::unique_ptr<StatementsBlock> then;
     std::unique_ptr<Statement> elseThen;
 
-    If(std::unique_ptr<Expression> condition, std::unique_ptr<StatementsBlock> then, std::unique_ptr<Statement> elseThen = nullptr)
-        : Statement(Kind::IfStatement),
+    If(std::unique_ptr<Expression> condition,
+       std::unique_ptr<StatementsBlock> then,
+       std::unique_ptr<Statement> elseThen,
+       SourceLocation sourceLocation)
+        : Statement(Kind::IfStatement, sourceLocation),
           condition(std::move(condition)),
           then(std::move(then)),
           elseThen(std::move(elseThen)) {}

@@ -11,8 +11,10 @@ struct While : public Statement {
     std::unique_ptr<Expression> condition;
     std::unique_ptr<StatementsBlock> body;
 
-    While(std::unique_ptr<Expression> condition, std::unique_ptr<StatementsBlock> body)
-        : Statement(Kind::WhileStatement),
+    While(std::unique_ptr<Expression> condition,
+          std::unique_ptr<StatementsBlock> body,
+          SourceLocation sourceLocation)
+        : Statement(Kind::WhileStatement, sourceLocation),
           condition(std::move(condition)),
           body(std::move(body)) {}
 

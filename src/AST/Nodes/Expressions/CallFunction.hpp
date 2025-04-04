@@ -14,8 +14,9 @@ struct CallFunction : public Expression {
     FunctionSymbol* symbolRef{nullptr};
 
     CallFunction(std::string name,
-                 std::vector<std::unique_ptr<Expression>> expressions = {})
-        : Expression(Kind::CallFunction),
+                 std::vector<std::unique_ptr<Expression>> expressions,
+                 SourceLocation sourceLocation)
+        : Expression(Kind::CallFunction, sourceLocation),
           name(std::move(name)),
           arguments(std::move(expressions)) {}
 

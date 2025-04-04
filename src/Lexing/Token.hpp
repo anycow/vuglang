@@ -117,7 +117,7 @@ public:
           _endColumn(endColumn),
           _isValid(true) {}
 
-    SourceLocation()
+    explicit SourceLocation()
         : _absoluteStart(-1),
           _absoluteEnd(-1),
           _startLine(-1),
