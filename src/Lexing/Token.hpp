@@ -103,12 +103,12 @@ inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
 
 class SourceLocation {
 public:
-    SourceLocation(size_t absoluteStart,
-                   size_t absoluteEnd,
-                   size_t startLine,
-                   size_t endLine,
-                   size_t startColumn,
-                   size_t endColumn)
+    SourceLocation(uint64_t absoluteStart,
+                   uint64_t absoluteEnd,
+                   uint64_t startLine,
+                   uint64_t endLine,
+                   uint64_t startColumn,
+                   uint64_t endColumn)
         : _absoluteStart(absoluteStart),
           _absoluteEnd(absoluteEnd),
           _startLine(startLine),
@@ -136,22 +136,22 @@ public:
           _endColumn(-1),
           _isValid(false) {}
 
-    [[nodiscard]] inline size_t getAbsoluteStart() const {
+    [[nodiscard]] inline uint64_t getAbsoluteStart() const {
         return _absoluteStart;
     }
-    [[nodiscard]] inline size_t getAbsoluteEnd() const {
+    [[nodiscard]] inline uint64_t getAbsoluteEnd() const {
         return _absoluteEnd;
     }
-    [[nodiscard]] inline size_t getStartLine() const {
+    [[nodiscard]] inline uint64_t getStartLine() const {
         return _startLine;
     }
-    [[nodiscard]] inline size_t getEndLine() const {
+    [[nodiscard]] inline uint64_t getEndLine() const {
         return _endLine;
     }
-    [[nodiscard]] inline size_t getStartColumn() const {
+    [[nodiscard]] inline uint64_t getStartColumn() const {
         return _startColumn;
     }
-    [[nodiscard]] inline size_t getEndColumn() const {
+    [[nodiscard]] inline uint64_t getEndColumn() const {
         return _endColumn;
     }
     [[nodiscard]] inline bool isValid() const {
@@ -172,12 +172,12 @@ public:
     }
 
 private:
-    size_t _absoluteStart;
-    size_t _absoluteEnd;
-    size_t _startLine;
-    size_t _endLine;
-    size_t _startColumn;
-    size_t _endColumn;
+    uint64_t _absoluteStart;
+    uint64_t _absoluteEnd;
+    uint64_t _startLine;
+    uint64_t _endLine;
+    uint64_t _startColumn;
+    uint64_t _endColumn;
     bool _isValid;
 };
 

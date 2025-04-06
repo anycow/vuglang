@@ -50,9 +50,9 @@ public:
 
 protected:
     std::unordered_map<std::string, LexemType> _keywords;
-    size_t _pos{0};
-    size_t _line{1};
-    size_t _column{0};
+    uint64_t _pos{0};
+    uint64_t _line{1};
+    uint64_t _column{0};
     const std::string& _source;
 
     Token getString();
