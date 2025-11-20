@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_LEXER_HPP
 #define VUG_LEXER_HPP
@@ -14,18 +15,20 @@
 #include "Token.hpp"
 
 class Lexer {
-public:
-    explicit Lexer(const SourceFile& source) : _keywords({
-                                                       {"mod", LexemType::Mod},
-                                                       {"func", LexemType::Func},
-                                                       {"var", LexemType::Var},
-                                                       {"if", LexemType::If},
-                                                       {"else", LexemType::Else},
-                                                       {"while", LexemType::While},
-                                                       {"break", LexemType::Break},
-                                                       {"return", LexemType::Return},
-                                               }),
-                                               _source(source) {}
+   public:
+    explicit Lexer(const SourceFile& source)
+        : _keywords({
+              {"mod", LexemType::Mod},
+              {"func", LexemType::Func},
+              {"var", LexemType::Var},
+              {"if", LexemType::If},
+              {"else", LexemType::Else},
+              {"while", LexemType::While},
+              {"break", LexemType::Break},
+              {"return", LexemType::Return},
+          }),
+          _source(source) {
+    }
 
     bool match(const Token& token) {
         return getToken() == token;
@@ -36,7 +39,7 @@ public:
 
     void revertTo(const Token& token);
 
-protected:
+   protected:
     std::unordered_map<std::string, LexemType> _keywords;
     int64_t _pos{0};
     int64_t _line{1};
@@ -70,4 +73,4 @@ protected:
 };
 
 
-#endif//VUG_LEXER_HPP
+#endif  // VUG_LEXER_HPP

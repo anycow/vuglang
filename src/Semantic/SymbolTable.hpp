@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_SYMBOLTABLE_HPP
 #define VUG_SYMBOLTABLE_HPP
@@ -16,46 +17,42 @@ struct SymbolTableRecord {
     const size_t depth;
     const SymbolTableRecord* shadowedRecord{nullptr};
     const bool canShadowed;
-    //SymbolTableRecord* overridedRecord{nullptr};
+    // SymbolTableRecord* overridedRecord{nullptr};
 
     explicit SymbolTableRecord(Symbol& symbol, size_t depth, bool canShadowed)
         : symbol(symbol),
           depth(depth),
-          canShadowed(canShadowed) {}
+          canShadowed(canShadowed) {
+    }
 };
 
 class SymbolTable {
-public:
+   public:
     SymbolTable() = default;
 
     struct InsertResult {
-        enum class Kind {
-            Successful,
-            NameConflict,
-            ProhibitedShadowing
-        };
+        enum class Kind { Successful, NameConflict, ProhibitedShadowing };
 
         const Kind kind;
         const SymbolTableRecord* conflictingSymbol;
 
         InsertResult(Kind kind, const SymbolTableRecord* conflictingSymbol = nullptr)
             : kind(kind),
-              conflictingSymbol(conflictingSymbol) {}
+              conflictingSymbol(conflictingSymbol) {
+        }
     };
     InsertResult insertSymbol(Symbol& symbol, bool canShadowed = true);
 
     struct FindResult {
-        enum class Kind {
-            Successful,
-            NotFound
-        };
+        enum class Kind { Successful, NotFound };
 
         const Kind kind;
         const SymbolTableRecord* record;
 
         FindResult(Kind kind, const SymbolTableRecord* record = nullptr)
             : kind(kind),
-              record(record) {}
+              record(record) {
+        }
     };
     FindResult findSymbol(const std::string& name);
 
@@ -68,7 +65,7 @@ public:
         return getDepth();
     }
     inline size_t closeScope() {
-        for (auto& record: _scopes.top()) {
+        for (auto& record : _scopes.top()) {
             if (record.shadowedRecord) {
                 _names[record.symbol.getName()] = record.shadowedRecord;
             } else {
@@ -80,11 +77,9 @@ public:
         return getDepth();
     }
 
-protected:
-    std::stack<std::list<SymbolTableRecord>,
-               std::list<std::list<SymbolTableRecord>>>
-            _scopes;
+   protected:
+    std::stack<std::list<SymbolTableRecord>, std::list<std::list<SymbolTableRecord>>> _scopes;
     std::unordered_map<std::string, const SymbolTableRecord*> _names;
 };
 
-#endif//VUG_SYMBOLTABLE_HPP
+#endif  // VUG_SYMBOLTABLE_HPP

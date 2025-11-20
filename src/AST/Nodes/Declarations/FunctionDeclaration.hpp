@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_FUNCTIONDECLARATION_HPP
 #define VUG_FUNCTIONDECLARATION_HPP
@@ -29,7 +30,8 @@ struct FunctionDeclaration : public Declaration {
           name(std::move(name)),
           returnType(std::move(returnType)),
           parameters(std::move(parameters)),
-          definition(std::move(definition)) {}
+          definition(std::move(definition)) {
+    }
 
     [[nodiscard]] Symbol* getSymbolPtr() const override {
         return symbolRef;
@@ -43,4 +45,4 @@ struct FunctionDeclaration : public Declaration {
     }
 };
 
-#endif//VUG_FUNCTIONDECLARATION_HPP
+#endif  // VUG_FUNCTIONDECLARATION_HPP

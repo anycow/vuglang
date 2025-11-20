@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "LocalScopePass.hpp"
 
@@ -38,9 +39,10 @@ void LocalScopePass::visit(ModuleDeclaration& node) {
             return;
         } else if (result.kind == SymbolTable::InsertResult::Kind::ProhibitedShadowing) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                    std::format("shadowing of '{}' is prohibited", node.name),
-                                                    {node.sourceLocation}));
+            diagnostic.addMessage(
+                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                  std::format("shadowing of '{}' is prohibited", node.name),
+                                  {node.sourceLocation}));
             _diagnosticManager.report(diagnostic);
             return;
         }
@@ -51,12 +53,12 @@ void LocalScopePass::visit(ModuleDeclaration& node) {
 void LocalScopePass::visit(DeclarationsBlock& node) {
     stackGuard();
 
-    for (auto& declaration: node.declarations) {
+    for (auto& declaration : node.declarations) {
         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
             _context.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
         }
     }
-    for (auto& declaration: node.declarations) {
+    for (auto& declaration : node.declarations) {
         visit(*declaration);
     }
 }
@@ -66,7 +68,7 @@ void LocalScopePass::visit(FunctionDeclaration& node) {
     _currentFunction = &node;
 
     _context.getSymbolTable().openScope();
-    for (const auto& parameter: node.parameters) {
+    for (const auto& parameter : node.parameters) {
         visit(*parameter);
     }
     visit(*node.definition);
@@ -152,13 +154,15 @@ void LocalScopePass::visit(CallFunction& node) {
     }
 
     size_t index = 0;
-    for (const auto& argument: node.arguments) {
+    for (const auto& argument : node.arguments) {
         visit(*argument);
-        if (argument->exprType != functionSymbol.getArguments()[index]->getTypeSymbol()->getType()) {
+        if (argument->exprType
+            != functionSymbol.getArguments()[index]->getTypeSymbol()->getType()) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                    std::format("incompatible types of arguments", node.name),
-                                                    {node.sourceLocation}));
+            diagnostic.addMessage(
+                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                  std::format("incompatible types of arguments", node.name),
+                                  {node.sourceLocation}));
             _diagnosticManager.report(diagnostic);
             return;
         }
@@ -201,8 +205,8 @@ void LocalScopePass::visit(BinaryOperation& node) {
     visit(*node.left);
     visit(*node.right);
 
-    auto checkResult =
-            node.left->exprType->binaryOperationType(node.operationToken, *node.right->exprType);
+    auto checkResult
+        = node.left->exprType->binaryOperationType(node.operationToken, *node.right->exprType);
 
     if (checkResult.isTypesCorrect) {
         node.exprType = checkResult.resultType;
@@ -221,8 +225,7 @@ void LocalScopePass::visit(PrefixOperation& node) {
 
     visit(*node.right);
 
-    auto checkResult =
-            node.right->exprType->prefixOperationType(node.operationType);
+    auto checkResult = node.right->exprType->prefixOperationType(node.operationType);
 
     if (checkResult.isTypesCorrect) {
         node.exprType = checkResult.resultType;
@@ -287,7 +290,7 @@ void LocalScopePass::visit(LocalVariableDeclaration& node) {
 void LocalScopePass::visit(StatementsBlock& node) {
     stackGuard();
 
-    for (const auto& stmt: node.statements) {
+    for (const auto& stmt : node.statements) {
         if (stmt->kind == Node::Kind::StatementBlock) {
             _context.getSymbolTable().openScope();
             visit(*stmt);
@@ -332,7 +335,7 @@ void LocalScopePass::visit(While& node) {
     _context.getSymbolTable().openScope();
 
     visit(*node.condition);
-    for (const auto& stmt: node.body->statements) {
+    for (const auto& stmt : node.body->statements) {
         visit(*stmt);
     }
 
@@ -348,7 +351,8 @@ void LocalScopePass::visit(Return& node) {
     stackGuard();
 
     visit(*node.returnExpression);
-    if (node.returnExpression->exprType != _currentFunction->symbolRef->getTypeSymbol()->getType()) {
+    if (node.returnExpression->exprType
+        != _currentFunction->symbolRef->getTypeSymbol()->getType()) {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                 std::format("bad return type"),

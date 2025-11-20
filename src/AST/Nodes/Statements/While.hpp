@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_WHILE_HPP
 #define VUG_WHILE_HPP
@@ -16,7 +17,8 @@ struct While : public Statement {
           SourceLocation sourceLocation)
         : Statement(Kind::While, sourceLocation),
           condition(std::move(condition)),
-          body(std::move(body)) {}
+          body(std::move(body)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -27,4 +29,4 @@ struct While : public Statement {
 };
 
 
-#endif//VUG_WHILE_HPP
+#endif  // VUG_WHILE_HPP

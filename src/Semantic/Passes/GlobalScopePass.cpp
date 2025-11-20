@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "GlobalScopePass.hpp"
 
@@ -37,12 +38,12 @@ void GlobalScopePass::visit(ModuleDeclaration& node) {
 void GlobalScopePass::visit(DeclarationsBlock& node) {
     stackGuard();
 
-    for (auto& declaration: node.declarations) {
+    for (auto& declaration : node.declarations) {
         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
             _context.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
         }
     }
-    for (auto& declaration: node.declarations) {
+    for (auto& declaration : node.declarations) {
         visit(*declaration);
     }
 }
@@ -50,28 +51,30 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
     stackGuard();
 
     node.symbolRef->startDefinition();
-    for (const auto& parameter: node.parameters) {
+    for (const auto& parameter : node.parameters) {
         auto parameterSymbol = _context.addSymbol<LocalVariableSymbol>(parameter->name);
 
         parameterSymbol->startDefinition();
         auto parameterTypeRecord = _context.getSymbolTable().findSymbol(parameter->type);
         if (parameterTypeRecord.kind == SymbolTable::FindResult::Kind::Successful) {
-            if (parameterTypeRecord.record->symbol.getKind() ==
-                Symbol::Kind::Type) {
-                parameterSymbol->setTypeSymbol(static_cast<TypeSymbol*>(&parameterTypeRecord.record->symbol));
+            if (parameterTypeRecord.record->symbol.getKind() == Symbol::Kind::Type) {
+                parameterSymbol->setTypeSymbol(
+                    static_cast<TypeSymbol*>(&parameterTypeRecord.record->symbol));
             } else {
                 auto diagnostic = Diagnostic();
-                diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                        std::format("'{}' isn't type", parameter->type),
-                                                        {node.sourceLocation}));
+                diagnostic.addMessage(
+                    DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                      std::format("'{}' isn't type", parameter->type),
+                                      {node.sourceLocation}));
                 _diagnosticManager.report(diagnostic);
                 return;
             }
         } else {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                    std::format("Can't find '{}' type", parameter->type),
-                                                    {node.sourceLocation}));
+            diagnostic.addMessage(
+                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                  std::format("Can't find '{}' type", parameter->type),
+                                  {node.sourceLocation}));
             _diagnosticManager.report(diagnostic);
             return;
         }
@@ -84,7 +87,8 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
     auto returnTypeRecord = _context.getSymbolTable().findSymbol(node.returnType);
     if (returnTypeRecord.kind == SymbolTable::FindResult::Kind::Successful) {
         if (returnTypeRecord.record->symbol.getKind() == Symbol::Kind::Type) {
-            node.symbolRef->setTypeSymbol(static_cast<TypeSymbol*>(&returnTypeRecord.record->symbol));
+            node.symbolRef->setTypeSymbol(
+                static_cast<TypeSymbol*>(&returnTypeRecord.record->symbol));
         } else {
             auto diagnostic = Diagnostic();
             diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
@@ -95,9 +99,10 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         }
     } else {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("Can't find '{}' type", node.returnType),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("Can't find '{}' type", node.returnType),
+                              {node.sourceLocation}));
         _diagnosticManager.report(diagnostic);
         return;
     }

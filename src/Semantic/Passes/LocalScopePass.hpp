@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_LOCALSCOPEPASS_HPP
 #define VUG_LOCALSCOPEPASS_HPP
@@ -13,13 +14,12 @@ class DiagnosticManager;
 class SymbolContext;
 
 class LocalScopePass : public ASTWalker {
-public:
-    LocalScopePass(Node& ast,
-                   SymbolContext& context,
-                   DiagnosticManager& diagnosticManager)
+   public:
+    LocalScopePass(Node& ast, SymbolContext& context, DiagnosticManager& diagnosticManager)
         : _ast(ast),
           _context(context),
-          _diagnosticManager(diagnosticManager) {}
+          _diagnosticManager(diagnosticManager) {
+    }
 
     void analyze();
 
@@ -43,7 +43,7 @@ public:
     void visit(Print& node) override;
     void visit(Return& node) override;
 
-protected:
+   protected:
     Node& _ast;
     SymbolContext& _context;
     DiagnosticManager& _diagnosticManager;
@@ -54,4 +54,4 @@ protected:
     void visit(Node& node) override;
 };
 
-#endif//VUG_LOCALSCOPEPASS_HPP
+#endif  // VUG_LOCALSCOPEPASS_HPP

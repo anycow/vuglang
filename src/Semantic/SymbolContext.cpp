@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "SymbolContext.hpp"
 
@@ -10,7 +11,7 @@ SymbolContext::SymbolContext(SymbolTable& table)
     _symbolTable.openScope();
 
     std::initializer_list<uint32_t> bits = {8, 16, 32, 64};
-    for (const auto& size: bits) {
+    for (const auto& size : bits) {
         auto signedInt = std::make_unique<TypeSymbol>("int" + std::to_string(size));
         auto unsignedInt = std::make_unique<TypeSymbol>("uint" + std::to_string(size));
 
@@ -18,12 +19,14 @@ SymbolContext::SymbolContext(SymbolTable& table)
         _symbolTable.insertSymbol(*unsignedInt, false);
 
         signedInt->startDefinition();
-        _type.push_back(std::make_unique<IntegerType>(*this, "int" + std::to_string(size), size, true));
+        _type.push_back(
+            std::make_unique<IntegerType>(*this, "int" + std::to_string(size), size, true));
         signedInt->setType(_type.back().get());
         signedInt->finishDefinition();
 
         unsignedInt->startDefinition();
-        _type.push_back(std::make_unique<IntegerType>(*this, "uint" + std::to_string(size), size, false));
+        _type.push_back(
+            std::make_unique<IntegerType>(*this, "uint" + std::to_string(size), size, false));
         unsignedInt->setType(_type.back().get());
         unsignedInt->finishDefinition();
 
@@ -44,5 +47,5 @@ SymbolContext::SymbolContext(SymbolTable& table)
     boolean->finishDefinition();
 
     _booleanTypeSymbol = boolean.get();
-    _symbols.push_back(std::move(boolean));
+    _symbols.emplace_back(std::move(boolean));
 }

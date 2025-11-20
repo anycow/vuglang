@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_DIAGNOSTIC_HPP
 #define VUG_DIAGNOSTIC_HPP
@@ -10,7 +11,7 @@
 #include "Lexing/Token.hpp"
 
 class DiagnosticFix {
-public:
+   public:
     struct Diff {
         const SourceFile& sourceFile;
         const uint64_t sourceLine;
@@ -19,7 +20,8 @@ public:
         Diff(const SourceFile& sourceFile, uint64_t sourceLine, std::string newString)
             : sourceFile(sourceFile),
               sourceLine(sourceLine),
-              newString(std::move(newString)) {}
+              newString(std::move(newString)) {
+        }
     };
 
     DiagnosticFix() = default;
@@ -27,32 +29,29 @@ public:
     [[nodiscard]] const std::vector<Diff>& getDiffs() const {
         return _diffs;
     }
-    DiagnosticFix& addDiff(const SourceFile& sourceFile, uint64_t sourceLine, std::string newString) {
+    DiagnosticFix& addDiff(const SourceFile& sourceFile,
+                           uint64_t sourceLine,
+                           std::string newString) {
         _diffs.emplace_back(sourceFile, sourceLine, std::move(newString));
         return *this;
     }
 
-private:
+   private:
     std::vector<Diff> _diffs;
 };
 
-//TODO! use builder pattern
+// TODO! use builder pattern
 class DiagnosticMessage {
-public:
-    enum class Severity {
-        Fatal,
-        Error,
-        Warning,
-        Hint,
-        Info
-    };
+   public:
+    enum class Severity { Fatal, Error, Warning, Hint, Info };
 
     explicit DiagnosticMessage(const Severity severity,
                                std::string message,
                                std::vector<SourceLocation> relatedCode)
         : _severity(severity),
           _message(std::move(message)),
-          _relatedCode(std::move(relatedCode)) {}
+          _relatedCode(std::move(relatedCode)) {
+    }
 
     [[nodiscard]] Severity getSeverity() const {
         return _severity;
@@ -74,7 +73,7 @@ public:
         return *this;
     }
 
-private:
+   private:
     const Severity _severity;
     const std::string _message;
     std::vector<SourceLocation> _relatedCode;
@@ -82,7 +81,7 @@ private:
 };
 
 class Diagnostic {
-public:
+   public:
     Diagnostic() = default;
 
     void addMessage(const DiagnosticMessage& message) {
@@ -92,7 +91,7 @@ public:
         return _messages;
     }
 
-private:
+   private:
     std::vector<DiagnosticMessage> _messages;
 };
 
@@ -112,4 +111,4 @@ constexpr const char* severityToString(DiagnosticMessage::Severity severity) {
             return "unknown";
     }
 }
-#endif//VUG_DIAGNOSTIC_HPP
+#endif  // VUG_DIAGNOSTIC_HPP

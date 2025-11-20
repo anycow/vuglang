@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_ASTNODES_HPP
 #define VUG_ASTNODES_HPP
@@ -29,4 +30,4 @@
 #include "AST/Nodes/Statements/StatementsBlock.hpp"
 #include "AST/Nodes/Statements/While.hpp"
 
-#endif//VUG_ASTNODES_HPP
+#endif  // VUG_ASTNODES_HPP

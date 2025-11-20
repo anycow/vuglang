@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "Printer.hpp"
 
@@ -54,12 +55,10 @@ void Printer::visit(FunctionDeclaration& node) {
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
-    std::cout << spaces
-              << "Function Declaration: "
-              << node.returnType << ' '
-              << node.name << std::endl;
+    std::cout << spaces << "Function Declaration: " << node.returnType << ' ' << node.name
+              << std::endl;
 
-    for (const auto& parameter: node.parameters) {
+    for (const auto& parameter : node.parameters) {
         visit(*parameter);
     }
 
@@ -73,9 +72,7 @@ void Printer::visit(FunctionParameter& node) {
 
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
-    std::cout << spaces << "Function Parameter: "
-              << node.type << ' '
-              << node.name << std::endl;
+    std::cout << spaces << "Function Parameter: " << node.type << ' ' << node.name << std::endl;
 
     --_currentDepth;
 }
@@ -98,7 +95,7 @@ void Printer::visit(DeclarationsBlock& node) {
     std::string spaces((_currentDepth - 1) * _tabSize, '-');
 
     std::cout << spaces << "Declarations Block: " << std::endl;
-    for (const auto& declaration: node.declarations) {
+    for (const auto& declaration : node.declarations) {
         visit(*declaration);
     }
 
@@ -125,9 +122,7 @@ void Printer::visit(Number& node) {
 
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "Number: "
-              << node.number
-              << std::endl;
+              << "Number: " << node.number << std::endl;
 
     --_currentDepth;
 }
@@ -139,9 +134,7 @@ void Printer::visit(Identifier& node) {
 
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "Identifier: "
-              << node.name
-              << std::endl;
+              << "Identifier: " << node.name << std::endl;
 
     --_currentDepth;
 }
@@ -153,9 +146,7 @@ void Printer::visit(BinaryOperation& node) {
 
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "BinOp: "
-              << TokenTypeNames[node.operationToken]
-              << std::endl;
+              << "BinOp: " << TokenTypeNames[node.operationToken] << std::endl;
 
     visit(*node.left);
     visit(*node.right);
@@ -170,9 +161,7 @@ void Printer::visit(PrefixOperation& node) {
 
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "PrefixOp: "
-              << TokenTypeNames[node.operationType]
-              << std::endl;
+              << "PrefixOp: " << TokenTypeNames[node.operationType] << std::endl;
 
     visit(*node.right);
 
@@ -200,7 +189,7 @@ void Printer::visit(StatementsBlock& node) {
 
     std::cout << spaces << "Block: " << std::endl;
 
-    for (const auto& item: node.statements) {
+    for (const auto& item : node.statements) {
         visit(*item);
     }
 
@@ -224,7 +213,7 @@ void Printer::visit(CallFunction& node) {
 
     std::cout << spaces << "Call: " << node.name << std::endl;
 
-    for (const auto& argument: node.arguments) {
+    for (const auto& argument : node.arguments) {
         visit(*argument);
     }
 

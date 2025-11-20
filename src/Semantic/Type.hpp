@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_TYPE_HPP
 #define VUG_TYPE_HPP
@@ -17,29 +18,31 @@ enum class TypeKind {
     Primitive,
 };
 
-enum class PrimitiveKind {
-    Integer,
-    Boolean
-};
+enum class PrimitiveKind { Integer, Boolean };
 
 struct OperationResultType {
     bool isTypesCorrect;
     const Type* resultType;
 
     explicit OperationResultType(bool isTypesCorrect, const Type* resultType)
-        : isTypesCorrect(isTypesCorrect), resultType(resultType) {}
+        : isTypesCorrect(isTypesCorrect),
+          resultType(resultType) {
+    }
 };
 
 class Type {
-public:
+   public:
     explicit Type(SymbolContext& context, std::string typeName, TypeKind kind)
         : _context(context),
           _typeName(std::move(typeName)),
-          _kind(kind) {}
+          _kind(kind) {
+    }
 
     virtual ~Type() = default;
 
-    [[nodiscard]] virtual OperationResultType binaryOperationType(LexemType opType, const Type& rhs) const = 0;
+    [[nodiscard]] virtual OperationResultType binaryOperationType(LexemType opType,
+                                                                  const Type& rhs) const
+        = 0;
     [[nodiscard]] virtual OperationResultType prefixOperationType(LexemType opType) const = 0;
 
     [[nodiscard]] TypeKind getKind() const {
@@ -59,7 +62,7 @@ public:
         return this != &rhs;
     }
 
-protected:
+   protected:
     SymbolContext& _context;
     std::string _typeName;
     TypeKind _kind;
@@ -67,44 +70,51 @@ protected:
 
 class UndefinedType : public Type {
     explicit UndefinedType(SymbolContext& context)
-        : Type(context, "Undefined", TypeKind::Undefined) {}
+        : Type(context, "Undefined", TypeKind::Undefined) {
+    }
 
-public:
-    [[nodiscard]] OperationResultType binaryOperationType(LexemType opType, const Type& rhs) const override;
+   public:
+    [[nodiscard]] OperationResultType binaryOperationType(LexemType opType,
+                                                          const Type& rhs) const override;
     [[nodiscard]] OperationResultType prefixOperationType(LexemType opType) const override;
 };
 
 class PrimitiveType : public Type {
-public:
+   public:
     PrimitiveType(SymbolContext& context, std::string typeName, PrimitiveKind primitiveKind)
         : Type(context, std::move(typeName), TypeKind::Primitive),
-          _primitiveKind(primitiveKind) {}
+          _primitiveKind(primitiveKind) {
+    }
 
     [[nodiscard]] PrimitiveKind getPrimitiveKind() const {
         return _primitiveKind;
     }
 
-protected:
+   protected:
     PrimitiveKind _primitiveKind;
 };
 
 class BooleanType : public PrimitiveType {
-public:
+   public:
     BooleanType(SymbolContext& context, std::string typeName)
-        : PrimitiveType(context, std::move(typeName), PrimitiveKind::Boolean) {}
+        : PrimitiveType(context, std::move(typeName), PrimitiveKind::Boolean) {
+    }
 
-    [[nodiscard]] OperationResultType binaryOperationType(LexemType opType, const Type& rhs) const override;
+    [[nodiscard]] OperationResultType binaryOperationType(LexemType opType,
+                                                          const Type& rhs) const override;
     [[nodiscard]] OperationResultType prefixOperationType(LexemType opType) const override;
 };
 
 class IntegerType : public PrimitiveType {
-public:
+   public:
     IntegerType(SymbolContext& context, std::string typeName, uint32_t bits, bool isSigned)
         : PrimitiveType(context, std::move(typeName), PrimitiveKind::Integer),
           _bits(bits),
-          _isSigned(isSigned) {}
+          _isSigned(isSigned) {
+    }
 
-    [[nodiscard]] OperationResultType binaryOperationType(LexemType opType, const Type& rhs) const override;
+    [[nodiscard]] OperationResultType binaryOperationType(LexemType opType,
+                                                          const Type& rhs) const override;
     [[nodiscard]] OperationResultType prefixOperationType(LexemType opType) const override;
 
     [[nodiscard]] uint32_t getBits() const {
@@ -114,10 +124,10 @@ public:
         return _isSigned;
     }
 
-protected:
+   protected:
     uint32_t _bits;
     bool _isSigned;
 };
 
 
-#endif//VUG_TYPE_HPP
+#endif  // VUG_TYPE_HPP

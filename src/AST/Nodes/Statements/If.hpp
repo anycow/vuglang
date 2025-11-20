@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_IF_HPP
 #define VUG_IF_HPP
@@ -21,7 +22,8 @@ struct If : public Statement {
         : Statement(Kind::If, sourceLocation),
           condition(std::move(condition)),
           then(std::move(then)),
-          elseThen(std::move(elseThen)) {}
+          elseThen(std::move(elseThen)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -31,4 +33,4 @@ struct If : public Statement {
     }
 };
 
-#endif//VUG_IF_HPP
+#endif  // VUG_IF_HPP

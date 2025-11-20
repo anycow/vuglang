@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "Evaluator.hpp"
 
@@ -97,7 +98,7 @@ StmtResult Evaluator::evaluateStatement(const Return& node) {
 StmtResult Evaluator::evaluateStatement(const StatementsBlock& node) {
     stackGuard();
 
-    for (const auto& stmt: node.statements) {
+    for (const auto& stmt : node.statements) {
         auto result = evaluateStatement(*stmt);
         if (result.resultType != StmtResultKind::Successful) {
             return result;
@@ -137,7 +138,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const CallFunction& node) 
     std::vector<std::unique_ptr<Object>> arguments;
     arguments.reserve(node.arguments.size());
 
-    for (const auto& argument: node.arguments) {
+    for (const auto& argument : node.arguments) {
         arguments.push_back(evaluateExpression(*argument));
     }
 
@@ -160,13 +161,14 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const PrefixOperation& nod
 
     return right->prefixOperation(node.operationType);
 }
-std::unique_ptr<Object> Evaluator::callFunction(const FunctionSymbol& functionSymbol, std::vector<std::unique_ptr<Object>> arguments) {
+std::unique_ptr<Object> Evaluator::callFunction(const FunctionSymbol& functionSymbol,
+                                                std::vector<std::unique_ptr<Object>> arguments) {
     stackGuard();
 
     _localObjects.emplace();
 
     size_t index = 0;
-    for (const auto parameter: functionSymbol.getArguments()) {
+    for (const auto parameter : functionSymbol.getArguments()) {
         _localObjects.top()[parameter] = std::move(arguments[index]);
         ++index;
     }

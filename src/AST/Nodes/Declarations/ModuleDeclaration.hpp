@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_MODULEDECLARATION_HPP
 #define VUG_MODULEDECLARATION_HPP
@@ -20,7 +21,8 @@ struct ModuleDeclaration : public Declaration {
                       SourceLocation sourceLocation)
         : Declaration(Kind::ModuleDeclaration, sourceLocation),
           name(std::move(name)),
-          body(std::move(body)) {}
+          body(std::move(body)) {
+    }
 
     [[nodiscard]] Symbol* getSymbolPtr() const override {
         return symbolRef;
@@ -34,4 +36,4 @@ struct ModuleDeclaration : public Declaration {
     }
 };
 
-#endif//VUG_MODULEDECLARATION_HPP
+#endif  // VUG_MODULEDECLARATION_HPP

@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include <Diagnostic/DiagnosticManager.hpp>
 #include <memory>
@@ -7,8 +8,8 @@
 #include "Parser.hpp"
 
 #include "AST/ASTNodes.hpp"
-#include "Misc/Stack.hpp"
 #include "Diagnostic/DiagnosticManager.hpp"
+#include "Misc/Stack.hpp"
 
 std::unique_ptr<Node> Parser::program() {
     stackGuard();
@@ -99,9 +100,9 @@ std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
     }
     advance();
 
-    return std::make_unique<DeclarationsBlock>(std::move(declarations),
-                                               SourceLocation(startLocation,
-                                                              _previous.getSourceLocation()));
+    return std::make_unique<DeclarationsBlock>(
+        std::move(declarations),
+        SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
     stackGuard();
@@ -128,10 +129,10 @@ std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
     advance();
     auto body = declarationsBlock();
 
-    return std::make_unique<ModuleDeclaration>(std::move(name),
-                                               std::move(body),
-                                               SourceLocation(startLocation,
-                                                              _previous.getSourceLocation()));
+    return std::make_unique<ModuleDeclaration>(
+        std::move(name),
+        std::move(body),
+        SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
     stackGuard();
@@ -203,12 +204,12 @@ std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
     advance();
     auto functionBody = stmtBlock();
 
-    return std::make_unique<FunctionDeclaration>(std::move(name),
-                                                 std::move(returnType),
-                                                 std::move(parameters),
-                                                 std::move(functionBody),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+    return std::make_unique<FunctionDeclaration>(
+        std::move(name),
+        std::move(returnType),
+        std::move(parameters),
+        std::move(functionBody),
+        SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<FunctionParameter> Parser::functionParameter() {
     stackGuard();
@@ -234,10 +235,10 @@ std::unique_ptr<FunctionParameter> Parser::functionParameter() {
     auto name = _current.getValue();
 
     advance();
-    return std::make_unique<FunctionParameter>(std::move(type),
-                                               std::move(name),
-                                               SourceLocation(startLocation,
-                                                              _previous.getSourceLocation()));
+    return std::make_unique<FunctionParameter>(
+        std::move(type),
+        std::move(name),
+        SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 
 std::unique_ptr<Statement> Parser::stmt() {
@@ -270,9 +271,9 @@ std::unique_ptr<Statement> Parser::stmt() {
                     advance();
                     auto printExpression = expr();
 
-                    node = std::make_unique<Print>(std::move(printExpression),
-                                                   SourceLocation(startLocation,
-                                                                  _previous.getSourceLocation()));
+                    node = std::make_unique<Print>(
+                        std::move(printExpression),
+                        SourceLocation(startLocation, _previous.getSourceLocation()));
                     break;
                 }
 
@@ -287,21 +288,23 @@ std::unique_ptr<Statement> Parser::stmt() {
             }
         }
 
-        if (node->kind != Node::Kind::If &&
-            node->kind != Node::Kind::While &&
-            node->kind != Node::Kind::StatementBlock) {
+        if (node->kind != Node::Kind::If && node->kind != Node::Kind::While
+            && node->kind != Node::Kind::StatementBlock) {
             if (_current != LexemType::Semicolon) {
                 auto diagnostic = Diagnostic();
 
-                const auto errorLine = _previous.getSourceLocation().getSourceFile()->getLine(_previous.getSourceLocation().getEndLine());
+                const auto errorLine = _previous.getSourceLocation().getSourceFile()->getLine(
+                    _previous.getSourceLocation().getEndLine());
                 auto fixLine = std::string(errorLine.begin(), errorLine.end());
                 fixLine.insert(fixLine.begin() + _previous.getSourceLocation().getEndColumn(), ';');
 
                 diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                         "expected semicolon",
                                                         {_previous.getSourceLocation()})
-                                              .addFix(DiagnosticFix().addDiff(*_previous.getSourceLocation().getSourceFile(),
-                                                                              _previous.getSourceLocation().getEndLine(), fixLine)));
+                                          .addFix(DiagnosticFix().addDiff(
+                                              *_previous.getSourceLocation().getSourceFile(),
+                                              _previous.getSourceLocation().getEndLine(),
+                                              fixLine)));
                 throw ParsingException(std::move(diagnostic));
             }
             advance();
@@ -377,14 +380,12 @@ std::unique_ptr<If> Parser::ifStmt() {
         return std::make_unique<If>(std::move(condition),
                                     std::move(then),
                                     std::move(elseThen),
-                                    SourceLocation(startLocation,
-                                                   _previous.getSourceLocation()));
+                                    SourceLocation(startLocation, _previous.getSourceLocation()));
     } else {
         return std::make_unique<If>(std::move(condition),
                                     std::move(then),
                                     nullptr,
-                                    SourceLocation(startLocation,
-                                                   _previous.getSourceLocation()));
+                                    SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 }
 std::unique_ptr<While> Parser::whileStmt() {
@@ -426,8 +427,7 @@ std::unique_ptr<While> Parser::whileStmt() {
 
     return std::make_unique<While>(std::move(condition),
                                    std::move(body),
-                                   SourceLocation(startLocation,
-                                                  _previous.getSourceLocation()));
+                                   SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<Break> Parser::breakStmt() {
     stackGuard();
@@ -443,8 +443,8 @@ std::unique_ptr<Break> Parser::breakStmt() {
 
     advance();
     if (_loopNestingDepth > 0) {
-        return std::make_unique<Break>(SourceLocation(startLocation,
-                                                      _previous.getSourceLocation()));
+        return std::make_unique<Break>(
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     } else {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
@@ -469,8 +469,7 @@ std::unique_ptr<Return> Parser::returnStmt() {
     auto returnExpression = expr();
 
     return std::make_unique<Return>(std::move(returnExpression),
-                                    SourceLocation(startLocation,
-                                                   _previous.getSourceLocation()));
+                                    SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
     stackGuard();
@@ -516,11 +515,11 @@ std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
     advance();
     auto value = expr();
 
-    return std::make_unique<LocalVariableDeclaration>(std::move(type),
-                                                      std::move(name),
-                                                      std::move(value),
-                                                      SourceLocation(startLocation,
-                                                                     _previous.getSourceLocation()));
+    return std::make_unique<LocalVariableDeclaration>(
+        std::move(type),
+        std::move(name),
+        std::move(value),
+        SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<Statement> Parser::varAssign() {
     stackGuard();
@@ -549,8 +548,7 @@ std::unique_ptr<Statement> Parser::varAssign() {
 
     return std::make_unique<Assign>(name,
                                     std::move(value),
-                                    SourceLocation(startLocation,
-                                                   _previous.getSourceLocation()));
+                                    SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 std::unique_ptr<StatementsBlock> Parser::stmtBlock() {
     stackGuard();
@@ -587,9 +585,9 @@ std::unique_ptr<StatementsBlock> Parser::stmtBlock() {
     }
     advance();
 
-    return std::make_unique<StatementsBlock>(std::move(statements),
-                                             SourceLocation(startLocation,
-                                                            _previous.getSourceLocation()));
+    return std::make_unique<StatementsBlock>(
+        std::move(statements),
+        SourceLocation(startLocation, _previous.getSourceLocation()));
 }
 
 std::unique_ptr<Expression> Parser::expr() {
@@ -607,11 +605,11 @@ std::unique_ptr<Expression> Parser::logicOr() {
         auto type = _current.getType();
         advance();
         auto right = logicAnd();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -626,11 +624,11 @@ std::unique_ptr<Expression> Parser::logicAnd() {
         auto type = _current.getType();
         advance();
         auto right = bitOr();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -645,11 +643,11 @@ std::unique_ptr<Expression> Parser::bitOr() {
         auto type = _current.getType();
         advance();
         auto right = bitXor();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -664,11 +662,11 @@ std::unique_ptr<Expression> Parser::bitXor() {
         auto type = _current.getType();
         advance();
         auto right = bitAnd();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -683,11 +681,11 @@ std::unique_ptr<Expression> Parser::bitAnd() {
         auto type = _current.getType();
         advance();
         auto right = equal();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -698,16 +696,15 @@ std::unique_ptr<Expression> Parser::equal() {
 
     auto node = relat();
 
-    if (_current == LexemType::Equal ||
-        _current == LexemType::Unequal) {
+    if (_current == LexemType::Equal || _current == LexemType::Unequal) {
         auto type = _current.getType();
         advance();
         auto right = relat();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -718,18 +715,16 @@ std::unique_ptr<Expression> Parser::relat() {
 
     auto node = term();
 
-    if (_current == LexemType::Less ||
-        _current == LexemType::LessEqual ||
-        _current == LexemType::Greater ||
-        _current == LexemType::GreaterEqual) {
+    if (_current == LexemType::Less || _current == LexemType::LessEqual
+        || _current == LexemType::Greater || _current == LexemType::GreaterEqual) {
         auto type = _current.getType();
         advance();
         auto right = relat();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -740,16 +735,15 @@ std::unique_ptr<Expression> Parser::term() {
 
     auto node = fact();
 
-    while (_current == LexemType::Plus ||
-           _current == LexemType::Minus) {
+    while (_current == LexemType::Plus || _current == LexemType::Minus) {
         auto type = _current.getType();
         advance();
         auto right = fact();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -760,17 +754,16 @@ std::unique_ptr<Expression> Parser::fact() {
 
     auto node = unary();
 
-    while (_current == LexemType::Multiply ||
-           _current == LexemType::Divide ||
-           _current == LexemType::Remainder) {
+    while (_current == LexemType::Multiply || _current == LexemType::Divide
+           || _current == LexemType::Remainder) {
         auto type = _current.getType();
         advance();
         auto right = unary();
-        node = std::make_unique<BinaryOperation>(type,
-                                                 std::move(node),
-                                                 std::move(right),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<BinaryOperation>(
+            type,
+            std::move(node),
+            std::move(right),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     }
 
     return node;
@@ -781,14 +774,13 @@ std::unique_ptr<Expression> Parser::unary() {
 
     std::unique_ptr<Expression> node;
 
-    if (_current == LexemType::Minus ||
-        _current == LexemType::Not) {
+    if (_current == LexemType::Minus || _current == LexemType::Not) {
         auto type = _current.getType();
         advance();
-        node = std::make_unique<PrefixOperation>(type,
-                                                 unary(),
-                                                 SourceLocation(startLocation,
-                                                                _previous.getSourceLocation()));
+        node = std::make_unique<PrefixOperation>(
+            type,
+            unary(),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     } else {
         node = primary();
     }
@@ -802,16 +794,16 @@ std::unique_ptr<Expression> Parser::primary() {
     if (_current == LexemType::Number) {
         auto value = _current.getValue();
         advance();
-        return std::make_unique<Number>(std::move(value),
-                                        SourceLocation(startLocation,
-                                                       _previous.getSourceLocation()));
+        return std::make_unique<Number>(
+            std::move(value),
+            SourceLocation(startLocation, _previous.getSourceLocation()));
     } else if (_current == LexemType::Identifier) {
         auto name = _current.getValue();
         advance();
         if (_current != LexemType::LeftRoundBracket) {
-            return std::make_unique<Identifier>(std::move(name),
-                                                SourceLocation(startLocation,
-                                                               _previous.getSourceLocation()));
+            return std::make_unique<Identifier>(
+                std::move(name),
+                SourceLocation(startLocation, _previous.getSourceLocation()));
         } else {
             advance();
             std::vector<std::unique_ptr<Expression>> arguments;
@@ -825,10 +817,10 @@ std::unique_ptr<Expression> Parser::primary() {
             }
             advance();
 
-            return std::make_unique<CallFunction>(std::move(name),
-                                                  std::move(arguments),
-                                                  SourceLocation(startLocation,
-                                                                 _previous.getSourceLocation()));
+            return std::make_unique<CallFunction>(
+                std::move(name),
+                std::move(arguments),
+                SourceLocation(startLocation, _previous.getSourceLocation()));
         }
     } else if (_current == LexemType::LeftRoundBracket) {
         advance();

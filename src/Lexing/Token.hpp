@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_TOKEN_HPP
 #define VUG_TOKEN_HPP
@@ -13,7 +14,7 @@ enum class [[maybe_unused]] LexemType : uint32_t {
     Number,
     String,
 
-    //KEYWORDS
+    // KEYWORDS
     Mod,
     Var,
     Func,
@@ -25,7 +26,7 @@ enum class [[maybe_unused]] LexemType : uint32_t {
     Break,
     Return,
 
-    //OPERATORS
+    // OPERATORS
     Plus,
     Minus,
     Multiply,
@@ -62,48 +63,48 @@ enum class [[maybe_unused]] LexemType : uint32_t {
 };
 
 inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
-        {LexemType::Identifier, "Identifier"},
-        {LexemType::Number, "Number"},
-        {LexemType::String, "String"},
-        {LexemType::Mod, "Module"},
-        {LexemType::Var, "Var"},
-        {LexemType::Func, "Function"},
-        {LexemType::Type, "Type"},
-        {LexemType::Decl, "Declare"},
-        {LexemType::While, "While"},
-        {LexemType::If, "If"},
-        {LexemType::Else, "Else"},
-        {LexemType::Plus, "+"},
-        {LexemType::Minus, "-"},
-        {LexemType::Multiply, "*"},
-        {LexemType::Divide, "/"},
-        {LexemType::Remainder, "%"},
-        {LexemType::Not, "!"},
-        {LexemType::LogicOr, "||"},
-        {LexemType::LogicAnd, "&&"},
-        {LexemType::BitOr, "|"},
-        {LexemType::BitXor, "^"},
-        {LexemType::BitAnd, "&"},
-        {LexemType::Assign, "="},
-        {LexemType::Equal, "=="},
-        {LexemType::Unequal, "!="},
-        {LexemType::Less, "<"},
-        {LexemType::LessEqual, "<="},
-        {LexemType::Greater, ">"},
-        {LexemType::GreaterEqual, ">="},
-        {LexemType::Arrow, "->"},
-        {LexemType::LeftRoundBracket, "("},
-        {LexemType::RightRoundBracket, ")"},
-        {LexemType::LeftCurlyBracket, "{"},
-        {LexemType::RightCurlyBracket, "}"},
-        {LexemType::Comma, "Comma"},
-        {LexemType::Semicolon, "Semicolon"},
-        {LexemType::EndOfFile, "EOF"},
+    {LexemType::Identifier, "Identifier"},
+    {LexemType::Number, "Number"},
+    {LexemType::String, "String"},
+    {LexemType::Mod, "Module"},
+    {LexemType::Var, "Var"},
+    {LexemType::Func, "Function"},
+    {LexemType::Type, "Type"},
+    {LexemType::Decl, "Declare"},
+    {LexemType::While, "While"},
+    {LexemType::If, "If"},
+    {LexemType::Else, "Else"},
+    {LexemType::Plus, "+"},
+    {LexemType::Minus, "-"},
+    {LexemType::Multiply, "*"},
+    {LexemType::Divide, "/"},
+    {LexemType::Remainder, "%"},
+    {LexemType::Not, "!"},
+    {LexemType::LogicOr, "||"},
+    {LexemType::LogicAnd, "&&"},
+    {LexemType::BitOr, "|"},
+    {LexemType::BitXor, "^"},
+    {LexemType::BitAnd, "&"},
+    {LexemType::Assign, "="},
+    {LexemType::Equal, "=="},
+    {LexemType::Unequal, "!="},
+    {LexemType::Less, "<"},
+    {LexemType::LessEqual, "<="},
+    {LexemType::Greater, ">"},
+    {LexemType::GreaterEqual, ">="},
+    {LexemType::Arrow, "->"},
+    {LexemType::LeftRoundBracket, "("},
+    {LexemType::RightRoundBracket, ")"},
+    {LexemType::LeftCurlyBracket, "{"},
+    {LexemType::RightCurlyBracket, "}"},
+    {LexemType::Comma, "Comma"},
+    {LexemType::Semicolon, "Semicolon"},
+    {LexemType::EndOfFile, "EOF"},
 };
 
 class SourceFile;
 class SourceLocation {
-public:
+   public:
     SourceLocation(const SourceFile* sourceFile,
                    int64_t absoluteStart,
                    int64_t absoluteEnd,
@@ -118,10 +119,10 @@ public:
           _endLine(endLine),
           _startColumn(startColumn),
           _endColumn(endColumn),
-          _isValid(true) {}
+          _isValid(true) {
+    }
 
-    SourceLocation(const SourceLocation& start,
-                   const SourceLocation& end)
+    SourceLocation(const SourceLocation& start, const SourceLocation& end)
         : _sourceFile(start._sourceFile),
           _absoluteStart(start._absoluteStart),
           _absoluteEnd(end._absoluteEnd),
@@ -129,7 +130,8 @@ public:
           _endLine(end._endLine),
           _startColumn(start._startColumn),
           _endColumn(end._endColumn),
-          _isValid(start.isValid() && end.isValid()) {}
+          _isValid(start.isValid() && end.isValid()) {
+    }
 
     explicit SourceLocation()
         : _sourceFile(nullptr),
@@ -139,7 +141,8 @@ public:
           _endLine(-1),
           _startColumn(-1),
           _endColumn(-1),
-          _isValid(false) {}
+          _isValid(false) {
+    }
 
     [[nodiscard]] inline const SourceFile* getSourceFile() const {
         return _sourceFile;
@@ -168,18 +171,15 @@ public:
 
     [[nodiscard]] inline std::string toString() const {
         if (_isValid) {
-            return std::to_string(_absoluteStart) + ", " +
-                   std::to_string(_absoluteEnd) + ", " +
-                   std::to_string(_startLine) + ", " +
-                   std::to_string(_endLine) + ", " +
-                   std::to_string(_startColumn) + ", " +
-                   std::to_string(_endColumn);
+            return std::to_string(_absoluteStart) + ", " + std::to_string(_absoluteEnd) + ", "
+                   + std::to_string(_startLine) + ", " + std::to_string(_endLine) + ", "
+                   + std::to_string(_startColumn) + ", " + std::to_string(_endColumn);
         } else {
             return "Invalid location";
         }
     }
 
-private:
+   private:
     const SourceFile* _sourceFile;
     int64_t _absoluteStart;
     int64_t _absoluteEnd;
@@ -191,13 +191,12 @@ private:
 };
 
 class Token {
-public:
-    Token(LexemType type,
-          SourceLocation sourceLocation,
-          const std::string&& value = "")
+   public:
+    Token(LexemType type, SourceLocation sourceLocation, const std::string&& value = "")
         : _type(type),
           _sourceLocation(sourceLocation),
-          _value(value) {}
+          _value(value) {
+    }
 
     [[nodiscard]] LexemType getType() const {
         return _type;
@@ -212,9 +211,8 @@ public:
     }
 
     [[nodiscard]] inline std::string toString() const {
-        return "Type: " + TokenTypeNames[_type] +
-               " Value: " + (!_value.empty() ? _value : "Empty") +
-               " Location: (" + _sourceLocation.toString() + ")";
+        return "Type: " + TokenTypeNames[_type] + " Value: " + (!_value.empty() ? _value : "Empty")
+               + " Location: (" + _sourceLocation.toString() + ")";
     }
 
     bool operator==(const LexemType& type) const {
@@ -225,17 +223,16 @@ public:
     }
 
     bool operator==(const Token& rhs) const {
-        return _type == rhs._type &&
-               _value == rhs._value;
+        return _type == rhs._type && _value == rhs._value;
     }
     bool operator!=(const Token& rhs) const {
         return !(rhs == *this);
     }
 
-protected:
+   protected:
     LexemType _type;
     SourceLocation _sourceLocation;
     std::string _value;
 };
 
-#endif// VUG_TOKEN_HPP
+#endif  // VUG_TOKEN_HPP

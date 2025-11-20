@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_PARSER_HPP
 #define VUG_PARSER_HPP
@@ -13,9 +14,12 @@
 class DiagnosticManager;
 
 class Parser {
-public:
+   public:
     explicit Parser(Lexer& lexer, DiagnosticManager& diagnosticManager)
-        : _lexer(lexer), _diagnosticManager(diagnosticManager) { advance(); }
+        : _lexer(lexer),
+          _diagnosticManager(diagnosticManager) {
+        advance();
+    }
 
     Token advance() {
         _previous = _current;
@@ -52,7 +56,7 @@ public:
     std::unique_ptr<Expression> unary();
     std::unique_ptr<Expression> primary();
 
-protected:
+   protected:
     Lexer& _lexer;
     DiagnosticManager& _diagnosticManager;
 
@@ -63,9 +67,10 @@ protected:
 };
 
 class ParsingException : public std::exception {
-public:
+   public:
     explicit ParsingException(Diagnostic diagnostic)
-        : _diagnostic(std::move(diagnostic)) {}
+        : _diagnostic(std::move(diagnostic)) {
+    }
 
     [[nodiscard]] const char* what() const noexcept override {
         return "Uncaught ParsingException";
@@ -75,8 +80,8 @@ public:
         return _diagnostic;
     }
 
-private:
+   private:
     const Diagnostic _diagnostic;
 };
 
-#endif//VUG_PARSER_HPP
+#endif  // VUG_PARSER_HPP

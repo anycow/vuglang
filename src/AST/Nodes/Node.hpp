@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_NODE_HPP
 #define VUG_NODE_HPP
@@ -48,18 +49,29 @@ struct Node {
 
     virtual ~Node() = default;
 
-    virtual void accept(ASTWalker& walker) { throw std::logic_error("Not implemented"); }
+    virtual void accept(ASTWalker& walker) {
+        throw std::logic_error("Not implemented");
+    }
 
-    virtual bool isExpression() { return false; }
-    virtual bool isStatement() { return false; }
-    virtual bool isDeclaration() { return false; }
-    virtual bool isInvalid() { return false; }
+    virtual bool isExpression() {
+        return false;
+    }
+    virtual bool isStatement() {
+        return false;
+    }
+    virtual bool isDeclaration() {
+        return false;
+    }
+    virtual bool isInvalid() {
+        return false;
+    }
 
-protected:
+   protected:
     explicit Node(Kind nodeType, SourceLocation sourceLocation)
         : kind(nodeType),
-          sourceLocation(sourceLocation) {}
+          sourceLocation(sourceLocation) {
+    }
 };
 
 
-#endif//VUG_NODE_HPP
+#endif  // VUG_NODE_HPP

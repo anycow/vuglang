@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_EVALUATOR_HPP
 #define VUG_EVALUATOR_HPP
@@ -25,23 +26,26 @@ struct StmtResult {
     std::unique_ptr<Object> returnedObject = nullptr;
 
     StmtResult(StmtResultKind resultType)
-        : resultType(resultType) {}
+        : resultType(resultType) {
+    }
 
     StmtResult(Statement* breakedStmt)
         : resultType(StmtResultKind::Break),
-          breakedStmt(breakedStmt) {}
+          breakedStmt(breakedStmt) {
+    }
 
     StmtResult(std::unique_ptr<Object> returnedObject)
         : resultType(StmtResultKind::Return),
-          returnedObject(std::move(returnedObject)) {}
+          returnedObject(std::move(returnedObject)) {
+    }
 };
 
 class Evaluator {
-public:
-    explicit Evaluator(Node& ast,
-                       const SymbolContext& typeContext)
+   public:
+    explicit Evaluator(Node& ast, const SymbolContext& typeContext)
         : _ast(ast),
-          _typeContext(typeContext) {}
+          _typeContext(typeContext) {
+    }
 
     void evaluate();
 
@@ -65,7 +69,7 @@ public:
     std::unique_ptr<Object> evaluateExpression(const BinaryOperation& node);
     std::unique_ptr<Object> evaluateExpression(const PrefixOperation& node);
 
-protected:
+   protected:
     Node& _ast;
     const SymbolContext& _typeContext;
     std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> _localObjects;
@@ -73,8 +77,9 @@ protected:
     StmtResult evaluateStatement(Statement& node);
     std::unique_ptr<Object> evaluateExpression(Expression& node);
 
-    std::unique_ptr<Object> callFunction(const FunctionSymbol& functionSymbol, std::vector<std::unique_ptr<Object>> arguments);
+    std::unique_ptr<Object> callFunction(const FunctionSymbol& functionSymbol,
+                                         std::vector<std::unique_ptr<Object>> arguments);
 };
 
 
-#endif//VUG_EVALUATOR_HPP
+#endif  // VUG_EVALUATOR_HPP

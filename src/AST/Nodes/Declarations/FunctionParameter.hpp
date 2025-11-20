@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_PARAMETER_HPP
 #define VUG_PARAMETER_HPP
@@ -15,12 +16,11 @@ struct FunctionParameter : public Declaration {
 
     LocalVariableSymbol* symbolRef{nullptr};
 
-    FunctionParameter(std::string type,
-                      std::string name,
-                      SourceLocation sourceLocation)
+    FunctionParameter(std::string type, std::string name, SourceLocation sourceLocation)
         : Declaration(Kind::FunctionParameter, sourceLocation),
           type(std::move(type)),
-          name(std::move(name)) {}
+          name(std::move(name)) {
+    }
 
     [[nodiscard]] Symbol* getSymbolPtr() const override {
         return symbolRef;
@@ -34,4 +34,4 @@ struct FunctionParameter : public Declaration {
     }
 };
 
-#endif//VUG_PARAMETER_HPP
+#endif  // VUG_PARAMETER_HPP

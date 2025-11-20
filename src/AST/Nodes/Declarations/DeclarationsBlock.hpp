@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_DECLARATIONSBLOCK_HPP
 #define VUG_DECLARATIONSBLOCK_HPP
@@ -14,7 +15,8 @@ struct DeclarationsBlock : public Declaration {
     DeclarationsBlock(std::vector<std::unique_ptr<Declaration>> declarations,
                       SourceLocation sourceLocation)
         : Declaration(Kind::DeclarationsBlock, sourceLocation),
-          declarations(std::move(declarations)) {}
+          declarations(std::move(declarations)) {
+    }
 
     void evaluate(Evaluator& evaluator) override {
         return evaluator.evaluateDeclaration(*this);
@@ -24,4 +26,4 @@ struct DeclarationsBlock : public Declaration {
     }
 };
 
-#endif//VUG_DECLARATIONSBLOCK_HPP
+#endif  // VUG_DECLARATIONSBLOCK_HPP

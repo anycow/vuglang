@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_PRINT_HPP
 #define VUG_PRINT_HPP
@@ -10,10 +11,10 @@
 struct Print : public Statement {
     std::unique_ptr<Expression> expression;
 
-    Print(std::unique_ptr<Expression> expression,
-          SourceLocation sourceLocation)
+    Print(std::unique_ptr<Expression> expression, SourceLocation sourceLocation)
         : Statement(Kind::Print, sourceLocation),
-          expression(std::move(expression)) {}
+          expression(std::move(expression)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -23,4 +24,4 @@ struct Print : public Statement {
     }
 };
 
-#endif//VUG_PRINT_HPP
+#endif  // VUG_PRINT_HPP

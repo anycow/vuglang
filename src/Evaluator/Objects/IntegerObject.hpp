@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_INTEGEROBJECT_HPP
 #define VUG_INTEGEROBJECT_HPP
@@ -8,63 +9,54 @@
 
 #include "BooleanObject.hpp"
 
-template<typename T>
+template <typename T>
 class IntegerObject : public Object {
-public:
+   public:
     explicit IntegerObject(T integerValue)
-        : _integerValue(integerValue) {}
+        : _integerValue(integerValue) {
+    }
 
     [[nodiscard]] T getValue() const {
         return _integerValue;
     }
 
-    [[nodiscard]] std::unique_ptr<Object> binaryOperation(LexemType opType, const Object& rhs) const override {
+    [[nodiscard]] std::unique_ptr<Object> binaryOperation(LexemType opType,
+                                                          const Object& rhs) const override {
         switch (opType) {
             case LexemType::Equal:
                 return std::make_unique<BooleanObject>(
-                        _integerValue ==
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue == rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Unequal:
                 return std::make_unique<BooleanObject>(
-                        _integerValue !=
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue != rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Less:
                 return std::make_unique<BooleanObject>(
-                        _integerValue <
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue < rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::LessEqual:
                 return std::make_unique<BooleanObject>(
-                        _integerValue <=
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue <= rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Greater:
                 return std::make_unique<BooleanObject>(
-                        _integerValue >
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue > rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::GreaterEqual:
                 return std::make_unique<BooleanObject>(
-                        _integerValue >=
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue >= rhs.to<const IntegerObject<T>&>().getValue());
 
             case LexemType::Plus:
                 return std::make_unique<IntegerObject<T>>(
-                        _integerValue +
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue + rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Minus:
                 return std::make_unique<IntegerObject<T>>(
-                        _integerValue -
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue - rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Multiply:
                 return std::make_unique<IntegerObject<T>>(
-                        _integerValue *
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue * rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Divide:
                 return std::make_unique<IntegerObject<T>>(
-                        _integerValue /
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue / rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Remainder:
                 return std::make_unique<IntegerObject<T>>(
-                        _integerValue %
-                        rhs.to<const IntegerObject<T>&>().getValue());
+                    _integerValue % rhs.to<const IntegerObject<T>&>().getValue());
             default:
                 throw std::logic_error("Unsupported operation");
         }
@@ -86,8 +78,8 @@ public:
         return std::to_string(_integerValue);
     }
 
-protected:
+   protected:
     T _integerValue;
 };
 
-#endif//VUG_INTEGEROBJECT_HPP
+#endif  // VUG_INTEGEROBJECT_HPP

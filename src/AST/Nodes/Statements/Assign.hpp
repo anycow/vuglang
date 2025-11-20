@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_ASSIGN_HPP
 #define VUG_ASSIGN_HPP
@@ -16,12 +17,11 @@ struct Assign : public Statement {
 
     LocalVariableSymbol* symbolRef{nullptr};
 
-    Assign(std::string name,
-           std::unique_ptr<Expression> value,
-           SourceLocation sourceLocation)
+    Assign(std::string name, std::unique_ptr<Expression> value, SourceLocation sourceLocation)
         : Statement(Kind::Assign, sourceLocation),
           name(std::move(name)),
-          value(std::move(value)) {}
+          value(std::move(value)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -31,4 +31,4 @@ struct Assign : public Statement {
     }
 };
 
-#endif//VUG_ASSIGN_HPP
+#endif  // VUG_ASSIGN_HPP
