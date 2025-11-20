@@ -5,20 +5,23 @@
 #define VUG_ASTNODESFORWARD_HPP
 
 struct Node;
-struct Statement;
-struct Expression;
-struct Declaration;
 
+struct Declaration;
+struct BadDeclaration;
 struct DeclarationsBlock;
 struct FunctionDeclaration;
 struct FunctionParameter;
 struct ModuleDeclaration;
 
+struct Expression;
+struct BadExpression;
 struct BinaryOperation;
 struct Identifier;
 struct Number;
 struct PrefixOperation;
 
+struct Statement;
+struct BadStatement;
 struct Assign;
 struct Break;
 struct CallFunction;

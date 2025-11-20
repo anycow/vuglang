@@ -8,12 +8,18 @@
 
 #include "AST/ASTWalker.hpp"
 
+
+class DiagnosticManager;
 class SymbolContext;
 
 class LocalScopePass : public ASTWalker {
 public:
     LocalScopePass(Node& ast,
-                   SymbolContext& context) : _ast(ast), _context(context) {}
+                   SymbolContext& context,
+                   DiagnosticManager& diagnosticManager)
+        : _ast(ast),
+          _context(context),
+          _diagnosticManager(diagnosticManager) {}
 
     void analyze();
 
@@ -40,6 +46,7 @@ public:
 protected:
     Node& _ast;
     SymbolContext& _context;
+    DiagnosticManager& _diagnosticManager;
 
     std::stack<While*> _loops;
     FunctionDeclaration* _currentFunction{nullptr};

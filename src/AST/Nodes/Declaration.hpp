@@ -23,4 +23,18 @@ struct Declaration : public Node {
     virtual void evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
 };
 
+struct BadDeclaration : public Declaration {
+    explicit BadDeclaration()
+        : Declaration(Kind::BadDeclaration, SourceLocation()) {}
+
+    void accept(ASTWalker& walker) override {
+        walker.visit(*this);
+    }
+    bool isInvalid() override {
+        return true;
+    }
+
+    void evaluate(Evaluator& evaluator) override { throw std::logic_error("Not implemented"); }
+};
+
 #endif//VUG_DECLARATION_HPP

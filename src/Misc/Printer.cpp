@@ -17,6 +17,37 @@ void Printer::visit(Node& node) {
     node.accept(*this);
 }
 
+void Printer::visit(BadDeclaration& node) {
+    stackGuard();
+    ++_currentDepth;
+
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Bad Declaration: " << std::endl;
+
+    --_currentDepth;
+}
+void Printer::visit(BadExpression& node) {
+    stackGuard();
+    ++_currentDepth;
+
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Bad Expression:" << std::endl;
+
+    --_currentDepth;
+}
+void Printer::visit(BadStatement& node) {
+    stackGuard();
+    ++_currentDepth;
+
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Bad Statement:" << std::endl;
+
+    --_currentDepth;
+}
+
 void Printer::visit(FunctionDeclaration& node) {
     stackGuard();
     ++_currentDepth;
@@ -64,6 +95,9 @@ void Printer::visit(DeclarationsBlock& node) {
     stackGuard();
     ++_currentDepth;
 
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Declarations Block: " << std::endl;
     for (const auto& declaration: node.declarations) {
         visit(*declaration);
     }
@@ -120,7 +154,7 @@ void Printer::visit(BinaryOperation& node) {
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "BinOp: "
-              << TokenTypeNames[node.operationType]
+              << TokenTypeNames[node.operationToken]
               << std::endl;
 
     visit(*node.left);

@@ -16,14 +16,14 @@ enum class LogLevel : uint32_t {
     Verbose,
 };
 
-template<LogLevel MaxLevel>
+template<LogLevel RequiredLevel>
 class Logger {
 public:
     Logger() = default;
 
     template<LogLevel Level>
     inline void log(const std::string& message) const {
-        if constexpr (Level <= MaxLevel) {
+        if constexpr (Level <= RequiredLevel) {
             std::cout << levelToString(Level) << ": "
                       << message
                       << std::endl;

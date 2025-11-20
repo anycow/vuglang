@@ -16,6 +16,10 @@ public:
 
     void print();
 
+    void visit(BadDeclaration& node) override;
+    void visit(BadExpression& node) override;
+    void visit(BadStatement& node) override;
+
     void visit(DeclarationsBlock& node) override;
     void visit(FunctionDeclaration& node) override;
     void visit(FunctionParameter& node) override;

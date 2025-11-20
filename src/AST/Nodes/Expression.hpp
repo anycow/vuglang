@@ -24,5 +24,18 @@ struct Expression : public Node {
     virtual std::unique_ptr<Object> evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
 };
 
+struct BadExpression : public Expression {
+    explicit BadExpression()
+        : Expression(Kind::BadExpression, SourceLocation()) {}
+
+    void accept(ASTWalker& walker) override {
+        walker.visit(*this);
+    }
+    bool isInvalid() override {
+        return true;
+    }
+
+    std::unique_ptr<Object> evaluate(Evaluator& evaluator) override { throw std::logic_error("Not implemented"); }
+};
 
 #endif//VUG_EXPRESSION_HPP

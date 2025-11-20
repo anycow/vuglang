@@ -1,6 +1,9 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include "Diagnostic/DiagnosticManager.hpp"
+
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -10,6 +13,7 @@
 #include "Evaluator/Evaluator.hpp"
 #include "Lexing/Lexer.hpp"
 #include "Misc/Printer.hpp"
+#include "Misc/SourceManager.hpp"
 #include "Misc/Stack.hpp"
 #include "Parsing/Parser.hpp"
 #include "Semantic/Passes/GlobalScopePass.hpp"
@@ -39,11 +43,17 @@ int main(int argc, char* argv[]) {
         diag.log<LogLevel::Fatal>("Path to source file not provided");
     }
 
-    auto lex = Lexer(input);
+    auto file = SourceFile(std::filesystem::path(argv[1]).filename().string(), std::move(input));
+    auto lex = Lexer(file);
 
     std::vector<Token> tokens;
+    lex.getTokens(tokens);
+    // for (const auto& token : tokens) {
+    //     //std::cout << token.toString() << std::endl;
+    // }
 
-    auto parse = Parser(lex);
+    DiagnosticManager diagnosticManager(DiagnosticMessage::Severity::Hint);
+    auto parse = Parser(lex, diagnosticManager);
 
     auto ast = parse.program();
 
@@ -53,13 +63,16 @@ int main(int argc, char* argv[]) {
     auto symbolTable = SymbolTable();
     auto context = SymbolContext(symbolTable);
 
-    auto pass1 = ModuleDefinitionPass(*ast, context);
-    auto pass2 = GlobalScopePass(*ast, context);
-    auto pass3 = LocalScopePass(*ast, context);
+    auto pass1 = ModuleDefinitionPass(*ast, context, diagnosticManager);
+    auto pass2 = GlobalScopePass(*ast, context, diagnosticManager);
+    auto pass3 = LocalScopePass(*ast, context, diagnosticManager);
     pass1.analyze();
     pass2.analyze();
     pass3.analyze();
 
+    if (diagnosticManager.error_count() > 0 || diagnosticManager.fatal_count() > 0) {
+        return 0;
+    }
     auto start = std::chrono::high_resolution_clock::now();
 
     auto evaluator = Evaluator(*ast, context);

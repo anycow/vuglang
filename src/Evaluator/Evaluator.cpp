@@ -28,7 +28,6 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(Expression& node) {
     return node.evaluate(*this);
 }
 
-
 void Evaluator::evaluateDeclaration(const DeclarationsBlock& node) {
     throw std::logic_error("not implemented");
 }
@@ -42,12 +41,11 @@ void Evaluator::evaluateDeclaration(const ModuleDeclaration& node) {
     throw std::logic_error("not implemented");
 }
 
-
 StmtResult Evaluator::evaluateStatement(const Assign& node) {
     stackGuard();
 
     auto value = evaluateExpression(*node.value);
-    _objects[node.symbolRef] = std::move(value);
+    _localObjects.top()[node.symbolRef] = std::move(value);
 
     return {StmtResultKind::Successful};
 }
@@ -78,7 +76,7 @@ StmtResult Evaluator::evaluateStatement(const LocalVariableDeclaration& node) {
 
     auto value = evaluateExpression(*node.value);
 
-    _objects[node.symbolRef] = std::move(value);
+    _localObjects.top()[node.symbolRef] = std::move(value);
 
     return {StmtResultKind::Successful};
 }
@@ -91,7 +89,10 @@ StmtResult Evaluator::evaluateStatement(const Print& node) {
 StmtResult Evaluator::evaluateStatement(const Return& node) {
     stackGuard();
 
-    return {evaluateExpression(*node.returnExpression)};
+    auto result = evaluateExpression(*node.returnExpression);
+    _localObjects.pop();
+
+    return {std::move(result)};
 }
 StmtResult Evaluator::evaluateStatement(const StatementsBlock& node) {
     stackGuard();
@@ -128,7 +129,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const BinaryOperation& nod
     auto left = evaluateExpression(*node.left);
     auto right = evaluateExpression(*node.right);
 
-    return left->binaryOperation(node.operationType, *right);
+    return left->binaryOperation(node.operationToken, *right);
 }
 std::unique_ptr<Object> Evaluator::evaluateExpression(const CallFunction& node) {
     stackGuard();
@@ -150,7 +151,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const Number& node) {
 std::unique_ptr<Object> Evaluator::evaluateExpression(const Identifier& node) {
     stackGuard();
 
-    return _objects[node.symbolRef]->clone();
+    return _localObjects.top()[node.symbolRef]->clone();
 }
 std::unique_ptr<Object> Evaluator::evaluateExpression(const PrefixOperation& node) {
     stackGuard();
@@ -162,9 +163,11 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const PrefixOperation& nod
 std::unique_ptr<Object> Evaluator::callFunction(const FunctionSymbol& functionSymbol, std::vector<std::unique_ptr<Object>> arguments) {
     stackGuard();
 
+    _localObjects.emplace();
+
     size_t index = 0;
     for (const auto parameter: functionSymbol.getArguments()) {
-        _objects[parameter] = std::move(arguments[index]);
+        _localObjects.top()[parameter] = std::move(arguments[index]);
         ++index;
     }
     auto result = evaluateStatement(*functionSymbol.getDefinition());

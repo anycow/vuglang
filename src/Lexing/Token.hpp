@@ -101,15 +101,18 @@ inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
         {LexemType::EndOfFile, "EOF"},
 };
 
+class SourceFile;
 class SourceLocation {
 public:
-    SourceLocation(uint64_t absoluteStart,
-                   uint64_t absoluteEnd,
-                   uint64_t startLine,
-                   uint64_t endLine,
-                   uint64_t startColumn,
-                   uint64_t endColumn)
-        : _absoluteStart(absoluteStart),
+    SourceLocation(const SourceFile* sourceFile,
+                   int64_t absoluteStart,
+                   int64_t absoluteEnd,
+                   int64_t startLine,
+                   int64_t endLine,
+                   int64_t startColumn,
+                   int64_t endColumn)
+        : _sourceFile(sourceFile),
+          _absoluteStart(absoluteStart),
           _absoluteEnd(absoluteEnd),
           _startLine(startLine),
           _endLine(endLine),
@@ -119,16 +122,18 @@ public:
 
     SourceLocation(const SourceLocation& start,
                    const SourceLocation& end)
-        : _absoluteStart(start._absoluteStart),
+        : _sourceFile(start._sourceFile),
+          _absoluteStart(start._absoluteStart),
           _absoluteEnd(end._absoluteEnd),
           _startLine(start._startLine),
           _endLine(end._endLine),
           _startColumn(start._startColumn),
           _endColumn(end._endColumn),
-          _isValid(true) {}
+          _isValid(start.isValid() && end.isValid()) {}
 
     explicit SourceLocation()
-        : _absoluteStart(-1),
+        : _sourceFile(nullptr),
+          _absoluteStart(-1),
           _absoluteEnd(-1),
           _startLine(-1),
           _endLine(-1),
@@ -136,22 +141,25 @@ public:
           _endColumn(-1),
           _isValid(false) {}
 
-    [[nodiscard]] inline uint64_t getAbsoluteStart() const {
+    [[nodiscard]] inline const SourceFile* getSourceFile() const {
+        return _sourceFile;
+    }
+    [[nodiscard]] inline int64_t getAbsoluteStart() const {
         return _absoluteStart;
     }
-    [[nodiscard]] inline uint64_t getAbsoluteEnd() const {
+    [[nodiscard]] inline int64_t getAbsoluteEnd() const {
         return _absoluteEnd;
     }
-    [[nodiscard]] inline uint64_t getStartLine() const {
+    [[nodiscard]] inline int64_t getStartLine() const {
         return _startLine;
     }
-    [[nodiscard]] inline uint64_t getEndLine() const {
+    [[nodiscard]] inline int64_t getEndLine() const {
         return _endLine;
     }
-    [[nodiscard]] inline uint64_t getStartColumn() const {
+    [[nodiscard]] inline int64_t getStartColumn() const {
         return _startColumn;
     }
-    [[nodiscard]] inline uint64_t getEndColumn() const {
+    [[nodiscard]] inline int64_t getEndColumn() const {
         return _endColumn;
     }
     [[nodiscard]] inline bool isValid() const {
@@ -172,12 +180,13 @@ public:
     }
 
 private:
-    uint64_t _absoluteStart;
-    uint64_t _absoluteEnd;
-    uint64_t _startLine;
-    uint64_t _endLine;
-    uint64_t _startColumn;
-    uint64_t _endColumn;
+    const SourceFile* _sourceFile;
+    int64_t _absoluteStart;
+    int64_t _absoluteEnd;
+    int64_t _startLine;
+    int64_t _endLine;
+    int64_t _startColumn;
+    int64_t _endColumn;
     bool _isValid;
 };
 

@@ -17,4 +17,18 @@ struct Statement : public Node {
     virtual StmtResult evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
 };
 
+struct BadStatement : public Statement {
+    explicit BadStatement()
+        : Statement(Kind::BadStatement, SourceLocation()) {}
+
+    void accept(ASTWalker& walker) override {
+        walker.visit(*this);
+    }
+    bool isInvalid() override {
+        return true;
+    }
+
+    StmtResult evaluate(Evaluator& evaluator) override { throw std::logic_error("Not implemented"); }
+};
+
 #endif//VUG_STATEMENT_HPP

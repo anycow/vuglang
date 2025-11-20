@@ -46,9 +46,6 @@ struct Node {
     const Kind kind;
     const SourceLocation sourceLocation;
 
-    explicit Node(Kind nodeType, SourceLocation sourceLocation)
-        : kind(nodeType),
-          sourceLocation(sourceLocation) {}
     virtual ~Node() = default;
 
     virtual void accept(ASTWalker& walker) { throw std::logic_error("Not implemented"); }
@@ -57,6 +54,11 @@ struct Node {
     virtual bool isStatement() { return false; }
     virtual bool isDeclaration() { return false; }
     virtual bool isInvalid() { return false; }
+
+protected:
+    explicit Node(Kind nodeType, SourceLocation sourceLocation)
+        : kind(nodeType),
+          sourceLocation(sourceLocation) {}
 };
 
 

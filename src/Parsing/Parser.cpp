@@ -1,19 +1,25 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include <Diagnostic/DiagnosticManager.hpp>
 #include <memory>
 
 #include "Parser.hpp"
 
 #include "AST/ASTNodes.hpp"
 #include "Misc/Stack.hpp"
+#include "Diagnostic/DiagnosticManager.hpp"
 
 std::unique_ptr<Node> Parser::program() {
     stackGuard();
 
     auto program = declaration();
     if (_current != LexemType::EndOfFile) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "unexpected token",
+                                                {_previous.getSourceLocation()}));
+        _diagnosticManager.report(diagnostic);
     }
 
     return program;
@@ -22,13 +28,40 @@ std::unique_ptr<Node> Parser::program() {
 std::unique_ptr<Declaration> Parser::declaration() {
     stackGuard();
 
-    switch (_current.getType()) {
-        case LexemType::Mod:
-            return moduleDeclaration();
-        case LexemType::Func:
-            return functionDeclaration();
-        default:
-            throw std::logic_error("Syntax error");
+    try {
+        switch (_current.getType()) {
+            case LexemType::Mod:
+                return moduleDeclaration();
+            case LexemType::Func:
+                return functionDeclaration();
+            default:
+                throw std::logic_error("Syntax error");
+        }
+    } catch (ParsingException& exception) {
+        _diagnosticManager.report(exception.getDiagnostic());
+
+        int64_t level = 0;
+        while (true) {
+            if (_current == LexemType::LeftCurlyBracket) {
+                level++;
+            } else if (_current == LexemType::RightCurlyBracket) {
+                level--;
+                if (level == 0) {
+                    advance();
+                    break;
+                }
+            }
+
+            if (level < 0) {
+                break;
+            }
+            if (level == 0 && _current == LexemType::Semicolon) {
+                advance();
+                break;
+            }
+            advance();
+        }
+        return std::make_unique<BadDeclaration>();
     }
 }
 std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
@@ -36,21 +69,33 @@ std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::LeftCurlyBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '{'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     std::vector<std::unique_ptr<Declaration>> declarations;
     while (_current != LexemType::RightCurlyBracket) {
         if (_current == LexemType::EndOfFile) {
-            throw std::logic_error("Syntax error");
+            auto diagnostic = Diagnostic();
+            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                    "expected '}'",
+                                                    {_previous.getSourceLocation()}));
+            throw ParsingException(std::move(diagnostic));
         }
 
         declarations.push_back(declaration());
     }
 
     if (_current != LexemType::RightCurlyBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '}'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     advance();
 
@@ -63,12 +108,20 @@ std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current.getType() != LexemType::Mod) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'mod'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     if (_current.getType() != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected module name",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     auto name = _current.getValue();
@@ -85,18 +138,30 @@ std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Func) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'func'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected function name",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto name = _current.getValue();
 
     advance();
     if (_current != LexemType::LeftRoundBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '('",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
@@ -107,17 +172,31 @@ std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
 
         if (_current == LexemType::Comma) {
             advance();
+        } else if (_current != LexemType::RightRoundBracket) {
+            auto diagnostic = Diagnostic();
+            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                    "expected ',' or ')'",
+                                                    {_previous.getSourceLocation()}));
+            throw ParsingException(std::move(diagnostic));
         }
     }
 
     advance();
     if (_current != LexemType::Arrow) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '->' before function type",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected function type name",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto returnType = _current.getValue();
 
@@ -136,13 +215,21 @@ std::unique_ptr<FunctionParameter> Parser::functionParameter() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected parameter type name",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto type = _current.getValue();
 
     advance();
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected parameter name",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto name = _current.getValue();
 
@@ -154,74 +241,125 @@ std::unique_ptr<FunctionParameter> Parser::functionParameter() {
 }
 
 std::unique_ptr<Statement> Parser::stmt() {
-    stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    try {
+        stackGuard();
+        auto startLocation = _current.getSourceLocation();
 
-    std::unique_ptr<Statement> node;
-    switch (_current.getType()) {
-        case LexemType::LeftCurlyBracket:
-            node = stmtBlock();
-            break;
-        case LexemType::If:
-            node = ifStmt();
-            break;
-        case LexemType::While:
-            node = whileStmt();
-            break;
-        case LexemType::Break:
-            node = breakStmt();
-            break;
-        case LexemType::Var:
-            node = localVariableDeclaration();
-            break;
-        case LexemType::Return:
-            node = returnStmt();
-            break;
-        case LexemType::Identifier:
-            if (_current.getValue() == "print") {
-                advance();
-                auto printExpression = expr();
-
-                node = std::make_unique<Print>(std::move(printExpression),
-                                               SourceLocation(startLocation,
-                                                              _previous.getSourceLocation()));
+        std::unique_ptr<Statement> node;
+        switch (_current.getType()) {
+            case LexemType::LeftCurlyBracket:
+                node = stmtBlock();
                 break;
+            case LexemType::If:
+                node = ifStmt();
+                break;
+            case LexemType::While:
+                node = whileStmt();
+                break;
+            case LexemType::Break:
+                node = breakStmt();
+                break;
+            case LexemType::Var:
+                node = localVariableDeclaration();
+                break;
+            case LexemType::Return:
+                node = returnStmt();
+                break;
+            case LexemType::Identifier:
+                if (_current.getValue() == "print") {
+                    advance();
+                    auto printExpression = expr();
+
+                    node = std::make_unique<Print>(std::move(printExpression),
+                                                   SourceLocation(startLocation,
+                                                                  _previous.getSourceLocation()));
+                    break;
+                }
+
+                node = varAssign();
+                break;
+            default: {
+                auto diagnostic = Diagnostic();
+                diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                        "unexpected token",
+                                                        {_previous.getSourceLocation()}));
+                throw ParsingException(std::move(diagnostic));
+            }
+        }
+
+        if (node->kind != Node::Kind::If &&
+            node->kind != Node::Kind::While &&
+            node->kind != Node::Kind::StatementBlock) {
+            if (_current != LexemType::Semicolon) {
+                auto diagnostic = Diagnostic();
+
+                const auto errorLine = _previous.getSourceLocation().getSourceFile()->getLine(_previous.getSourceLocation().getEndLine());
+                auto fixLine = std::string(errorLine.begin(), errorLine.end());
+                fixLine.insert(fixLine.begin() + _previous.getSourceLocation().getEndColumn(), ';');
+
+                diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                        "expected semicolon",
+                                                        {_previous.getSourceLocation()})
+                                              .addFix(DiagnosticFix().addDiff(*_previous.getSourceLocation().getSourceFile(),
+                                                                              _previous.getSourceLocation().getEndLine(), fixLine)));
+                throw ParsingException(std::move(diagnostic));
+            }
+            advance();
+        }
+
+        return node;
+    } catch (ParsingException& exception) {
+        _diagnosticManager.report(exception.getDiagnostic());
+
+        int64_t level = 0;
+        while (true) {
+            if (_current == LexemType::LeftCurlyBracket) {
+                level++;
+            } else if (_current == LexemType::RightCurlyBracket) {
+                level--;
             }
 
-            node = varAssignOrCallStmt();
-            break;
-        default:
-            throw std::logic_error("Syntax error");
-    }
-
-    if (node->kind != Node::Kind::If &&
-        node->kind != Node::Kind::While &&
-        node->kind != Node::Kind::StatementBlock) {
-        if (_current != LexemType::Semicolon) {
-            throw std::logic_error("; expected");
+            if (level < 0) {
+                break;
+            }
+            if (level == 0 && _current == LexemType::Semicolon) {
+                advance();
+                break;
+            }
+            advance();
         }
-        advance();
+        return std::make_unique<BadStatement>();
     }
-
-    return node;
 }
 std::unique_ptr<If> Parser::ifStmt() {
     stackGuard();
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::If) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'if'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     if (_current != LexemType::LeftRoundBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '(' after 'if'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     auto condition = expr();
     if (_current != LexemType::RightRoundBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected ')'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
@@ -254,24 +392,33 @@ std::unique_ptr<While> Parser::whileStmt() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::While) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'while'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     if (_current != LexemType::LeftRoundBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '(' after 'while'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     auto condition = expr();
     if (_current != LexemType::RightRoundBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected ')'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
-    if (_current != LexemType::LeftCurlyBracket) {
-        throw std::logic_error("Syntax error");
-    }
 
     ++_loopNestingDepth;
     auto body = stmtBlock();
@@ -287,7 +434,11 @@ std::unique_ptr<Break> Parser::breakStmt() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Break) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'break'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
@@ -295,7 +446,11 @@ std::unique_ptr<Break> Parser::breakStmt() {
         return std::make_unique<Break>(SourceLocation(startLocation,
                                                       _previous.getSourceLocation()));
     } else {
-        throw std::logic_error("Break operator outisde loop body");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "break operator outside loop body",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 }
 std::unique_ptr<Return> Parser::returnStmt() {
@@ -303,7 +458,11 @@ std::unique_ptr<Return> Parser::returnStmt() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Return) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'return'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
@@ -318,24 +477,40 @@ std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Var) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected 'var'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected type name in var declaration",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto type = _current.getValue();
 
     advance();
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected variable name in var declaration",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto name = _current.getValue();
 
     advance();
     if (_current != LexemType::Assign) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '=' after var declaration",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
@@ -347,18 +522,26 @@ std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
                                                       SourceLocation(startLocation,
                                                                      _previous.getSourceLocation()));
 }
-std::unique_ptr<Statement> Parser::varAssignOrCallStmt() {
+std::unique_ptr<Statement> Parser::varAssign() {
     stackGuard();
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Identifier) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected variable name",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     auto name = _current.getValue();
 
     advance();
     if (_current != LexemType::Assign) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '='",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
@@ -374,21 +557,33 @@ std::unique_ptr<StatementsBlock> Parser::stmtBlock() {
     auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::LeftCurlyBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '{'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
 
     advance();
     std::vector<std::unique_ptr<Statement>> statements;
     while (_current != LexemType::RightCurlyBracket) {
         if (_current == LexemType::EndOfFile) {
-            throw std::logic_error("Syntax error");
+            auto diagnostic = Diagnostic();
+            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                    "expected '}'",
+                                                    {_previous.getSourceLocation()}));
+            throw ParsingException(std::move(diagnostic));
         }
 
         statements.push_back(stmt());
     }
 
     if (_current != LexemType::RightCurlyBracket) {
-        throw std::logic_error("Syntax error");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                "expected '}'",
+                                                {_previous.getSourceLocation()}));
+        throw ParsingException(std::move(diagnostic));
     }
     advance();
 
@@ -643,9 +838,17 @@ std::unique_ptr<Expression> Parser::primary() {
             advance();
             return expression;
         } else {
-            throw std::logic_error("Right Bracket Expected");
+            auto diagnostic = Diagnostic();
+            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                    "expected '}",
+                                                    {_previous.getSourceLocation()}));
+            throw ParsingException(std::move(diagnostic));
         }
     }
 
-    throw std::logic_error("Unexpected symbol");
+    auto diagnostic = Diagnostic();
+    diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                            "unexpected token",
+                                            {_previous.getSourceLocation()}));
+    throw ParsingException(std::move(diagnostic));
 }
