@@ -7,12 +7,14 @@
 #include "AST/Nodes/Expression.hpp"
 
 struct PrefixOperation : public Expression {
-    LexemType op;
+    LexemType operationType;
     std::unique_ptr<Expression> right;
 
-    PrefixOperation(LexemType op, std::unique_ptr<Expression> right)
-        : Expression(Kind::PrefixOperation),
-          op(op),
+    PrefixOperation(LexemType operationType,
+                    std::unique_ptr<Expression> right,
+                    SourceLocation sourceLocation)
+        : Expression(Kind::PrefixOperation, sourceLocation),
+          operationType(operationType),
           right(std::move(right)) {}
 
     void accept(ASTWalker& walker) override {

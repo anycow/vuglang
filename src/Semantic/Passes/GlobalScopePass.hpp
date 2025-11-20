@@ -6,14 +6,18 @@
 
 #include "AST/ASTWalker.hpp"
 
+
+class DiagnosticManager;
 class SymbolContext;
 
 class GlobalScopePass : public ASTWalker {
 public:
     GlobalScopePass(Node& ast,
-                    SymbolContext& context)
+                    SymbolContext& context,
+                    DiagnosticManager& diagnosticManager)
         : _ast(ast),
-          _context(context) {}
+          _context(context),
+          _diagnosticManager(diagnosticManager) {}
 
     void analyze();
 
@@ -23,8 +27,8 @@ public:
 
 protected:
     Node& _ast;
-
     SymbolContext& _context;
+    DiagnosticManager& _diagnosticManager;
 
     void visit(Node& node) override;
 };

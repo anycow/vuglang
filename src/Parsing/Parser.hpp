@@ -5,15 +5,20 @@
 #define VUG_PARSER_HPP
 
 #include <memory>
+#include <utility>
 
 #include "AST/ASTNodesForward.hpp"
 #include "Lexing/Lexer.hpp"
 
+class DiagnosticManager;
+
 class Parser {
 public:
-    explicit Parser(Lexer& lexer) : _lexer(lexer) { advance(); }
+    explicit Parser(Lexer& lexer, DiagnosticManager& diagnosticManager)
+        : _lexer(lexer), _diagnosticManager(diagnosticManager) { advance(); }
 
     Token advance() {
+        _previous = _current;
         return (_current = _lexer.getToken());
     }
 
@@ -30,8 +35,8 @@ public:
     std::unique_ptr<While> whileStmt();
     std::unique_ptr<Break> breakStmt();
     std::unique_ptr<Return> returnStmt();
-    std::unique_ptr<LocalVariableDeclaration> localVarDeclaration();
-    std::unique_ptr<Statement> varAssignOrCallStmt();
+    std::unique_ptr<LocalVariableDeclaration> localVariableDeclaration();
+    std::unique_ptr<Statement> varAssign();
     std::unique_ptr<StatementsBlock> stmtBlock();
 
     std::unique_ptr<Expression> expr();
@@ -49,8 +54,29 @@ public:
 
 protected:
     Lexer& _lexer;
-    Token _current;
+    DiagnosticManager& _diagnosticManager;
+
+    Token _current{LexemType::EndOfFile, SourceLocation()};
+    Token _previous{LexemType::EndOfFile, SourceLocation()};
+
     uint32_t _loopNestingDepth = 0;
+};
+
+class ParsingException : public std::exception {
+public:
+    explicit ParsingException(Diagnostic diagnostic)
+        : _diagnostic(std::move(diagnostic)) {}
+
+    [[nodiscard]] const char* what() const noexcept override {
+        return "Uncaught ParsingException";
+    }
+
+    [[nodiscard]] const Diagnostic& getDiagnostic() const {
+        return _diagnostic;
+    }
+
+private:
+    const Diagnostic _diagnostic;
 };
 
 #endif//VUG_PARSER_HPP

@@ -11,10 +11,14 @@
 
 class Printer : public ASTWalker {
 public:
-    Printer(const std::unique_ptr<Node>& ast,
+    Printer(Node& ast,
             uint32_t tabSize) : _ast(ast), _tabSize(tabSize) {}
 
     void print();
+
+    void visit(BadDeclaration& node) override;
+    void visit(BadExpression& node) override;
+    void visit(BadStatement& node) override;
 
     void visit(DeclarationsBlock& node) override;
     void visit(FunctionDeclaration& node) override;
@@ -37,9 +41,10 @@ public:
     void visit(CallFunction& node) override;
 
 protected:
-    const std::unique_ptr<Node>& _ast;
+    Node& _ast;
     uint32_t _currentDepth = 0;
     uint32_t _tabSize = 0;
+
 
     void visit(Node& node) override;
 };

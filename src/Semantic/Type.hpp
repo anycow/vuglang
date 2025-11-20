@@ -50,6 +50,8 @@ public:
         return _typeName;
     }
 
+    [[nodiscard]] bool isInteger() const;
+
     inline bool operator==(const Type& rhs) const {
         return this == &rhs;
     }

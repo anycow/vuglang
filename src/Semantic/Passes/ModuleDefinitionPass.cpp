@@ -17,7 +17,9 @@ void ModuleDefinitionPass::analyze() {
 void ModuleDefinitionPass::visit(Node& node) {
     stackGuard();
 
-    node.accept(*this);
+    if (!node.isInvalid()) {
+        node.accept(*this);
+    }
 }
 
 void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
@@ -29,7 +31,7 @@ void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
     module->startDefinition();
     visit(*node.body);
     for (const auto& declaration: node.body->declarations) {
-        if (declaration->getSymbolPtr()) {
+         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
             module->addMember(*declaration->getSymbolPtr());
         }
     }

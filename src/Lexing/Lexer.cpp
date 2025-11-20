@@ -1,4 +1,3 @@
-
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
@@ -12,87 +11,125 @@ Token Lexer::getToken() {
 
         switch (c) {
             case '(':
-                return {LexemType::LeftRoundBracket};
+                return {LexemType::LeftRoundBracket,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case ')':
-                return {LexemType::RightRoundBracket};
+                return {LexemType::RightRoundBracket,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '{':
-                return {LexemType::LeftCurlyBracket};
+                return {LexemType::LeftCurlyBracket,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '}':
-                return {LexemType::RightCurlyBracket};
+                return {LexemType::RightCurlyBracket,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '+':
-                return {LexemType::Plus};
+                return {LexemType::Plus,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '-':
                 if (peek() == '>') {
-                    return {LexemType::Arrow};
+                    return {LexemType::Arrow,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::Minus};
+                    --_column;
+                    return {LexemType::Minus,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case '*':
-                return {LexemType::Multiply};
+                return {LexemType::Multiply,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '/':
-                return {LexemType::Divide};
+                return {LexemType::Divide,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '%':
-                return {LexemType::Remainder};
+                return {LexemType::Remainder,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '!':
                 if (peek() == '=') {
-                    return {LexemType::Unequal};
+                    return {LexemType::Unequal,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::Not};
+                    --_column;
+                    return {LexemType::Not,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case '|':
                 if (peek() == '|') {
-                    return {LexemType::LogicOr};
+                    return {LexemType::LogicOr,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::BitOr};
+                    --_column;
+                    return {LexemType::BitOr,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case '&':
                 if (peek() == '&') {
-                    return {LexemType::LogicAnd};
+                    return {LexemType::LogicAnd,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::BitAnd};
+                    --_column;
+                    return {LexemType::BitAnd,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case '^':
-                return {LexemType::BitXor};
+                return {LexemType::BitXor,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '<':
                 if (peek() == '=') {
-                    return {LexemType::LessEqual};
+                    return {LexemType::LessEqual,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::Less};
+                    --_column;
+                    return {LexemType::Less,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case '>':
                 if (peek() == '=') {
-                    return {LexemType::GreaterEqual};
+                    return {LexemType::GreaterEqual,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::Greater};
+                    --_column;
+                    return {LexemType::Greater,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case '=':
                 if (peek() == '=') {
-                    return {LexemType::Equal};
+                    return {LexemType::Equal,
+                            SourceLocation(&_source, getPrevPos() - 1, getPrevPos(), _line, _line, _column - 1, _column)};
                 } else {
                     --_pos;
-                    return {LexemType::Assign};
+                    --_column;
+                    return {LexemType::Assign,
+                            SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
                 }
             case ',':
-                return {LexemType::Comma};
+                return {LexemType::Comma,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case ';':
-                return {LexemType::Semicolon};
+                return {LexemType::Semicolon,
+                        SourceLocation(&_source, getPrevPos(), getPrevPos(), _line, _line, _column, _column)};
             case '"':
                 return getString();
 
             case ' ':
-            case '\t':
-            case '\n':
             case '\r':
+                break;
+            case '\t':
+                _column += 4;
+                break;
+            case '\n':
+                _column = 0;
+                ++_line;
                 break;
 
             case '\0':
-                return {LexemType::EndOfFile};
+                return {LexemType::EndOfFile,
+                        SourceLocation()};
 
             default:
                 if (c >= '0' && c <= '9') {
@@ -111,12 +148,23 @@ void Lexer::getTokens(std::vector<Token>& tokens) {
 
         if (token.getType() == LexemType::EndOfFile) {
             _pos = 0;
+            _line = 1;
+            _column = 0;
             return;
         }
     }
 }
+void Lexer::revertTo(const Token& token) {
+    _pos = token.getSourceLocation().getAbsoluteEnd() + 1;
+    _line = token.getSourceLocation().getEndLine();
+    _column = token.getSourceLocation().getEndColumn();
+}
 Token Lexer::getString() {
     std::string string;
+
+    auto startPos = getPrevPos();
+    auto startLine = _line;
+    auto startColumn = _column;
 
     while (true) {
         char c = peek();
@@ -127,6 +175,10 @@ Token Lexer::getString() {
         if (c == '\r') {
             continue;
         }
+        if (c == '\n') {
+            _column = 0;
+            ++_line;
+        }
 
         if (c == '"') {
             break;
@@ -134,9 +186,17 @@ Token Lexer::getString() {
 
         string.push_back(c);
     }
-    return {LexemType::String, std::move(string)};
+    return {LexemType::String,
+            SourceLocation(&_source, startPos, getPrevPos(),
+                           startLine, getPrevPos(),
+                           startColumn, getPrevPos()),
+            std::move(string)};
 }
 Token Lexer::getIdentifier(char firstChar) {
+    auto startPos = getPrevPos();
+    auto startLine = _line;
+    auto startColumn = _column;
+
     std::string string;
     string.push_back(firstChar);
 
@@ -145,6 +205,7 @@ Token Lexer::getIdentifier(char firstChar) {
 
         if (!isalpha(c) && !isdigit(c)) {
             _pos--;
+            _column--;
             break;
         }
 
@@ -154,25 +215,43 @@ Token Lexer::getIdentifier(char firstChar) {
     auto keyword = _keywords.find(string);
 
     if (keyword != _keywords.end()) {
-        return {keyword->second};
+        return {
+                keyword->second,
+                SourceLocation(&_source, startPos, getPrevPos(),
+                               startLine, _line,
+                               startColumn, _column),
+        };
     } else {
-        return {LexemType::Identifier, std::move(string)};
+        return {LexemType::Identifier,
+                SourceLocation(&_source, startPos, getPrevPos(),
+                               startLine, _line,
+                               startColumn, _column),
+                std::move(string)};
     }
 }
 Token Lexer::getNumber(char firstChar) {
     std::string string;
     string.push_back(firstChar);
 
+    auto startPos = getPrevPos();
+    auto startLine = _line;
+    auto startColumn = _column;
+
     while (true) {
         char c = peek();
 
         if (!isdigit(c)) {
             _pos--;
+            _column--;
             break;
         }
 
         string.push_back(c);
     }
 
-    return {LexemType::Number, std::move(string)};
+    return {LexemType::Number,
+            SourceLocation(&_source, startPos, getPrevPos(),
+                           startLine, _line,
+                           startColumn, _column),
+            std::move(string)};
 }

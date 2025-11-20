@@ -101,18 +101,110 @@ inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
         {LexemType::EndOfFile, "EOF"},
 };
 
-class Token {
-private:
-    LexemType _type;
-    std::string _value;
-
+class SourceFile;
+class SourceLocation {
 public:
-    Token(LexemType type = LexemType::EndOfFile,
-          const std::string&& value = "") : _type(type), _value(value) {}
+    SourceLocation(const SourceFile* sourceFile,
+                   int64_t absoluteStart,
+                   int64_t absoluteEnd,
+                   int64_t startLine,
+                   int64_t endLine,
+                   int64_t startColumn,
+                   int64_t endColumn)
+        : _sourceFile(sourceFile),
+          _absoluteStart(absoluteStart),
+          _absoluteEnd(absoluteEnd),
+          _startLine(startLine),
+          _endLine(endLine),
+          _startColumn(startColumn),
+          _endColumn(endColumn),
+          _isValid(true) {}
 
+    SourceLocation(const SourceLocation& start,
+                   const SourceLocation& end)
+        : _sourceFile(start._sourceFile),
+          _absoluteStart(start._absoluteStart),
+          _absoluteEnd(end._absoluteEnd),
+          _startLine(start._startLine),
+          _endLine(end._endLine),
+          _startColumn(start._startColumn),
+          _endColumn(end._endColumn),
+          _isValid(start.isValid() && end.isValid()) {}
+
+    explicit SourceLocation()
+        : _sourceFile(nullptr),
+          _absoluteStart(-1),
+          _absoluteEnd(-1),
+          _startLine(-1),
+          _endLine(-1),
+          _startColumn(-1),
+          _endColumn(-1),
+          _isValid(false) {}
+
+    [[nodiscard]] inline const SourceFile* getSourceFile() const {
+        return _sourceFile;
+    }
+    [[nodiscard]] inline int64_t getAbsoluteStart() const {
+        return _absoluteStart;
+    }
+    [[nodiscard]] inline int64_t getAbsoluteEnd() const {
+        return _absoluteEnd;
+    }
+    [[nodiscard]] inline int64_t getStartLine() const {
+        return _startLine;
+    }
+    [[nodiscard]] inline int64_t getEndLine() const {
+        return _endLine;
+    }
+    [[nodiscard]] inline int64_t getStartColumn() const {
+        return _startColumn;
+    }
+    [[nodiscard]] inline int64_t getEndColumn() const {
+        return _endColumn;
+    }
+    [[nodiscard]] inline bool isValid() const {
+        return _isValid;
+    }
+
+    [[nodiscard]] inline std::string toString() const {
+        if (_isValid) {
+            return std::to_string(_absoluteStart) + ", " +
+                   std::to_string(_absoluteEnd) + ", " +
+                   std::to_string(_startLine) + ", " +
+                   std::to_string(_endLine) + ", " +
+                   std::to_string(_startColumn) + ", " +
+                   std::to_string(_endColumn);
+        } else {
+            return "Invalid location";
+        }
+    }
+
+private:
+    const SourceFile* _sourceFile;
+    int64_t _absoluteStart;
+    int64_t _absoluteEnd;
+    int64_t _startLine;
+    int64_t _endLine;
+    int64_t _startColumn;
+    int64_t _endColumn;
+    bool _isValid;
+};
+
+class Token {
+public:
+    Token(LexemType type,
+          SourceLocation sourceLocation,
+          const std::string&& value = "")
+        : _type(type),
+          _sourceLocation(sourceLocation),
+          _value(value) {}
 
     [[nodiscard]] LexemType getType() const {
         return _type;
+    }
+
+    [[nodiscard]] const SourceLocation& getSourceLocation() const {
+        return _sourceLocation;
     }
 
     [[nodiscard]] const std::string& getValue() const {
@@ -120,7 +212,9 @@ public:
     }
 
     [[nodiscard]] inline std::string toString() const {
-        return "Type: " + TokenTypeNames[_type] + " Value: " + (!_value.empty() ? _value : "Empty");
+        return "Type: " + TokenTypeNames[_type] +
+               " Value: " + (!_value.empty() ? _value : "Empty") +
+               " Location: (" + _sourceLocation.toString() + ")";
     }
 
     bool operator==(const LexemType& type) const {
@@ -137,6 +231,11 @@ public:
     bool operator!=(const Token& rhs) const {
         return !(rhs == *this);
     }
+
+protected:
+    LexemType _type;
+    SourceLocation _sourceLocation;
+    std::string _value;
 };
 
 #endif// VUG_TOKEN_HPP

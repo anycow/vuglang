@@ -20,9 +20,10 @@ struct LocalVariableDeclaration : public Statement {
     LocalVariableSymbol* symbolRef{nullptr};
 
     LocalVariableDeclaration(std::string type,
-                        std::string name,
-                        std::unique_ptr<Expression> value = nullptr)
-        : Statement(Kind::VarDeclaration),
+                             std::string name,
+                             std::unique_ptr<Expression> value,
+                             SourceLocation sourceLocation)
+        : Statement(Kind::LocalVarDeclaration, sourceLocation),
           type(std::move(type)),
           name(std::move(name)),
           value(std::move(value)) {}

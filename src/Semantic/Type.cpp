@@ -5,6 +5,10 @@
 
 #include "Semantic/SymbolContext.hpp"
 
+bool Type::isInteger() const {
+    return _kind == TypeKind::Primitive && (static_cast<const PrimitiveType*>(this)->getPrimitiveKind() == PrimitiveKind::Integer);
+}
+
 OperationResultType BooleanType::binaryOperationType(LexemType opType, const Type& rhs) const {
     switch (opType) {
         case LexemType::Equal:
@@ -46,12 +50,21 @@ OperationResultType IntegerType::binaryOperationType(LexemType opType, const Typ
             } else {
                 return OperationResultType(false, nullptr);
             }
-        default:
+        case LexemType::Plus:
+        case LexemType::Minus:
+        case LexemType::Multiply:
+        case LexemType::Divide:
+        case LexemType::Remainder:
+        case LexemType::BitOr:
+        case LexemType::BitXor:
+        case LexemType::BitAnd:
             if (*this == rhs) {
                 return OperationResultType(true, this);
             } else {
                 return OperationResultType(false, nullptr);
             }
+        default:
+            return OperationResultType(false, nullptr);
     }
 }
 OperationResultType IntegerType::prefixOperationType(LexemType opType) const {

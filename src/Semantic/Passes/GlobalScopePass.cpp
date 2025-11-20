@@ -6,6 +6,7 @@
 #include "GlobalScopePass.hpp"
 
 #include "AST/ASTNodes.hpp"
+#include "Diagnostic/DiagnosticManager.hpp"
 #include "Misc/Stack.hpp"
 #include "Semantic/SymbolContext.hpp"
 #include "Semantic/SymbolTable.hpp"
@@ -20,7 +21,9 @@ void GlobalScopePass::analyze() {
 void GlobalScopePass::visit(Node& node) {
     stackGuard();
 
-    node.accept(*this);
+    if (!node.isInvalid()) {
+        node.accept(*this);
+    }
 }
 
 void GlobalScopePass::visit(ModuleDeclaration& node) {
@@ -35,7 +38,9 @@ void GlobalScopePass::visit(DeclarationsBlock& node) {
     stackGuard();
 
     for (auto& declaration: node.declarations) {
-        _context.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
+        if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
+            _context.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
+        }
     }
     for (auto& declaration: node.declarations) {
         visit(*declaration);
@@ -55,10 +60,20 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
                 Symbol::Kind::Type) {
                 parameterSymbol->setTypeSymbol(static_cast<TypeSymbol*>(&parameterTypeRecord.record->symbol));
             } else {
-                throw std::logic_error("Symbol isn't type");
+                auto diagnostic = Diagnostic();
+                diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                        std::format("'{}' isn't type", parameter->type),
+                                                        {node.sourceLocation}));
+                _diagnosticManager.report(diagnostic);
+                return;
             }
         } else {
-            throw std::logic_error("Can't find symbol");
+            auto diagnostic = Diagnostic();
+            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                    std::format("Can't find '{}' type", parameter->type),
+                                                    {node.sourceLocation}));
+            _diagnosticManager.report(diagnostic);
+            return;
         }
         parameterSymbol->finishDefinition();
 
@@ -71,10 +86,20 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         if (returnTypeRecord.record->symbol.getKind() == Symbol::Kind::Type) {
             node.symbolRef->setTypeSymbol(static_cast<TypeSymbol*>(&returnTypeRecord.record->symbol));
         } else {
-            throw std::logic_error("Symbol isn't type");
+            auto diagnostic = Diagnostic();
+            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                    std::format("'{}' isn't type", node.returnType),
+                                                    {node.sourceLocation}));
+            _diagnosticManager.report(diagnostic);
+            return;
         }
     } else {
-        throw std::logic_error("Can't find symbol");
+        auto diagnostic = Diagnostic();
+        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                                std::format("Can't find '{}' type", node.returnType),
+                                                {node.sourceLocation}));
+        _diagnosticManager.report(diagnostic);
+        return;
     }
 
     node.symbolRef->setDefinition(*node.definition);

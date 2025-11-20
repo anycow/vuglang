@@ -9,13 +9,26 @@
 #include "Evaluator/Evaluator.hpp"
 
 struct Statement : public Node {
-    explicit Statement(Kind nodeType) : Node(nodeType) {}
+    explicit Statement(Kind nodeType, SourceLocation sourceLocation)
+        : Node(nodeType, sourceLocation) {}
 
-    bool isStatement() override {
+    bool isStatement() override { return true; }
+
+    virtual StmtResult evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
+};
+
+struct BadStatement : public Statement {
+    explicit BadStatement()
+        : Statement(Kind::BadStatement, SourceLocation()) {}
+
+    void accept(ASTWalker& walker) override {
+        walker.visit(*this);
+    }
+    bool isInvalid() override {
         return true;
     }
 
-    virtual StmtResult evaluate(Evaluator& evaluator) = 0;
+    StmtResult evaluate(Evaluator& evaluator) override { throw std::logic_error("Not implemented"); }
 };
 
 #endif//VUG_STATEMENT_HPP

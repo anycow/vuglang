@@ -8,6 +8,12 @@
 
 class ASTWalker {
 public:
+    virtual ~ASTWalker() = default;
+
+    virtual void visit(BadDeclaration& node) { throw std::logic_error("Not implemented"); }
+    virtual void visit(BadExpression& node) { throw std::logic_error("Not implemented"); }
+    virtual void visit(BadStatement& node) { throw std::logic_error("Not implemented"); }
+
     virtual void visit(DeclarationsBlock& node) { throw std::logic_error("Not implemented"); }
     virtual void visit(FunctionDeclaration& node) { throw std::logic_error("Not implemented"); }
     virtual void visit(FunctionParameter& node) { throw std::logic_error("Not implemented"); }

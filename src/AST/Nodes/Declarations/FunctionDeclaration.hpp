@@ -23,8 +23,9 @@ struct FunctionDeclaration : public Declaration {
     FunctionDeclaration(std::string name,
                         std::string returnType,
                         std::vector<std::unique_ptr<FunctionParameter>> parameters,
-                        std::unique_ptr<StatementsBlock> definition)
-        : Declaration(Kind::FunctionDeclaration),
+                        std::unique_ptr<StatementsBlock> definition,
+                        SourceLocation sourceLocation)
+        : Declaration(Kind::FunctionDeclaration, sourceLocation),
           name(std::move(name)),
           returnType(std::move(returnType)),
           parameters(std::move(parameters)),

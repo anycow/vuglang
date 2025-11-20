@@ -11,8 +11,10 @@
 struct DeclarationsBlock : public Declaration {
     std::vector<std::unique_ptr<Declaration>> declarations;
 
-    DeclarationsBlock(std::vector<std::unique_ptr<Declaration>> declarations = {})
-        : Declaration(Kind::DeclarationsBlock), declarations(std::move(declarations)) {}
+    DeclarationsBlock(std::vector<std::unique_ptr<Declaration>> declarations,
+                      SourceLocation sourceLocation)
+        : Declaration(Kind::DeclarationsBlock, sourceLocation),
+          declarations(std::move(declarations)) {}
 
     void evaluate(Evaluator& evaluator) override {
         return evaluator.evaluateDeclaration(*this);

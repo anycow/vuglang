@@ -9,12 +9,43 @@
 void Printer::print() {
     stackGuard();
 
-    _ast->accept(*this);
+    _ast.accept(*this);
 }
 void Printer::visit(Node& node) {
     stackGuard();
 
     node.accept(*this);
+}
+
+void Printer::visit(BadDeclaration& node) {
+    stackGuard();
+    ++_currentDepth;
+
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Bad Declaration: " << std::endl;
+
+    --_currentDepth;
+}
+void Printer::visit(BadExpression& node) {
+    stackGuard();
+    ++_currentDepth;
+
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Bad Expression:" << std::endl;
+
+    --_currentDepth;
+}
+void Printer::visit(BadStatement& node) {
+    stackGuard();
+    ++_currentDepth;
+
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Bad Statement:" << std::endl;
+
+    --_currentDepth;
 }
 
 void Printer::visit(FunctionDeclaration& node) {
@@ -64,6 +95,9 @@ void Printer::visit(DeclarationsBlock& node) {
     stackGuard();
     ++_currentDepth;
 
+    std::string spaces((_currentDepth - 1) * _tabSize, '-');
+
+    std::cout << spaces << "Declarations Block: " << std::endl;
     for (const auto& declaration: node.declarations) {
         visit(*declaration);
     }
@@ -120,7 +154,7 @@ void Printer::visit(BinaryOperation& node) {
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "BinOp: "
-              << TokenTypeNames[node.op]
+              << TokenTypeNames[node.operationToken]
               << std::endl;
 
     visit(*node.left);
@@ -137,7 +171,7 @@ void Printer::visit(PrefixOperation& node) {
     std::cout << spaces
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "PrefixOp: "
-              << TokenTypeNames[node.op]
+              << TokenTypeNames[node.operationType]
               << std::endl;
 
     visit(*node.right);
@@ -190,7 +224,7 @@ void Printer::visit(CallFunction& node) {
 
     std::cout << spaces << "Call: " << node.name << std::endl;
 
-    for (const auto& argument: node.arguments){
+    for (const auto& argument: node.arguments) {
         visit(*argument);
     }
 

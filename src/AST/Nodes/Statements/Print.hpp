@@ -10,8 +10,9 @@
 struct Print : public Statement {
     std::unique_ptr<Expression> expression;
 
-    Print(std::unique_ptr<Expression> expression)
-        : Statement(Kind::Print),
+    Print(std::unique_ptr<Expression> expression,
+          SourceLocation sourceLocation)
+        : Statement(Kind::Print, sourceLocation),
           expression(std::move(expression)) {}
 
     void accept(ASTWalker& walker) override {

@@ -10,8 +10,9 @@
 struct Return : public Statement {
     std::unique_ptr<Expression> returnExpression;
 
-    Return(std::unique_ptr<Expression> returnedExpression)
-        : Statement(Kind::Return),
+    Return(std::unique_ptr<Expression> returnedExpression,
+           SourceLocation sourceLocation)
+        : Statement(Kind::Return, sourceLocation),
           returnExpression(std::move(returnedExpression)) {}
 
     void accept(ASTWalker& walker) override {

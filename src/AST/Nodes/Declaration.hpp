@@ -11,17 +11,30 @@
 class Symbol;
 
 struct Declaration : public Node {
-    explicit Declaration(Kind nodeType) : Node(nodeType) {}
+    explicit Declaration(Kind nodeType, SourceLocation sourceLocation)
+        : Node(nodeType, sourceLocation) {}
 
     bool isDeclaration() override {
         return true;
     }
 
-    [[nodiscard]] virtual Symbol* getSymbolPtr() const {
-        return nullptr;
+    [[nodiscard]] virtual Symbol* getSymbolPtr() const { return nullptr; }
+
+    virtual void evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
+};
+
+struct BadDeclaration : public Declaration {
+    explicit BadDeclaration()
+        : Declaration(Kind::BadDeclaration, SourceLocation()) {}
+
+    void accept(ASTWalker& walker) override {
+        walker.visit(*this);
+    }
+    bool isInvalid() override {
+        return true;
     }
 
-    virtual void evaluate(Evaluator& evaluator) = 0;
+    void evaluate(Evaluator& evaluator) override { throw std::logic_error("Not implemented"); }
 };
 
 #endif//VUG_DECLARATION_HPP

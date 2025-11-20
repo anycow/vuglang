@@ -16,8 +16,9 @@ struct FunctionParameter : public Declaration {
     LocalVariableSymbol* symbolRef{nullptr};
 
     FunctionParameter(std::string type,
-                      std::string name)
-        : Declaration(Kind::FunctionParameter),
+                      std::string name,
+                      SourceLocation sourceLocation)
+        : Declaration(Kind::FunctionParameter, sourceLocation),
           type(std::move(type)),
           name(std::move(name)) {}
 

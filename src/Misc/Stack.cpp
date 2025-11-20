@@ -13,7 +13,7 @@ void setStackBottom() {
 }
 #endif
 #ifndef _WIN32
-void setStackBottom() { }
+void setStackBottom() {}
 #endif
 
 //TODO! Add unix-like systems support

@@ -7,11 +7,10 @@
 #include "AST/Nodes/Statement.hpp"
 
 struct Break : public Statement {
-    Statement* breakedStmt;
+    Statement* breakedStmt{nullptr};
 
-    explicit Break(Statement* breakedStmt = nullptr)
-        : Statement(Kind::Break),
-          breakedStmt(breakedStmt) {}
+    explicit Break(SourceLocation sourceLocation)
+        : Statement(Kind::Break, sourceLocation) {}
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);

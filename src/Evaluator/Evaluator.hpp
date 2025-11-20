@@ -68,7 +68,7 @@ public:
 protected:
     Node& _ast;
     const SymbolContext& _typeContext;
-    std::unordered_map<const Symbol*, std::unique_ptr<Object>> _objects;
+    std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> _localObjects;
 
     StmtResult evaluateStatement(Statement& node);
     std::unique_ptr<Object> evaluateExpression(Expression& node);

@@ -15,15 +15,27 @@ class Object;
 struct Expression : public Node {
     const Type* exprType = nullptr;
 
-    explicit Expression(Kind nodeType)
-        : Node(nodeType) {}
+    explicit Expression(Kind nodeType,
+                        SourceLocation sourceLocation)
+        : Node(nodeType, sourceLocation) {}
 
-    bool isExpression() override {
+    bool isExpression() override { return true; }
+
+    virtual std::unique_ptr<Object> evaluate(Evaluator& evaluator) { throw std::logic_error("Not implemented"); }
+};
+
+struct BadExpression : public Expression {
+    explicit BadExpression()
+        : Expression(Kind::BadExpression, SourceLocation()) {}
+
+    void accept(ASTWalker& walker) override {
+        walker.visit(*this);
+    }
+    bool isInvalid() override {
         return true;
     }
 
-    virtual std::unique_ptr<Object> evaluate(Evaluator& evaluator) = 0;
+    std::unique_ptr<Object> evaluate(Evaluator& evaluator) override { throw std::logic_error("Not implemented"); }
 };
-
 
 #endif//VUG_EXPRESSION_HPP

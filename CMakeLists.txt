@@ -15,8 +15,4 @@ add_compile_options(
         -fstack-usage
 )
 
-add_executable(Vug src/Main.cpp)
 add_subdirectory(src)
-
-target_precompile_headers(Vug PRIVATE src/pch.hpp)
-target_include_directories(Vug PRIVATE src)

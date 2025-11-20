@@ -9,55 +9,64 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Diagnostic/Logger.hpp"
+#include "Misc/SourceManager.hpp"
 #include "Token.hpp"
 
 class Lexer {
 public:
-    explicit Lexer(const std::string& source) : _keywords({
-                                                        {"mod", LexemType::Mod},
-                                                        {"func", LexemType::Func},
-                                                        {"var", LexemType::Var},
-                                                        {"if", LexemType::If},
-                                                        {"else", LexemType::Else},
-                                                        {"while", LexemType::While},
-                                                        {"break", LexemType::Break},
-                                                        {"return", LexemType::Return},
-                                                }),
-                                                _source(source) {}
+    explicit Lexer(const SourceFile& source) : _keywords({
+                                                       {"mod", LexemType::Mod},
+                                                       {"func", LexemType::Func},
+                                                       {"var", LexemType::Var},
+                                                       {"if", LexemType::If},
+                                                       {"else", LexemType::Else},
+                                                       {"while", LexemType::While},
+                                                       {"break", LexemType::Break},
+                                                       {"return", LexemType::Return},
+                                               }),
+                                               _source(source) {}
 
-    inline char peek() {
-        _pos++;
-        if (_pos <= _source.size()) {
-            return _source[_pos - 1];
-        }
-        return '\0';
-    }
-
-    inline char peekCurrent() {
-        if (_pos <= _source.size()) {
-            return _source[_pos - 1];
-        }
-        return '\0';
-    }
-
-    inline bool match(const Token& token) {
+    bool match(const Token& token) {
         return getToken() == token;
     }
 
     Token getToken();
-
     void getTokens(std::vector<Token>& tokens);
+
+    void revertTo(const Token& token);
 
 protected:
     std::unordered_map<std::string, LexemType> _keywords;
-    size_t _pos = 0;
-    const std::string& _source;
+    int64_t _pos{0};
+    int64_t _line{1};
+    int64_t _column{0};
+    const SourceFile& _source;
+
+    char peek() {
+        ++_pos;
+        ++_column;
+        if (_pos <= static_cast<int64_t>(_source.getText().size())) {
+            return _source.getText()[_pos - 1];
+        }
+        return '\0';
+    }
+    [[nodiscard]] char peekCurrent() const {
+        if (_pos <= static_cast<int64_t>(_source.getText().size())) {
+            return _source.getText()[_pos - 1];
+        }
+        return '\0';
+    }
 
     Token getString();
 
     Token getIdentifier(char firstChar);
 
     Token getNumber(char firstChar);
+
+    inline int64_t getPrevPos() const {
+        return _pos - 1;
+    }
 };
 
 
