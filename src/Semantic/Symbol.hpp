@@ -27,50 +27,49 @@ class Symbol {
         Complete,
     };
 
-    Symbol(Kind kind, std::string name)
-        : _kind(kind),
-          _state(State::Placeholder),
+    Symbol(const Kind kind, std::string name)
+        : kind_(kind),
+          state_(State::Placeholder),
           _name(std::move(name)) {
     }
 
-    Symbol(Kind kind, State state, std::string name)
-        : _kind(kind),
-          _state(state),
+    Symbol(const Kind kind, const State state, std::string name)
+        : kind_(kind),
+          state_(state),
           _name(std::move(name)) {
     }
 
-    [[nodiscard]] Kind getKind() const noexcept {
-        return _kind;
+    [[nodiscard]] constexpr Kind getKind() const {
+        return kind_;
     }
-    [[nodiscard]] State getState() const noexcept {
-        return _state;
+    [[nodiscard]] constexpr State getState() const {
+        return state_;
     }
-    [[nodiscard]] const std::string& getName() const noexcept {
+    [[nodiscard]] constexpr const std::string& getName() const {
         return _name;
     }
 
-    void startDefinition() {
-        _state = State::Incomplete;
+    constexpr void startDefinition() {
+        state_ = State::Incomplete;
     }
-    void finishDefinition() {
-        _state = State::Complete;
+    constexpr void finishDefinition() {
+        state_ = State::Complete;
     }
 
    protected:
-    const Kind _kind;
-    State _state;
+    const Kind kind_;
+    State state_;
     std::string _name;
 };
 
 class ModuleSymbol : public Symbol {
    public:
-    ModuleSymbol(std::string name)
-        : Symbol(Symbol::Kind::Module, std::move(name)),
-          _members() {
+    explicit ModuleSymbol(std::string name)
+        : Symbol(Kind::Module, std::move(name)) {
     }
 
     std::vector<Symbol*> findMember(const std::string& name) const {
-        auto range = _members.equal_range(name);
+        const auto range = _members.equal_range(name);
         std::vector<Symbol*> result;
 
         for (auto iter = range.first; iter != range.second; ++iter) {
@@ -89,14 +88,14 @@ class ModuleSymbol : public Symbol {
 
 class TypeSymbol : public Symbol {
    public:
-    TypeSymbol(std::string name)
-        : Symbol(Symbol::Kind::Type, std::move(name)) {
+    explicit TypeSymbol(std::string name)
+        : Symbol(Kind::Type, std::move(name)) {
     }
 
-    [[nodiscard]] Type* getType() const {
+    [[nodiscard]] constexpr Type* getType() const {
         return _type;
     }
-    void setType(Type* type) {
+    constexpr void setType(Type* type) {
         _type = type;
     }
 
@@ -106,14 +105,14 @@ class TypeSymbol : public Symbol {
 
 class LocalVariableSymbol : public Symbol {
    public:
-    LocalVariableSymbol(std::string name)
-        : Symbol(Symbol::Kind::Variable, std::move(name)) {
+    explicit LocalVariableSymbol(std::string name)
+        : Symbol(Kind::Variable, std::move(name)) {
     }
 
-    [[nodiscard]] TypeSymbol* getTypeSymbol() const {
+    [[nodiscard]] constexpr TypeSymbol* getTypeSymbol() const {
         return _typeSymbol;
     }
-    void setTypeSymbol(TypeSymbol* type) {
+    constexpr void setTypeSymbol(TypeSymbol* type) {
         _typeSymbol = type;
     }
 
@@ -123,29 +122,28 @@ class LocalVariableSymbol : public Symbol {
 
 class FunctionSymbol : public Symbol {
    public:
-    FunctionSymbol(std::string name)
-        : Symbol(Symbol::Kind::Function, std::move(name)),
-          _arguments() {
+    explicit FunctionSymbol(std::string name)
+        : Symbol(Kind::Function, std::move(name)) {
     }
 
-    [[nodiscard]] const std::vector<LocalVariableSymbol*>& getArguments() const {
+    [[nodiscard]] constexpr const std::vector<LocalVariableSymbol*>& getArguments() const {
         return _arguments;
     }
-    void addArgument(LocalVariableSymbol& symbol) {
+    constexpr void addArgument(LocalVariableSymbol& symbol) {
         _arguments.push_back(&symbol);
     }
 
-    [[nodiscard]] StatementsBlock* getDefinition() const {
+    [[nodiscard]] constexpr StatementsBlock* getDefinition() const {
         return _definition;
     }
-    void setDefinition(StatementsBlock& definition) {
+    constexpr void setDefinition(StatementsBlock& definition) {
         _definition = &definition;
     }
 
-    [[nodiscard]] TypeSymbol* getTypeSymbol() const {
+    [[nodiscard]] constexpr TypeSymbol* getTypeSymbol() const {
         return _typeSymbol;
     }
-    void setTypeSymbol(TypeSymbol* type) {
+    constexpr void setTypeSymbol(TypeSymbol* type) {
         _typeSymbol = type;
     }
 

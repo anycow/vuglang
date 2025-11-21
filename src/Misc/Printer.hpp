@@ -5,14 +5,12 @@
 #ifndef VUG_PRINTER_HPP
 #define VUG_PRINTER_HPP
 
-#include <iostream>
-
 #include "AST/ASTNodes.hpp"
 #include "AST/ASTWalker.hpp"
 
 class Printer : public ASTWalker {
    public:
-    Printer(Node& ast, uint32_t tabSize)
+    Printer(Node& ast, const uint32_t tabSize)
         : _ast(ast),
           _tabSize(tabSize) {
     }
@@ -48,8 +46,8 @@ class Printer : public ASTWalker {
     uint32_t _currentDepth = 0;
     uint32_t _tabSize = 0;
 
-
     void visit(Node& node) override;
+    [[nodiscard]] std::string getIndentSpaces() const;
 };
 
 #endif  // VUG_PRINTER_HPP

@@ -10,7 +10,7 @@
 struct Break : public Statement {
     Statement* breakedStmt{nullptr};
 
-    explicit Break(SourceLocation sourceLocation)
+    Break(const SourceLocation& sourceLocation)
         : Statement(Kind::Break, sourceLocation) {
     }
 

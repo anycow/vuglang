@@ -20,10 +20,10 @@ enum class LogLevel : uint32_t {
 template <LogLevel RequiredLevel>
 class Logger {
    public:
-    Logger() = default;
+    constexpr Logger() = default;
 
     template <LogLevel Level>
-    inline void log(const std::string& message) const {
+    constexpr void log(const std::string& message) const {
         if constexpr (Level <= RequiredLevel) {
             std::cout << levelToString(Level) << ": " << message << std::endl;
 
@@ -34,7 +34,7 @@ class Logger {
     }
 
    protected:
-    [[nodiscard]] inline constexpr const char* levelToString(LogLevel level) const {
+    [[nodiscard]] constexpr const char* levelToString(const LogLevel level) const {
         switch (level) {
             case LogLevel::Fatal:
                 return "Fatal";

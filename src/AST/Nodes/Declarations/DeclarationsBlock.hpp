@@ -13,7 +13,7 @@ struct DeclarationsBlock : public Declaration {
     std::vector<std::unique_ptr<Declaration>> declarations;
 
     DeclarationsBlock(std::vector<std::unique_ptr<Declaration>> declarations,
-                      SourceLocation sourceLocation)
+                      const SourceLocation& sourceLocation)
         : Declaration(Kind::DeclarationsBlock, sourceLocation),
           declarations(std::move(declarations)) {
     }

@@ -23,7 +23,7 @@ struct LocalVariableDeclaration : public Statement {
     LocalVariableDeclaration(std::string type,
                              std::string name,
                              std::unique_ptr<Expression> value,
-                             SourceLocation sourceLocation)
+                             const SourceLocation& sourceLocation)
         : Statement(Kind::LocalVarDeclaration, sourceLocation),
           type(std::move(type)),
           name(std::move(name)),

@@ -9,46 +9,46 @@
 
 class BooleanObject : public Object {
    public:
-    explicit BooleanObject(bool integerValue)
-        : _booleanValue(integerValue) {
+    explicit BooleanObject(const bool value)
+        : _value(value) {
     }
 
     [[nodiscard]] bool getValue() const {
-        return _booleanValue;
+        return _value;
     }
 
-    [[nodiscard]] std::unique_ptr<Object> binaryOperation(LexemType opType,
+    [[nodiscard]] std::unique_ptr<Object> binaryOperation(const LexemType opType,
                                                           const Object& rhs) const override {
         switch (opType) {
             case LexemType::LogicAnd:
                 return std::make_unique<BooleanObject>(
-                    _booleanValue && rhs.to<const BooleanObject&>().getValue());
+                    _value && rhs.to<const BooleanObject&>().getValue());
             case LexemType::LogicOr:
                 return std::make_unique<BooleanObject>(
-                    _booleanValue || rhs.to<const BooleanObject&>().getValue());
+                    _value || rhs.to<const BooleanObject&>().getValue());
             default:
                 throw std::logic_error("Unsupported operation");
         }
     }
-    [[nodiscard]] std::unique_ptr<Object> prefixOperation(LexemType opType) const override {
+    [[nodiscard]] std::unique_ptr<Object> prefixOperation(const LexemType opType) const override {
         switch (opType) {
             case LexemType::Not:
-                return std::make_unique<BooleanObject>(!_booleanValue);
+                return std::make_unique<BooleanObject>(!_value);
             default:
                 throw std::logic_error("Unsupported operation");
         }
     }
 
     std::unique_ptr<Object> clone() override {
-        return std::make_unique<BooleanObject>(_booleanValue);
+        return std::make_unique<BooleanObject>(_value);
     }
 
     std::string toString() override {
-        return std::to_string(_booleanValue);
+        return std::to_string(_value);
     }
 
    protected:
-    bool _booleanValue;
+    bool _value;
 };
 
 

@@ -4,8 +4,14 @@
 
 #include "Printer.hpp"
 
+#include <iostream>
+
 #include "AST/ASTNodes.hpp"
 #include "Misc/Stack.hpp"
+
+std::string Printer::getIndentSpaces() const {
+    return std::string((_currentDepth - 1) * _tabSize, '-');
+}
 
 void Printer::print() {
     stackGuard();
@@ -22,9 +28,7 @@ void Printer::visit(BadDeclaration& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Bad Declaration: " << std::endl;
+    std::cout << getIndentSpaces() << "Bad Declaration: " << std::endl;
 
     --_currentDepth;
 }
@@ -32,9 +36,7 @@ void Printer::visit(BadExpression& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Bad Expression:" << std::endl;
+    std::cout << getIndentSpaces() << "Bad Expression:" << std::endl;
 
     --_currentDepth;
 }
@@ -42,9 +44,7 @@ void Printer::visit(BadStatement& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Bad Statement:" << std::endl;
+    std::cout << getIndentSpaces() << "Bad Statement:" << std::endl;
 
     --_currentDepth;
 }
@@ -53,10 +53,8 @@ void Printer::visit(FunctionDeclaration& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Function Declaration: " << node.returnType << ' ' << node.name
-              << std::endl;
+    std::cout << getIndentSpaces() << "Function Declaration: " << node.returnType << ' '
+              << node.name << std::endl;
 
     for (const auto& parameter : node.parameters) {
         visit(*parameter);
@@ -70,9 +68,8 @@ void Printer::visit(FunctionParameter& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Function Parameter: " << node.type << ' ' << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Function Parameter: " << node.type << ' ' << node.name
+              << std::endl;
 
     --_currentDepth;
 }
@@ -80,9 +77,7 @@ void Printer::visit(ModuleDeclaration& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Module Declaration: " << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Module Declaration: " << node.name << std::endl;
 
     visit(*node.body);
 
@@ -92,9 +87,7 @@ void Printer::visit(DeclarationsBlock& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Declarations Block: " << std::endl;
+    std::cout << getIndentSpaces() << "Declarations Block: " << std::endl;
     for (const auto& declaration : node.declarations) {
         visit(*declaration);
     }
@@ -106,9 +99,7 @@ void Printer::visit(Assign& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Assign: " << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Assign: " << node.name << std::endl;
 
     visit(*node.value);
 
@@ -118,9 +109,7 @@ void Printer::visit(Number& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces
+    std::cout << getIndentSpaces()
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "Number: " << node.number << std::endl;
 
@@ -130,9 +119,7 @@ void Printer::visit(Identifier& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces
+    std::cout << getIndentSpaces()
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "Identifier: " << node.name << std::endl;
 
@@ -142,9 +129,7 @@ void Printer::visit(BinaryOperation& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces
+    std::cout << getIndentSpaces()
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "BinOp: " << TokenTypeNames[node.operationToken] << std::endl;
 
@@ -157,9 +142,7 @@ void Printer::visit(PrefixOperation& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces
+    std::cout << getIndentSpaces()
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
               << "PrefixOp: " << TokenTypeNames[node.operationType] << std::endl;
 
@@ -171,9 +154,8 @@ void Printer::visit(LocalVariableDeclaration& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Var Declaration: " << node.type << " " << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Var Declaration: " << node.type << " " << node.name
+              << std::endl;
 
     if (node.value != nullptr) {
         visit(*node.value);
@@ -185,9 +167,7 @@ void Printer::visit(StatementsBlock& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Block: " << std::endl;
+    std::cout << getIndentSpaces() << "Block: " << std::endl;
 
     for (const auto& item : node.statements) {
         visit(*item);
@@ -199,9 +179,7 @@ void Printer::visit(Break& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Break: " << std::endl;
+    std::cout << getIndentSpaces() << "Break: " << std::endl;
 
     --_currentDepth;
 }
@@ -209,9 +187,7 @@ void Printer::visit(CallFunction& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Call: " << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Call: " << node.name << std::endl;
 
     for (const auto& argument : node.arguments) {
         visit(*argument);
@@ -223,9 +199,7 @@ void Printer::visit(If& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "If: " << std::endl;
+    std::cout << getIndentSpaces() << "If: " << std::endl;
 
     visit(*node.condition);
     visit(*node.then);
@@ -240,9 +214,7 @@ void Printer::visit(While& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "While: " << std::endl;
+    std::cout << getIndentSpaces() << "While: " << std::endl;
 
     visit(*node.condition);
     visit(*node.body);
@@ -253,9 +225,7 @@ void Printer::visit(Print& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Print: " << std::endl;
+    std::cout << getIndentSpaces() << "Print: " << std::endl;
 
     visit(*node.expression);
 
@@ -265,9 +235,7 @@ void Printer::visit(Return& node) {
     stackGuard();
     ++_currentDepth;
 
-    std::string spaces((_currentDepth - 1) * _tabSize, '-');
-
-    std::cout << spaces << "Return: " << std::endl;
+    std::cout << getIndentSpaces() << "Return: " << std::endl;
 
     visit(*node.returnExpression);
 

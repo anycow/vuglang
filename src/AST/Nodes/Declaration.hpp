@@ -12,7 +12,7 @@
 class Symbol;
 
 struct Declaration : public Node {
-    explicit Declaration(Kind nodeType, SourceLocation sourceLocation)
+    Declaration(const Kind nodeType, const SourceLocation& sourceLocation)
         : Node(nodeType, sourceLocation) {
     }
 
@@ -30,7 +30,7 @@ struct Declaration : public Node {
 };
 
 struct BadDeclaration : public Declaration {
-    explicit BadDeclaration()
+    BadDeclaration()
         : Declaration(Kind::BadDeclaration, SourceLocation()) {
     }
 

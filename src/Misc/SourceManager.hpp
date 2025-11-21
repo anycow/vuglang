@@ -9,7 +9,7 @@
 
 class SourceFile {
    public:
-    SourceFile(std::string name, std::string text)
+    constexpr SourceFile(std::string name, std::string text)
         : _name(std::move(name)),
           _text(std::move(text)) {
         size_t start = 0;
@@ -31,13 +31,13 @@ class SourceFile {
         }
     }
 
-    [[nodiscard]] const std::string& getName() const {
+    [[nodiscard]] constexpr const std::string& getName() const {
         return _name;
     }
-    [[nodiscard]] const std::string& getText() const {
+    [[nodiscard]] constexpr const std::string& getText() const {
         return _text;
     }
-    [[nodiscard]] inline std::string_view getLine(uint64_t line) const {
+    [[nodiscard]] constexpr std::string_view getLine(const uint64_t line) const {
         return _textLines[line - 1];
     }
 

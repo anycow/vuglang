@@ -12,8 +12,8 @@
 struct StatementsBlock : public Statement {
     std::vector<std::unique_ptr<Statement>> statements;
 
-    explicit StatementsBlock(std::vector<std::unique_ptr<Statement>> statements,
-                             SourceLocation sourceLocation)
+    StatementsBlock(std::vector<std::unique_ptr<Statement>> statements,
+                    const SourceLocation& sourceLocation)
         : Statement(Kind::StatementBlock, sourceLocation),
           statements(std::move(statements)) {
     }

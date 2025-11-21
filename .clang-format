@@ -20,8 +20,6 @@ AllowAllParametersOfDeclarationOnNextLine: false
 IncludeBlocks: Preserve
 InsertNewlineAtEOF: true
 
-PenaltyBreakBeforeFirstCallParameter: 0
-
 AlignAfterOpenBracket: Align
 MaxEmptyLinesToKeep: 2
 BreakBeforeBinaryOperators: All

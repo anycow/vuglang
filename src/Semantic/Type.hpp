@@ -5,7 +5,6 @@
 #ifndef VUG_TYPE_HPP
 #define VUG_TYPE_HPP
 
-#include <memory>
 #include <utility>
 
 #include "Lexing/Lexer.hpp"
@@ -24,7 +23,7 @@ struct OperationResultType {
     bool isTypesCorrect;
     const Type* resultType;
 
-    explicit OperationResultType(bool isTypesCorrect, const Type* resultType)
+    constexpr explicit OperationResultType(const bool isTypesCorrect, const Type* resultType)
         : isTypesCorrect(isTypesCorrect),
           resultType(resultType) {
     }
@@ -32,7 +31,7 @@ struct OperationResultType {
 
 class Type {
    public:
-    explicit Type(SymbolContext& context, std::string typeName, TypeKind kind)
+    constexpr explicit Type(SymbolContext& context, std::string typeName, const TypeKind kind)
         : _context(context),
           _typeName(std::move(typeName)),
           _kind(kind) {
@@ -45,20 +44,20 @@ class Type {
         = 0;
     [[nodiscard]] virtual OperationResultType prefixOperationType(LexemType opType) const = 0;
 
-    [[nodiscard]] TypeKind getKind() const {
+    [[nodiscard]] constexpr TypeKind getKind() const {
         return _kind;
     }
 
-    [[nodiscard]] const std::string& getTypeName() const {
+    [[nodiscard]] constexpr const std::string& getTypeName() const {
         return _typeName;
     }
 
     [[nodiscard]] bool isInteger() const;
 
-    inline bool operator==(const Type& rhs) const {
+    constexpr bool operator==(const Type& rhs) const {
         return this == &rhs;
     }
-    inline bool operator!=(const Type& rhs) const {
+    constexpr bool operator!=(const Type& rhs) const {
         return this != &rhs;
     }
 
@@ -69,11 +68,11 @@ class Type {
 };
 
 class UndefinedType : public Type {
-    explicit UndefinedType(SymbolContext& context)
+   public:
+    constexpr explicit UndefinedType(SymbolContext& context)
         : Type(context, "Undefined", TypeKind::Undefined) {
     }
 
-   public:
     [[nodiscard]] OperationResultType binaryOperationType(LexemType opType,
                                                           const Type& rhs) const override;
     [[nodiscard]] OperationResultType prefixOperationType(LexemType opType) const override;
@@ -81,12 +80,14 @@ class UndefinedType : public Type {
 
 class PrimitiveType : public Type {
    public:
-    PrimitiveType(SymbolContext& context, std::string typeName, PrimitiveKind primitiveKind)
+    constexpr PrimitiveType(SymbolContext& context,
+                            std::string typeName,
+                            const PrimitiveKind primitiveKind)
         : Type(context, std::move(typeName), TypeKind::Primitive),
           _primitiveKind(primitiveKind) {
     }
 
-    [[nodiscard]] PrimitiveKind getPrimitiveKind() const {
+    [[nodiscard]] constexpr PrimitiveKind getPrimitiveKind() const {
         return _primitiveKind;
     }
 
@@ -96,7 +97,7 @@ class PrimitiveType : public Type {
 
 class BooleanType : public PrimitiveType {
    public:
-    BooleanType(SymbolContext& context, std::string typeName)
+    constexpr BooleanType(SymbolContext& context, std::string typeName)
         : PrimitiveType(context, std::move(typeName), PrimitiveKind::Boolean) {
     }
 
@@ -107,7 +108,10 @@ class BooleanType : public PrimitiveType {
 
 class IntegerType : public PrimitiveType {
    public:
-    IntegerType(SymbolContext& context, std::string typeName, uint32_t bits, bool isSigned)
+    constexpr IntegerType(SymbolContext& context,
+                          std::string typeName,
+                          const uint32_t bits,
+                          const bool isSigned)
         : PrimitiveType(context, std::move(typeName), PrimitiveKind::Integer),
           _bits(bits),
           _isSigned(isSigned) {
@@ -117,10 +121,10 @@ class IntegerType : public PrimitiveType {
                                                           const Type& rhs) const override;
     [[nodiscard]] OperationResultType prefixOperationType(LexemType opType) const override;
 
-    [[nodiscard]] uint32_t getBits() const {
+    [[nodiscard]] constexpr uint32_t getBits() const {
         return _bits;
     }
-    [[nodiscard]] bool isIsSigned() const {
+    [[nodiscard]] constexpr bool isIsSigned() const {
         return _isSigned;
     }
 

@@ -22,19 +22,19 @@ enum class StmtResultKind {
 
 struct StmtResult {
     StmtResultKind resultType;
-    Statement* breakedStmt = nullptr;
+    Statement* const breakedStmt = nullptr;
     std::unique_ptr<Object> returnedObject = nullptr;
 
-    StmtResult(StmtResultKind resultType)
+    explicit StmtResult(const StmtResultKind resultType)
         : resultType(resultType) {
     }
 
-    StmtResult(Statement* breakedStmt)
+    explicit StmtResult(Statement* const breakedStmt)
         : resultType(StmtResultKind::Break),
           breakedStmt(breakedStmt) {
     }
 
-    StmtResult(std::unique_ptr<Object> returnedObject)
+    explicit StmtResult(std::unique_ptr<Object> returnedObject)
         : resultType(StmtResultKind::Return),
           returnedObject(std::move(returnedObject)) {
     }
@@ -49,9 +49,9 @@ class Evaluator {
 
     void evaluate();
 
-    void evaluateDeclaration(const DeclarationsBlock& node);
-    void evaluateDeclaration(const FunctionDeclaration& node);
-    void evaluateDeclaration(const FunctionParameter& node);
+    void evaluateDeclaration(const DeclarationsBlock& node) const;
+    void evaluateDeclaration(const FunctionDeclaration& node) const;
+    void evaluateDeclaration(const FunctionParameter& node) const;
     void evaluateDeclaration(const ModuleDeclaration& node);
 
     StmtResult evaluateStatement(const Assign& node);

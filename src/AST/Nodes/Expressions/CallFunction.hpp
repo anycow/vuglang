@@ -16,7 +16,7 @@ struct CallFunction : public Expression {
 
     CallFunction(std::string name,
                  std::vector<std::unique_ptr<Expression>> expressions,
-                 SourceLocation sourceLocation)
+                 const SourceLocation& sourceLocation)
         : Expression(Kind::CallFunction, sourceLocation),
           name(std::move(name)),
           arguments(std::move(expressions)) {

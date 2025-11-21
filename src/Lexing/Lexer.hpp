@@ -5,7 +5,6 @@
 #ifndef VUG_LEXER_HPP
 #define VUG_LEXER_HPP
 
-#include <cctype>
 #include <string>
 #include <unordered_map>
 #include <vector>

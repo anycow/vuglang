@@ -17,7 +17,7 @@ class DiagnosticFix {
         const uint64_t sourceLine;
         const std::string newString;
 
-        Diff(const SourceFile& sourceFile, uint64_t sourceLine, std::string newString)
+        Diff(const SourceFile& sourceFile, const uint64_t sourceLine, std::string newString)
             : sourceFile(sourceFile),
               sourceLine(sourceLine),
               newString(std::move(newString)) {
@@ -30,7 +30,7 @@ class DiagnosticFix {
         return _diffs;
     }
     DiagnosticFix& addDiff(const SourceFile& sourceFile,
-                           uint64_t sourceLine,
+                           const uint64_t sourceLine,
                            std::string newString) {
         _diffs.emplace_back(sourceFile, sourceLine, std::move(newString));
         return *this;
@@ -45,30 +45,30 @@ class DiagnosticMessage {
    public:
     enum class Severity { Fatal, Error, Warning, Hint, Info };
 
-    explicit DiagnosticMessage(const Severity severity,
-                               std::string message,
-                               std::vector<SourceLocation> relatedCode)
+    constexpr explicit DiagnosticMessage(const Severity severity,
+                                         std::string message,
+                                         std::vector<SourceLocation> relatedCode)
         : _severity(severity),
           _message(std::move(message)),
           _relatedCode(std::move(relatedCode)) {
     }
 
-    [[nodiscard]] Severity getSeverity() const {
+    [[nodiscard]] constexpr Severity getSeverity() const {
         return _severity;
     }
 
-    [[nodiscard]] const std::string& getMessage() const {
+    [[nodiscard]] constexpr const std::string& getMessage() const {
         return _message;
     }
 
-    [[nodiscard]] const std::vector<SourceLocation>& getRelatedCode() const {
+    [[nodiscard]] constexpr const std::vector<SourceLocation>& getRelatedCode() const {
         return _relatedCode;
     }
 
-    [[nodiscard]] const std::vector<DiagnosticFix>& getFixes() const {
+    [[nodiscard]] constexpr const std::vector<DiagnosticFix>& getFixes() const {
         return _fixes;
     }
-    DiagnosticMessage& addFix(const DiagnosticFix& fix) {
+    constexpr DiagnosticMessage& addFix(const DiagnosticFix& fix) {
         _fixes.push_back(fix);
         return *this;
     }
@@ -82,7 +82,7 @@ class DiagnosticMessage {
 
 class Diagnostic {
    public:
-    Diagnostic() = default;
+    constexpr Diagnostic() = default;
 
     void addMessage(const DiagnosticMessage& message) {
         _messages.push_back(message);
@@ -95,7 +95,7 @@ class Diagnostic {
     std::vector<DiagnosticMessage> _messages;
 };
 
-constexpr const char* severityToString(DiagnosticMessage::Severity severity) {
+constexpr const char* severityToString(const DiagnosticMessage::Severity severity) {
     switch (severity) {
         case DiagnosticMessage::Severity::Fatal:
             return "fatal";

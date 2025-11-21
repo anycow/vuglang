@@ -29,13 +29,13 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(Expression& node) {
     return node.evaluate(*this);
 }
 
-void Evaluator::evaluateDeclaration(const DeclarationsBlock& node) {
+void Evaluator::evaluateDeclaration(const DeclarationsBlock& node) const {
     throw std::logic_error("not implemented");
 }
-void Evaluator::evaluateDeclaration(const FunctionDeclaration& node) {
+void Evaluator::evaluateDeclaration(const FunctionDeclaration& node) const {
     throw std::logic_error("not implemented");
 }
-void Evaluator::evaluateDeclaration(const FunctionParameter& node) {
+void Evaluator::evaluateDeclaration(const FunctionParameter& node) const {
     throw std::logic_error("not implemented");
 }
 void Evaluator::evaluateDeclaration(const ModuleDeclaration& node) {
@@ -48,12 +48,12 @@ StmtResult Evaluator::evaluateStatement(const Assign& node) {
     auto value = evaluateExpression(*node.value);
     _localObjects.top()[node.symbolRef] = std::move(value);
 
-    return {StmtResultKind::Successful};
+    return StmtResult(StmtResultKind::Successful);
 }
 StmtResult Evaluator::evaluateStatement(const Break& node) {
     stackGuard();
 
-    return {node.breakedStmt};
+    return StmtResult(node.breakedStmt);
 }
 StmtResult Evaluator::evaluateStatement(const If& node) {
     stackGuard();
@@ -70,7 +70,7 @@ StmtResult Evaluator::evaluateStatement(const If& node) {
         }
     }
 
-    return {StmtResultKind::Successful};
+    return StmtResult(StmtResultKind::Successful);
 }
 StmtResult Evaluator::evaluateStatement(const LocalVariableDeclaration& node) {
     stackGuard();
@@ -79,13 +79,13 @@ StmtResult Evaluator::evaluateStatement(const LocalVariableDeclaration& node) {
 
     _localObjects.top()[node.symbolRef] = std::move(value);
 
-    return {StmtResultKind::Successful};
+    return StmtResult(StmtResultKind::Successful);
 }
 StmtResult Evaluator::evaluateStatement(const Print& node) {
     stackGuard();
     std::cout << evaluateExpression(*node.expression)->toString() << std::endl;
 
-    return {StmtResultKind::Successful};
+    return StmtResult(StmtResultKind::Successful);
 }
 StmtResult Evaluator::evaluateStatement(const Return& node) {
     stackGuard();
@@ -93,7 +93,7 @@ StmtResult Evaluator::evaluateStatement(const Return& node) {
     auto result = evaluateExpression(*node.returnExpression);
     _localObjects.pop();
 
-    return {std::move(result)};
+    return StmtResult(std::move(result));
 }
 StmtResult Evaluator::evaluateStatement(const StatementsBlock& node) {
     stackGuard();
@@ -105,7 +105,7 @@ StmtResult Evaluator::evaluateStatement(const StatementsBlock& node) {
         }
     }
 
-    return {StmtResultKind::Successful};
+    return StmtResult(StmtResultKind::Successful);
 }
 StmtResult Evaluator::evaluateStatement(const While& node) {
     stackGuard();
@@ -121,14 +121,14 @@ StmtResult Evaluator::evaluateStatement(const While& node) {
         }
     }
 
-    return {StmtResultKind::Successful};
+    return StmtResult(StmtResultKind::Successful);
 }
 
 std::unique_ptr<Object> Evaluator::evaluateExpression(const BinaryOperation& node) {
     stackGuard();
 
-    auto left = evaluateExpression(*node.left);
-    auto right = evaluateExpression(*node.right);
+    const auto left = evaluateExpression(*node.left);
+    const auto right = evaluateExpression(*node.right);
 
     return left->binaryOperation(node.operationToken, *right);
 }
@@ -157,7 +157,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const Identifier& node) {
 std::unique_ptr<Object> Evaluator::evaluateExpression(const PrefixOperation& node) {
     stackGuard();
 
-    auto right = evaluateExpression(*node.right);
+    const auto right = evaluateExpression(*node.right);
 
     return right->prefixOperation(node.operationType);
 }
@@ -176,3 +176,4 @@ std::unique_ptr<Object> Evaluator::callFunction(const FunctionSymbol& functionSy
 
     return std::move(result.returnedObject);
 }
+

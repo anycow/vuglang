@@ -13,7 +13,7 @@
 struct Number : public Expression {
     std::string number;
 
-    explicit Number(std::string num, SourceLocation sourceLocation)
+    Number(std::string num, const SourceLocation& sourceLocation)
         : Expression(Kind::Number, sourceLocation),
           number(std::move(num)) {
     }

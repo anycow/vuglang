@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "AST/ASTNodesForward.hpp"
+#include "Diagnostic/Diagnostic.hpp"
 #include "Lexing/Lexer.hpp"
 
 class DiagnosticManager;

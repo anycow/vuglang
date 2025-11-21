@@ -10,7 +10,7 @@ SymbolContext::SymbolContext(SymbolTable& table)
     : _symbolTable(table) {
     _symbolTable.openScope();
 
-    std::initializer_list<uint32_t> bits = {8, 16, 32, 64};
+    const auto bits = {8, 16, 32, 64};
     for (const auto& size : bits) {
         auto signedInt = std::make_unique<TypeSymbol>("int" + std::to_string(size));
         auto unsignedInt = std::make_unique<TypeSymbol>("uint" + std::to_string(size));

@@ -11,9 +11,9 @@ struct PrefixOperation : public Expression {
     LexemType operationType;
     std::unique_ptr<Expression> right;
 
-    PrefixOperation(LexemType operationType,
+    PrefixOperation(const LexemType operationType,
                     std::unique_ptr<Expression> right,
-                    SourceLocation sourceLocation)
+                    const SourceLocation& sourceLocation)
         : Expression(Kind::PrefixOperation, sourceLocation),
           operationType(operationType),
           right(std::move(right)) {

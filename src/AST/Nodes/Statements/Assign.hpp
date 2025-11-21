@@ -17,7 +17,9 @@ struct Assign : public Statement {
 
     LocalVariableSymbol* symbolRef{nullptr};
 
-    Assign(std::string name, std::unique_ptr<Expression> value, SourceLocation sourceLocation)
+    Assign(std::string name,
+           std::unique_ptr<Expression> value,
+           const SourceLocation& sourceLocation)
         : Statement(Kind::Assign, sourceLocation),
           name(std::move(name)),
           value(std::move(value)) {

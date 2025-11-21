@@ -2,7 +2,7 @@
 // If a copy of the MPL was not distributed with this file, You can obtain one at
 // https://mozilla.org/MPL/2.0/.
 
-#include <Diagnostic/DiagnosticManager.hpp>
+
 #include <memory>
 
 #include "Parser.hpp"
@@ -67,7 +67,7 @@ std::unique_ptr<Declaration> Parser::declaration() {
 }
 std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::LeftCurlyBracket) {
         auto diagnostic = Diagnostic();
@@ -106,7 +106,7 @@ std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
 }
 std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current.getType() != LexemType::Mod) {
         auto diagnostic = Diagnostic();
@@ -136,7 +136,7 @@ std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
 }
 std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Func) {
         auto diagnostic = Diagnostic();
@@ -213,7 +213,7 @@ std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
 }
 std::unique_ptr<FunctionParameter> Parser::functionParameter() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Identifier) {
         auto diagnostic = Diagnostic();
@@ -244,7 +244,7 @@ std::unique_ptr<FunctionParameter> Parser::functionParameter() {
 std::unique_ptr<Statement> Parser::stmt() {
     try {
         stackGuard();
-        auto startLocation = _current.getSourceLocation();
+        const auto startLocation = _current.getSourceLocation();
 
         std::unique_ptr<Statement> node;
         switch (_current.getType()) {
@@ -336,7 +336,7 @@ std::unique_ptr<Statement> Parser::stmt() {
 }
 std::unique_ptr<If> Parser::ifStmt() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::If) {
         auto diagnostic = Diagnostic();
@@ -390,7 +390,7 @@ std::unique_ptr<If> Parser::ifStmt() {
 }
 std::unique_ptr<While> Parser::whileStmt() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::While) {
         auto diagnostic = Diagnostic();
@@ -431,7 +431,7 @@ std::unique_ptr<While> Parser::whileStmt() {
 }
 std::unique_ptr<Break> Parser::breakStmt() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Break) {
         auto diagnostic = Diagnostic();
@@ -455,7 +455,7 @@ std::unique_ptr<Break> Parser::breakStmt() {
 }
 std::unique_ptr<Return> Parser::returnStmt() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Return) {
         auto diagnostic = Diagnostic();
@@ -473,7 +473,7 @@ std::unique_ptr<Return> Parser::returnStmt() {
 }
 std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Var) {
         auto diagnostic = Diagnostic();
@@ -523,7 +523,7 @@ std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
 }
 std::unique_ptr<Statement> Parser::varAssign() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::Identifier) {
         auto diagnostic = Diagnostic();
@@ -552,7 +552,7 @@ std::unique_ptr<Statement> Parser::varAssign() {
 }
 std::unique_ptr<StatementsBlock> Parser::stmtBlock() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current != LexemType::LeftCurlyBracket) {
         auto diagnostic = Diagnostic();
@@ -597,7 +597,7 @@ std::unique_ptr<Expression> Parser::expr() {
 }
 std::unique_ptr<Expression> Parser::logicOr() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = logicAnd();
 
@@ -616,7 +616,7 @@ std::unique_ptr<Expression> Parser::logicOr() {
 }
 std::unique_ptr<Expression> Parser::logicAnd() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = bitOr();
 
@@ -635,7 +635,7 @@ std::unique_ptr<Expression> Parser::logicAnd() {
 }
 std::unique_ptr<Expression> Parser::bitOr() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = bitXor();
 
@@ -654,7 +654,7 @@ std::unique_ptr<Expression> Parser::bitOr() {
 }
 std::unique_ptr<Expression> Parser::bitXor() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = bitAnd();
 
@@ -673,7 +673,7 @@ std::unique_ptr<Expression> Parser::bitXor() {
 }
 std::unique_ptr<Expression> Parser::bitAnd() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = equal();
 
@@ -692,7 +692,7 @@ std::unique_ptr<Expression> Parser::bitAnd() {
 }
 std::unique_ptr<Expression> Parser::equal() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = relat();
 
@@ -711,7 +711,7 @@ std::unique_ptr<Expression> Parser::equal() {
 }
 std::unique_ptr<Expression> Parser::relat() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = term();
 
@@ -731,7 +731,7 @@ std::unique_ptr<Expression> Parser::relat() {
 }
 std::unique_ptr<Expression> Parser::term() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = fact();
 
@@ -750,7 +750,7 @@ std::unique_ptr<Expression> Parser::term() {
 }
 std::unique_ptr<Expression> Parser::fact() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     auto node = unary();
 
@@ -770,7 +770,7 @@ std::unique_ptr<Expression> Parser::fact() {
 }
 std::unique_ptr<Expression> Parser::unary() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     std::unique_ptr<Expression> node;
 
@@ -789,7 +789,7 @@ std::unique_ptr<Expression> Parser::unary() {
 }
 std::unique_ptr<Expression> Parser::primary() {
     stackGuard();
-    auto startLocation = _current.getSourceLocation();
+    const auto startLocation = _current.getSourceLocation();
 
     if (_current == LexemType::Number) {
         auto value = _current.getValue();

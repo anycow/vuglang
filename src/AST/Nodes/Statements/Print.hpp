@@ -11,7 +11,7 @@
 struct Print : public Statement {
     std::unique_ptr<Expression> expression;
 
-    Print(std::unique_ptr<Expression> expression, SourceLocation sourceLocation)
+    Print(std::unique_ptr<Expression> expression, const SourceLocation& sourceLocation)
         : Statement(Kind::Print, sourceLocation),
           expression(std::move(expression)) {
     }

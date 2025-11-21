@@ -20,7 +20,7 @@ class IntegerObject : public Object {
         return _integerValue;
     }
 
-    [[nodiscard]] std::unique_ptr<Object> binaryOperation(LexemType opType,
+    [[nodiscard]] std::unique_ptr<Object> binaryOperation(const LexemType opType,
                                                           const Object& rhs) const override {
         switch (opType) {
             case LexemType::Equal:
@@ -61,7 +61,7 @@ class IntegerObject : public Object {
                 throw std::logic_error("Unsupported operation");
         }
     }
-    [[nodiscard]] std::unique_ptr<Object> prefixOperation(LexemType opType) const override {
+    [[nodiscard]] std::unique_ptr<Object> prefixOperation(const LexemType opType) const override {
         switch (opType) {
             case LexemType::Minus:
                 return std::make_unique<IntegerObject>(-_integerValue);

@@ -105,13 +105,13 @@ inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
 class SourceFile;
 class SourceLocation {
    public:
-    SourceLocation(const SourceFile* sourceFile,
-                   int64_t absoluteStart,
-                   int64_t absoluteEnd,
-                   int64_t startLine,
-                   int64_t endLine,
-                   int64_t startColumn,
-                   int64_t endColumn)
+    constexpr SourceLocation(const SourceFile* sourceFile,
+                             const int64_t absoluteStart,
+                             const int64_t absoluteEnd,
+                             const int64_t startLine,
+                             const int64_t endLine,
+                             const int64_t startColumn,
+                             const int64_t endColumn)
         : _sourceFile(sourceFile),
           _absoluteStart(absoluteStart),
           _absoluteEnd(absoluteEnd),
@@ -122,7 +122,7 @@ class SourceLocation {
           _isValid(true) {
     }
 
-    SourceLocation(const SourceLocation& start, const SourceLocation& end)
+    constexpr SourceLocation(const SourceLocation& start, const SourceLocation& end)
         : _sourceFile(start._sourceFile),
           _absoluteStart(start._absoluteStart),
           _absoluteEnd(end._absoluteEnd),
@@ -133,7 +133,7 @@ class SourceLocation {
           _isValid(start.isValid() && end.isValid()) {
     }
 
-    explicit SourceLocation()
+    constexpr SourceLocation()
         : _sourceFile(nullptr),
           _absoluteStart(-1),
           _absoluteEnd(-1),
@@ -144,32 +144,32 @@ class SourceLocation {
           _isValid(false) {
     }
 
-    [[nodiscard]] inline const SourceFile* getSourceFile() const {
+    [[nodiscard]] constexpr const SourceFile* getSourceFile() const {
         return _sourceFile;
     }
-    [[nodiscard]] inline int64_t getAbsoluteStart() const {
+    [[nodiscard]] constexpr int64_t getAbsoluteStart() const {
         return _absoluteStart;
     }
-    [[nodiscard]] inline int64_t getAbsoluteEnd() const {
+    [[nodiscard]] constexpr int64_t getAbsoluteEnd() const {
         return _absoluteEnd;
     }
-    [[nodiscard]] inline int64_t getStartLine() const {
+    [[nodiscard]] constexpr int64_t getStartLine() const {
         return _startLine;
     }
-    [[nodiscard]] inline int64_t getEndLine() const {
+    [[nodiscard]] constexpr int64_t getEndLine() const {
         return _endLine;
     }
-    [[nodiscard]] inline int64_t getStartColumn() const {
+    [[nodiscard]] constexpr int64_t getStartColumn() const {
         return _startColumn;
     }
-    [[nodiscard]] inline int64_t getEndColumn() const {
+    [[nodiscard]] constexpr int64_t getEndColumn() const {
         return _endColumn;
     }
-    [[nodiscard]] inline bool isValid() const {
+    [[nodiscard]] constexpr bool isValid() const {
         return _isValid;
     }
 
-    [[nodiscard]] inline std::string toString() const {
+    [[nodiscard]] std::string toString() const {
         if (_isValid) {
             return std::to_string(_absoluteStart) + ", " + std::to_string(_absoluteEnd) + ", "
                    + std::to_string(_startLine) + ", " + std::to_string(_endLine) + ", "
@@ -192,40 +192,42 @@ class SourceLocation {
 
 class Token {
    public:
-    Token(LexemType type, SourceLocation sourceLocation, const std::string&& value = "")
+    constexpr Token(const LexemType type,
+                    const SourceLocation& sourceLocation,
+                    const std::string&& value = "")
         : _type(type),
           _sourceLocation(sourceLocation),
           _value(value) {
     }
 
-    [[nodiscard]] LexemType getType() const {
+    [[nodiscard]] constexpr LexemType getType() const {
         return _type;
     }
 
-    [[nodiscard]] const SourceLocation& getSourceLocation() const {
+    [[nodiscard]] constexpr const SourceLocation& getSourceLocation() const {
         return _sourceLocation;
     }
 
-    [[nodiscard]] const std::string& getValue() const {
+    [[nodiscard]] constexpr const std::string& getValue() const {
         return _value;
     }
 
-    [[nodiscard]] inline std::string toString() const {
+    [[nodiscard]] std::string toString() const {
         return "Type: " + TokenTypeNames[_type] + " Value: " + (!_value.empty() ? _value : "Empty")
                + " Location: (" + _sourceLocation.toString() + ")";
     }
 
-    bool operator==(const LexemType& type) const {
+    bool constexpr operator==(const LexemType& type) const {
         return _type == type;
     }
-    bool operator!=(const LexemType& type) const {
+    bool constexpr operator!=(const LexemType& type) const {
         return _type != type;
     }
 
-    bool operator==(const Token& rhs) const {
+    bool constexpr operator==(const Token& rhs) const {
         return _type == rhs._type && _value == rhs._value;
     }
-    bool operator!=(const Token& rhs) const {
+    bool constexpr operator!=(const Token& rhs) const {
         return !(rhs == *this);
     }
 

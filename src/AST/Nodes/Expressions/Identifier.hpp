@@ -14,7 +14,7 @@ struct Identifier : public Expression {
 
     LocalVariableSymbol* symbolRef{nullptr};
 
-    explicit Identifier(std::string name, SourceLocation sourceLocation)
+    Identifier(std::string name, const SourceLocation& sourceLocation)
         : Expression(Kind::Identifier, sourceLocation),
           name(std::move(name)) {
     }

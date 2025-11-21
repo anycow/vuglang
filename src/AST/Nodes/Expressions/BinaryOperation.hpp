@@ -14,10 +14,10 @@ struct BinaryOperation : public Expression {
     std::unique_ptr<Expression> left;
     std::unique_ptr<Expression> right;
 
-    BinaryOperation(LexemType operationToken,
+    BinaryOperation(const LexemType operationToken,
                     std::unique_ptr<Expression> left,
                     std::unique_ptr<Expression> right,
-                    SourceLocation sourceLocation)
+                    const SourceLocation& sourceLocation)
         : Expression(Kind::BinaryOperation, sourceLocation),
           operationToken(operationToken),
           left(std::move(left)),

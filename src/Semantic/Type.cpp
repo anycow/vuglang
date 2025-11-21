@@ -12,7 +12,8 @@ bool Type::isInteger() const {
                == PrimitiveKind::Integer);
 }
 
-OperationResultType BooleanType::binaryOperationType(LexemType opType, const Type& rhs) const {
+OperationResultType BooleanType::binaryOperationType(const LexemType opType,
+                                                     const Type& rhs) const {
     switch (opType) {
         case LexemType::Equal:
         case LexemType::Unequal:
@@ -31,7 +32,7 @@ OperationResultType BooleanType::binaryOperationType(LexemType opType, const Typ
             return OperationResultType(false, nullptr);
     }
 }
-OperationResultType BooleanType::prefixOperationType(LexemType opType) const {
+OperationResultType BooleanType::prefixOperationType(const LexemType opType) const {
     switch (opType) {
         case LexemType::Not:
             return OperationResultType(true, this);
@@ -40,7 +41,8 @@ OperationResultType BooleanType::prefixOperationType(LexemType opType) const {
     }
 }
 
-OperationResultType IntegerType::binaryOperationType(LexemType opType, const Type& rhs) const {
+OperationResultType IntegerType::binaryOperationType(const LexemType opType,
+                                                     const Type& rhs) const {
     switch (opType) {
         case LexemType::Equal:
         case LexemType::Unequal:
@@ -70,7 +72,7 @@ OperationResultType IntegerType::binaryOperationType(LexemType opType, const Typ
             return OperationResultType(false, nullptr);
     }
 }
-OperationResultType IntegerType::prefixOperationType(LexemType opType) const {
+OperationResultType IntegerType::prefixOperationType(const LexemType opType) const {
     switch (opType) {
         case LexemType::Minus:
             return OperationResultType(true, this);
@@ -79,9 +81,10 @@ OperationResultType IntegerType::prefixOperationType(LexemType opType) const {
     }
 }
 
-OperationResultType UndefinedType::binaryOperationType(LexemType opType, const Type& rhs) const {
+OperationResultType UndefinedType::binaryOperationType(const LexemType opType,
+                                                       const Type& rhs) const {
     return OperationResultType(true, this);
 }
-OperationResultType UndefinedType::prefixOperationType(LexemType opType) const {
+OperationResultType UndefinedType::prefixOperationType(const LexemType opType) const {
     return OperationResultType(true, this);
 }

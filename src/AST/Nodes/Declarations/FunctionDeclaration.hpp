@@ -25,7 +25,7 @@ struct FunctionDeclaration : public Declaration {
                         std::string returnType,
                         std::vector<std::unique_ptr<FunctionParameter>> parameters,
                         std::unique_ptr<StatementsBlock> definition,
-                        SourceLocation sourceLocation)
+                        const SourceLocation& sourceLocation)
         : Declaration(Kind::FunctionDeclaration, sourceLocation),
           name(std::move(name)),
           returnType(std::move(returnType)),

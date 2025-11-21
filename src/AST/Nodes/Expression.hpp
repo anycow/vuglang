@@ -16,7 +16,7 @@ class Object;
 struct Expression : public Node {
     const Type* exprType = nullptr;
 
-    explicit Expression(Kind nodeType, SourceLocation sourceLocation)
+    Expression(const Kind nodeType, const SourceLocation& sourceLocation)
         : Node(nodeType, sourceLocation) {
     }
 
@@ -30,7 +30,7 @@ struct Expression : public Node {
 };
 
 struct BadExpression : public Expression {
-    explicit BadExpression()
+    BadExpression()
         : Expression(Kind::BadExpression, SourceLocation()) {
     }
 

@@ -8,6 +8,6 @@ void SourceManager::insertSourceFile(SourceFile file) {
     _files.insert({file.getName(), std::move(file)});
 }
 
-SourceFile SourceManager::findSourceFile(const std::string& file) {
-    return _files.find(file)->second;
+SourceFile SourceManager::findSourceFile(const std::string& name) {
+    return _files.find(name)->second;
 }

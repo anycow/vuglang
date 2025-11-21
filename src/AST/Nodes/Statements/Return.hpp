@@ -11,7 +11,7 @@
 struct Return : public Statement {
     std::unique_ptr<Expression> returnExpression;
 
-    Return(std::unique_ptr<Expression> returnedExpression, SourceLocation sourceLocation)
+    Return(std::unique_ptr<Expression> returnedExpression, const SourceLocation& sourceLocation)
         : Statement(Kind::Return, sourceLocation),
           returnExpression(std::move(returnedExpression)) {
     }

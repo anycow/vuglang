@@ -28,7 +28,7 @@ void LocalScopePass::visit(ModuleDeclaration& node) {
     stackGuard();
 
     _context.getSymbolTable().openScope();
-    auto result = _context.getSymbolTable().insertSymbol(*node.symbolRef);
+    const auto result = _context.getSymbolTable().insertSymbol(*node.symbolRef);
     if (result.kind != SymbolTable::InsertResult::Kind::Successful) {
         if (result.kind == SymbolTable::InsertResult::Kind::NameConflict) {
             auto diagnostic = Diagnostic();
@@ -53,7 +53,7 @@ void LocalScopePass::visit(ModuleDeclaration& node) {
 void LocalScopePass::visit(DeclarationsBlock& node) {
     stackGuard();
 
-    for (auto& declaration : node.declarations) {
+    for (const auto& declaration : node.declarations) {
         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
             _context.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
         }
@@ -87,7 +87,7 @@ void LocalScopePass::visit(Assign& node) {
 
     visit(*node.value);
 
-    auto result = _context.getSymbolTable().findSymbol(node.name);
+    const auto result = _context.getSymbolTable().findSymbol(node.name);
 
     if (result.kind != SymbolTable::FindResult::Kind::Successful) {
         auto diagnostic = Diagnostic();
@@ -120,7 +120,7 @@ void LocalScopePass::visit(Assign& node) {
 void LocalScopePass::visit(CallFunction& node) {
     stackGuard();
 
-    auto result = _context.getSymbolTable().findSymbol(node.name);
+    const auto result = _context.getSymbolTable().findSymbol(node.name);
 
     if (result.kind != SymbolTable::FindResult::Kind::Successful) {
         auto diagnostic = Diagnostic();
@@ -177,7 +177,7 @@ void LocalScopePass::visit(Number& node) {
 void LocalScopePass::visit(Identifier& node) {
     stackGuard();
 
-    auto result = _context.getSymbolTable().findSymbol(node.name);
+    const auto result = _context.getSymbolTable().findSymbol(node.name);
 
     if (result.kind != SymbolTable::FindResult::Kind::Successful) {
         auto diagnostic = Diagnostic();
@@ -205,7 +205,7 @@ void LocalScopePass::visit(BinaryOperation& node) {
     visit(*node.left);
     visit(*node.right);
 
-    auto checkResult
+    const auto checkResult
         = node.left->exprType->binaryOperationType(node.operationToken, *node.right->exprType);
 
     if (checkResult.isTypesCorrect) {
@@ -225,7 +225,7 @@ void LocalScopePass::visit(PrefixOperation& node) {
 
     visit(*node.right);
 
-    auto checkResult = node.right->exprType->prefixOperationType(node.operationType);
+    const auto checkResult = node.right->exprType->prefixOperationType(node.operationType);
 
     if (checkResult.isTypesCorrect) {
         node.exprType = checkResult.resultType;
@@ -241,7 +241,7 @@ void LocalScopePass::visit(PrefixOperation& node) {
 void LocalScopePass::visit(LocalVariableDeclaration& node) {
     stackGuard();
 
-    auto typeFindResult = _context.getSymbolTable().findSymbol(node.type);
+    const auto typeFindResult = _context.getSymbolTable().findSymbol(node.type);
 
     if (typeFindResult.kind != SymbolTable::FindResult::Kind::Successful) {
         auto diagnostic = Diagnostic();
@@ -260,11 +260,11 @@ void LocalScopePass::visit(LocalVariableDeclaration& node) {
         return;
     }
 
-    auto symbol = _context.addSymbol<LocalVariableSymbol>(node.name);
+    const auto symbol = _context.addSymbol<LocalVariableSymbol>(node.name);
     symbol->setTypeSymbol(static_cast<TypeSymbol*>(&typeFindResult.record->symbol));
     node.symbolRef = symbol;
 
-    auto insertResult = _context.getSymbolTable().insertSymbol(*node.symbolRef);
+    const auto insertResult = _context.getSymbolTable().insertSymbol(*node.symbolRef);
     if (insertResult.kind != SymbolTable::InsertResult::Kind::Successful) {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,

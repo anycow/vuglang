@@ -16,8 +16,8 @@ constexpr size_t stackEpsilon = 128 * 1024;
 void setStackBottom();
 
 inline bool checkStackCapacity() {
-    size_t freeStack = std::abs(reinterpret_cast<intptr_t>(__builtin_frame_address(0))
-                                - static_cast<intptr_t>(stackBottom));
+    const size_t freeStack = std::abs(reinterpret_cast<intptr_t>(__builtin_frame_address(0))
+                                      - static_cast<intptr_t>(stackBottom));
     if (freeStack < stackEpsilon) {
         return false;
     }
@@ -25,7 +25,7 @@ inline bool checkStackCapacity() {
 }
 
 #ifdef _WIN32
-inline void stackGuard(std::source_location location = std::source_location::current()) {
+inline void stackGuard(const std::source_location location = std::source_location::current()) {
     if (!checkStackCapacity()) {
         std::cerr << "Stack Overflow at " << location.function_name() << " in "
                   << std::filesystem::path(location.file_name()).filename() << std::endl;

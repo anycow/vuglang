@@ -14,7 +14,7 @@ struct While : public Statement {
 
     While(std::unique_ptr<Expression> condition,
           std::unique_ptr<StatementsBlock> body,
-          SourceLocation sourceLocation)
+          const SourceLocation& sourceLocation)
         : Statement(Kind::While, sourceLocation),
           condition(std::move(condition)),
           body(std::move(body)) {

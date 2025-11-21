@@ -5,7 +5,6 @@
 #ifndef VUG_SYMBOLTABLE_HPP
 #define VUG_SYMBOLTABLE_HPP
 
-#include <cstdint>
 #include <list>
 #include <stack>
 #include <unordered_map>
@@ -19,7 +18,7 @@ struct SymbolTableRecord {
     const bool canShadowed;
     // SymbolTableRecord* overridedRecord{nullptr};
 
-    explicit SymbolTableRecord(Symbol& symbol, size_t depth, bool canShadowed)
+    constexpr explicit SymbolTableRecord(Symbol& symbol, const size_t depth, const bool canShadowed)
         : symbol(symbol),
           depth(depth),
           canShadowed(canShadowed) {
@@ -36,7 +35,7 @@ class SymbolTable {
         const Kind kind;
         const SymbolTableRecord* conflictingSymbol;
 
-        InsertResult(Kind kind, const SymbolTableRecord* conflictingSymbol = nullptr)
+        constexpr explicit InsertResult(const Kind kind, const SymbolTableRecord* conflictingSymbol = nullptr)
             : kind(kind),
               conflictingSymbol(conflictingSymbol) {
         }
@@ -49,22 +48,22 @@ class SymbolTable {
         const Kind kind;
         const SymbolTableRecord* record;
 
-        FindResult(Kind kind, const SymbolTableRecord* record = nullptr)
+        constexpr explicit FindResult(const Kind kind, const SymbolTableRecord* record = nullptr)
             : kind(kind),
               record(record) {
         }
     };
     FindResult findSymbol(const std::string& name);
 
-    [[nodiscard]] inline size_t getDepth() const {
+    [[nodiscard]] size_t getDepth() const {
         return _scopes.size();
     }
-    inline size_t openScope() {
+    size_t openScope() {
         _scopes.emplace();
 
         return getDepth();
     }
-    inline size_t closeScope() {
+    size_t closeScope() {
         for (auto& record : _scopes.top()) {
             if (record.shadowedRecord) {
                 _names[record.symbol.getName()] = record.shadowedRecord;

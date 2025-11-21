@@ -18,7 +18,7 @@ struct ModuleDeclaration : public Declaration {
 
     ModuleDeclaration(std::string name,
                       std::unique_ptr<DeclarationsBlock> body,
-                      SourceLocation sourceLocation)
+                      const SourceLocation& sourceLocation)
         : Declaration(Kind::ModuleDeclaration, sourceLocation),
           name(std::move(name)),
           body(std::move(body)) {

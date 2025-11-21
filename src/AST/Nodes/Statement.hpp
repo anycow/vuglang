@@ -10,7 +10,7 @@
 #include "Evaluator/Evaluator.hpp"
 
 struct Statement : public Node {
-    explicit Statement(Kind nodeType, SourceLocation sourceLocation)
+    Statement(const Kind nodeType, const SourceLocation& sourceLocation)
         : Node(nodeType, sourceLocation) {
     }
 
@@ -24,7 +24,7 @@ struct Statement : public Node {
 };
 
 struct BadStatement : public Statement {
-    explicit BadStatement()
+    BadStatement()
         : Statement(Kind::BadStatement, SourceLocation()) {
     }
 

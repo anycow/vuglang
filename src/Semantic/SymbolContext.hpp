@@ -14,26 +14,26 @@ class SymbolTable;
 
 class SymbolContext {
    public:
-    SymbolContext(SymbolTable& table);
+    explicit SymbolContext(SymbolTable& table);
 
     template <typename T = Symbol, typename... Args>
-    inline T* addSymbol(Args&&... args) {
+    constexpr T* addSymbol(Args&&... args) {
         _symbols.push_back(std::move(std::make_unique<T>(std::forward<Args>(args)...)));
         return static_cast<T*>(_symbols.back().get());
     }
 
-    [[nodiscard]] inline SymbolTable& getSymbolTable() const {
+    [[nodiscard]] constexpr SymbolTable& getSymbolTable() const {
         return _symbolTable;
     }
 
-    [[nodiscard]] inline const TypeSymbol* getIntType(uint32_t bits, bool isSigned) const {
+    [[nodiscard]] const TypeSymbol* getIntType(const uint32_t bits, const bool isSigned) const {
         if (isSigned) {
             return _signedIntegerTypeSymbols.find(bits)->second;
         } else {
             return _unsignedIntegerTypeSymbols.find(bits)->second;
         }
     }
-    [[nodiscard]] inline const TypeSymbol* getBoolType() const {
+    [[nodiscard]] constexpr const TypeSymbol* getBoolType() const {
         return _booleanTypeSymbol;
     }
 

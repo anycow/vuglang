@@ -67,7 +67,7 @@ struct Node {
     }
 
    protected:
-    explicit Node(Kind nodeType, SourceLocation sourceLocation)
+    Node(const Kind nodeType, const SourceLocation& sourceLocation)
         : kind(nodeType),
           sourceLocation(sourceLocation) {
     }

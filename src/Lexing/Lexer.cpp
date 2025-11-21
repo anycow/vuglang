@@ -8,9 +8,7 @@
 
 Token Lexer::getToken() {
     while (true) {
-        auto c = peek();
-
-        switch (c) {
+        switch (const auto c = peek()) {
             case '(':
                 return {LexemType::LeftRoundBracket,
                         SourceLocation(&_source,
@@ -312,12 +310,12 @@ void Lexer::revertTo(const Token& token) {
 Token Lexer::getString() {
     std::string string;
 
-    auto startPos = getPrevPos();
-    auto startLine = _line;
-    auto startColumn = _column;
+    const auto startPos = getPrevPos();
+    const auto startLine = _line;
+    const auto startColumn = _column;
 
     while (true) {
-        char c = peek();
+        const char c = peek();
 
         if (c == '\0') {
             throw std::logic_error("Bad lexing");
@@ -346,16 +344,16 @@ Token Lexer::getString() {
                            getPrevPos()),
             std::move(string)};
 }
-Token Lexer::getIdentifier(char firstChar) {
-    auto startPos = getPrevPos();
-    auto startLine = _line;
-    auto startColumn = _column;
+Token Lexer::getIdentifier(const char firstChar) {
+    const auto startPos = getPrevPos();
+    const auto startLine = _line;
+    const auto startColumn = _column;
 
     std::string string;
     string.push_back(firstChar);
 
     while (true) {
-        char c = peek();
+        const char c = peek();
 
         if (!isalpha(c) && !isdigit(c)) {
             _pos--;
@@ -366,7 +364,7 @@ Token Lexer::getIdentifier(char firstChar) {
         string.push_back(c);
     }
 
-    auto keyword = _keywords.find(string);
+    const auto keyword = _keywords.find(string);
 
     if (keyword != _keywords.end()) {
         return {
@@ -391,16 +389,16 @@ Token Lexer::getIdentifier(char firstChar) {
                 std::move(string)};
     }
 }
-Token Lexer::getNumber(char firstChar) {
+Token Lexer::getNumber(const char firstChar) {
     std::string string;
     string.push_back(firstChar);
 
-    auto startPos = getPrevPos();
-    auto startLine = _line;
-    auto startColumn = _column;
+    const auto startPos = getPrevPos();
+    const auto startLine = _line;
+    const auto startColumn = _column;
 
     while (true) {
-        char c = peek();
+        const char c = peek();
 
         if (!isdigit(c)) {
             _pos--;
