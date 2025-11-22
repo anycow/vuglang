@@ -25,7 +25,7 @@ class GlobalScopePass : public ASTWalker {
     void visit(DeclarationsBlock& node) override;
     void visit(FunctionDeclaration& node) override;
 
-   protected:
+   private:
     Node& mAst;
     SymbolContext& mContext;
     DiagnosticManager& mDiagnosticManager;

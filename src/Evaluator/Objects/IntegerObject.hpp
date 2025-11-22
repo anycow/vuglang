@@ -78,7 +78,7 @@ class IntegerObject : public Object {
         return std::to_string(mIntegerValue);
     }
 
-   protected:
+   private:
     T mIntegerValue;
 };
 

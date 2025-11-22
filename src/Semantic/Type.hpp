@@ -44,10 +44,13 @@ class Type {
         = 0;
     [[nodiscard]] virtual OperationResultType prefixOperationType(LexemType opType) const = 0;
 
+
+    [[nodiscard]] SymbolContext& getContext() const {
+        return mContext;
+    }
     [[nodiscard]] constexpr TypeKind getKind() const {
         return mKind;
     }
-
     [[nodiscard]] constexpr const std::string& getTypeName() const {
         return mTypeName;
     }
@@ -61,7 +64,7 @@ class Type {
         return this != &rhs;
     }
 
-   protected:
+   private:
     SymbolContext& mContext;
     std::string mTypeName;
     TypeKind mKind;
@@ -91,7 +94,7 @@ class PrimitiveType : public Type {
         return mPrimitiveKind;
     }
 
-   protected:
+   private:
     PrimitiveKind mPrimitiveKind;
 };
 
@@ -128,7 +131,7 @@ class IntegerType : public PrimitiveType {
         return mIsSigned;
     }
 
-   protected:
+   private:
     uint32_t mBits;
     bool mIsSigned;
 };

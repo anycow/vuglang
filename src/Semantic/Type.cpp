@@ -51,7 +51,7 @@ OperationResultType IntegerType::binaryOperationType(const LexemType opType,
         case LexemType::Greater:
         case LexemType::GreaterEqual:
             if (*this == rhs) {
-                return OperationResultType(true, mContext.getBoolType()->getType());
+                return OperationResultType(true, getContext().getBoolType()->getType());
             } else {
                 return OperationResultType(false, nullptr);
             }

@@ -76,7 +76,7 @@ class SymbolTable {
         return getDepth();
     }
 
-   protected:
+   private:
     std::stack<std::list<SymbolTableRecord>, std::list<std::list<SymbolTableRecord>>> mScopes;
     std::unordered_map<std::string, const SymbolTableRecord*> mNames;
 };

@@ -47,7 +47,7 @@ class BooleanObject : public Object {
         return std::to_string(mValue);
     }
 
-   protected:
+   private:
     bool mValue;
 };
 

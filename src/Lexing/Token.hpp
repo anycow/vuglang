@@ -231,7 +231,7 @@ class Token {
         return !(rhs == *this);
     }
 
-   protected:
+   private:
     LexemType mType;
     SourceLocation mSourceLocation;
     std::string mValue;

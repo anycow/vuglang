@@ -43,7 +43,7 @@ class LocalScopePass : public ASTWalker {
     void visit(Print& node) override;
     void visit(Return& node) override;
 
-   protected:
+   private:
     Node& mAst;
     SymbolContext& mContext;
     DiagnosticManager& mDiagnosticManager;

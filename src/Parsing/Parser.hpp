@@ -57,7 +57,7 @@ class Parser {
     std::unique_ptr<Expression> unary();
     std::unique_ptr<Expression> primary();
 
-   protected:
+   private:
     Lexer& mLexer;
     DiagnosticManager& mDiagnosticManager;
 

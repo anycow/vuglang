@@ -37,7 +37,7 @@ class SymbolContext {
         return mBooleanTypeSymbol;
     }
 
-   protected:
+   private:
     std::vector<std::unique_ptr<Symbol>> mSymbols;
     std::vector<std::unique_ptr<Type>> mType;
     SymbolTable& mSymbolTable;

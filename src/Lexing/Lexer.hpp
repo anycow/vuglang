@@ -39,12 +39,6 @@ class Lexer {
     void revertTo(const Token& token);
 
    protected:
-    std::unordered_map<std::string, LexemType> mKeywords;
-    int64_t mPos{0};
-    int64_t mLine{1};
-    int64_t mColumn{0};
-    const SourceFile& mSource;
-
     char peek() {
         ++mPos;
         ++mColumn;
@@ -59,16 +53,20 @@ class Lexer {
         }
         return '\0';
     }
-
-    Token getString();
-
-    Token getIdentifier(char firstChar);
-
-    Token getNumber(char firstChar);
-
     inline int64_t getPrevPos() const {
         return mPos - 1;
     }
+
+    Token getString();
+    Token getIdentifier(char firstChar);
+    Token getNumber(char firstChar);
+
+   private:
+    std::unordered_map<std::string, LexemType> mKeywords;
+    int64_t mPos{0};
+    int64_t mLine{1};
+    int64_t mColumn{0};
+    const SourceFile& mSource;
 };
 
 

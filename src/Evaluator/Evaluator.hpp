@@ -48,6 +48,8 @@ class Evaluator {
     }
 
     void evaluate();
+    StmtResult evaluateStatement(Statement& node);
+    std::unique_ptr<Object> evaluateExpression(Expression& node);
 
     void evaluateDeclaration(const DeclarationsBlock& node) const;
     void evaluateDeclaration(const FunctionDeclaration& node) const;
@@ -70,15 +72,13 @@ class Evaluator {
     std::unique_ptr<Object> evaluateExpression(const PrefixOperation& node);
 
    protected:
+    std::unique_ptr<Object> callFunction(const FunctionSymbol& functionSymbol,
+                                         std::vector<std::unique_ptr<Object>> arguments);
+
+   private:
     Node& mAst;
     const SymbolContext& mTypeContext;
     std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> mLocalObjects;
-
-    StmtResult evaluateStatement(Statement& node);
-    std::unique_ptr<Object> evaluateExpression(Expression& node);
-
-    std::unique_ptr<Object> callFunction(const FunctionSymbol& functionSymbol,
-                                         std::vector<std::unique_ptr<Object>> arguments);
 };
 
 

@@ -17,6 +17,8 @@ class Printer : public ASTWalker {
 
     void print();
 
+    void visit(Node& node) override;
+
     void visit(BadDeclaration& node) override;
     void visit(BadExpression& node) override;
     void visit(BadStatement& node) override;
@@ -42,12 +44,12 @@ class Printer : public ASTWalker {
     void visit(CallFunction& node) override;
 
    protected:
+    [[nodiscard]] std::string getIndentSpaces() const;
+
+   private:
     Node& mAst;
     uint32_t mCurrentDepth = 0;
     uint32_t mTabSize = 0;
-
-    void visit(Node& node) override;
-    [[nodiscard]] std::string getIndentSpaces() const;
 };
 
 #endif  // VUG_PRINTER_HPP
