@@ -5,6 +5,8 @@
 #include "SymbolContext.hpp"
 
 #include "Semantic/SymbolTable.hpp"
+#include "Semantic/Types/BooleanType.hpp"
+#include "Semantic/Types/IntegerType.hpp"
 
 SymbolContext::SymbolContext(SymbolTable& table)
     : mSymbolTable(table) {

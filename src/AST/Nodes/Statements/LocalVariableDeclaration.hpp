@@ -8,10 +8,8 @@
 #include <utility>
 
 #include "AST/Nodes/Expression.hpp"
-#include "AST/Nodes/Expressions/Identifier.hpp"
 #include "AST/Nodes/Statement.hpp"
-
-#include "Semantic/Type.hpp"
+#include "Semantic/Types/Type.hpp"
 
 struct LocalVariableDeclaration : public Statement {
     std::string type;

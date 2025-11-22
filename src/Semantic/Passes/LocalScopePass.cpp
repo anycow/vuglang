@@ -9,7 +9,7 @@
 #include "Misc/Stack.hpp"
 #include "Semantic/SymbolContext.hpp"
 #include "Semantic/SymbolTable.hpp"
-#include "Semantic/Type.hpp"
+#include "Semantic/Types/Type.hpp"
 
 void LocalScopePass::analyze() {
     stackGuard();

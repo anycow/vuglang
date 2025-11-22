@@ -8,7 +8,7 @@
 #include <string>
 
 #include "Semantic/Symbol.hpp"
-#include "Semantic/Type.hpp"
+#include "Types/Type.hpp"
 
 class SymbolTable;
 
