@@ -13,7 +13,7 @@
 void Evaluator::evaluate() {
     stackGuard();
 
-    auto& mainSymbol = *static_cast<ModuleDeclaration&>(_ast).symbolRef->findMember("main")[0];
+    auto& mainSymbol = *static_cast<ModuleDeclaration&>(mAst).symbolRef->findMember("main")[0];
     callFunction(static_cast<FunctionSymbol&>(mainSymbol), {});
 }
 
@@ -46,7 +46,7 @@ StmtResult Evaluator::evaluateStatement(const Assign& node) {
     stackGuard();
 
     auto value = evaluateExpression(*node.value);
-    _localObjects.top()[node.symbolRef] = std::move(value);
+    mLocalObjects.top()[node.symbolRef] = std::move(value);
 
     return StmtResult(StmtResultKind::Successful);
 }
@@ -77,7 +77,7 @@ StmtResult Evaluator::evaluateStatement(const LocalVariableDeclaration& node) {
 
     auto value = evaluateExpression(*node.value);
 
-    _localObjects.top()[node.symbolRef] = std::move(value);
+    mLocalObjects.top()[node.symbolRef] = std::move(value);
 
     return StmtResult(StmtResultKind::Successful);
 }
@@ -91,7 +91,7 @@ StmtResult Evaluator::evaluateStatement(const Return& node) {
     stackGuard();
 
     auto result = evaluateExpression(*node.returnExpression);
-    _localObjects.pop();
+    mLocalObjects.pop();
 
     return StmtResult(std::move(result));
 }
@@ -152,7 +152,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const Number& node) {
 std::unique_ptr<Object> Evaluator::evaluateExpression(const Identifier& node) {
     stackGuard();
 
-    return _localObjects.top()[node.symbolRef]->clone();
+    return mLocalObjects.top()[node.symbolRef]->clone();
 }
 std::unique_ptr<Object> Evaluator::evaluateExpression(const PrefixOperation& node) {
     stackGuard();
@@ -165,11 +165,11 @@ std::unique_ptr<Object> Evaluator::callFunction(const FunctionSymbol& functionSy
                                                 std::vector<std::unique_ptr<Object>> arguments) {
     stackGuard();
 
-    _localObjects.emplace();
+    mLocalObjects.emplace();
 
     size_t index = 0;
     for (const auto parameter : functionSymbol.getArguments()) {
-        _localObjects.top()[parameter] = std::move(arguments[index]);
+        mLocalObjects.top()[parameter] = std::move(arguments[index]);
         ++index;
     }
     auto result = evaluateStatement(*functionSymbol.getDefinition());

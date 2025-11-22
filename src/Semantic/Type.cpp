@@ -7,7 +7,7 @@
 #include "Semantic/SymbolContext.hpp"
 
 bool Type::isInteger() const {
-    return _kind == TypeKind::Primitive
+    return mKind == TypeKind::Primitive
            && (static_cast<const PrimitiveType*>(this)->getPrimitiveKind()
                == PrimitiveKind::Integer);
 }
@@ -51,7 +51,7 @@ OperationResultType IntegerType::binaryOperationType(const LexemType opType,
         case LexemType::Greater:
         case LexemType::GreaterEqual:
             if (*this == rhs) {
-                return OperationResultType(true, _context.getBoolType()->getType());
+                return OperationResultType(true, mContext.getBoolType()->getType());
             } else {
                 return OperationResultType(false, nullptr);
             }

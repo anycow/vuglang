@@ -18,32 +18,32 @@ class SymbolContext {
 
     template <typename T = Symbol, typename... Args>
     constexpr T* addSymbol(Args&&... args) {
-        _symbols.push_back(std::move(std::make_unique<T>(std::forward<Args>(args)...)));
-        return static_cast<T*>(_symbols.back().get());
+        mSymbols.push_back(std::move(std::make_unique<T>(std::forward<Args>(args)...)));
+        return static_cast<T*>(mSymbols.back().get());
     }
 
     [[nodiscard]] constexpr SymbolTable& getSymbolTable() const {
-        return _symbolTable;
+        return mSymbolTable;
     }
 
     [[nodiscard]] const TypeSymbol* getIntType(const uint32_t bits, const bool isSigned) const {
         if (isSigned) {
-            return _signedIntegerTypeSymbols.find(bits)->second;
+            return mSignedIntegerTypeSymbols.find(bits)->second;
         } else {
-            return _unsignedIntegerTypeSymbols.find(bits)->second;
+            return mUnsignedIntegerTypeSymbols.find(bits)->second;
         }
     }
     [[nodiscard]] constexpr const TypeSymbol* getBoolType() const {
-        return _booleanTypeSymbol;
+        return mBooleanTypeSymbol;
     }
 
    protected:
-    std::vector<std::unique_ptr<Symbol>> _symbols;
-    std::vector<std::unique_ptr<Type>> _type;
-    SymbolTable& _symbolTable;
+    std::vector<std::unique_ptr<Symbol>> mSymbols;
+    std::vector<std::unique_ptr<Type>> mType;
+    SymbolTable& mSymbolTable;
 
-    std::unordered_map<uint32_t, const TypeSymbol*> _signedIntegerTypeSymbols;
-    std::unordered_map<uint32_t, const TypeSymbol*> _unsignedIntegerTypeSymbols;
-    const TypeSymbol* _booleanTypeSymbol;
+    std::unordered_map<uint32_t, const TypeSymbol*> mSignedIntegerTypeSymbols;
+    std::unordered_map<uint32_t, const TypeSymbol*> mUnsignedIntegerTypeSymbols;
+    const TypeSymbol* mBooleanTypeSymbol;
 };
 #endif  // VUG_SYMBOLCONTEXT_HPP

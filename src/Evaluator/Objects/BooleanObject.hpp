@@ -10,11 +10,11 @@
 class BooleanObject : public Object {
    public:
     explicit BooleanObject(const bool value)
-        : _value(value) {
+        : mValue(value) {
     }
 
     [[nodiscard]] bool getValue() const {
-        return _value;
+        return mValue;
     }
 
     [[nodiscard]] std::unique_ptr<Object> binaryOperation(const LexemType opType,
@@ -22,10 +22,10 @@ class BooleanObject : public Object {
         switch (opType) {
             case LexemType::LogicAnd:
                 return std::make_unique<BooleanObject>(
-                    _value && rhs.to<const BooleanObject&>().getValue());
+                    mValue && rhs.to<const BooleanObject&>().getValue());
             case LexemType::LogicOr:
                 return std::make_unique<BooleanObject>(
-                    _value || rhs.to<const BooleanObject&>().getValue());
+                    mValue || rhs.to<const BooleanObject&>().getValue());
             default:
                 throw std::logic_error("Unsupported operation");
         }
@@ -33,22 +33,22 @@ class BooleanObject : public Object {
     [[nodiscard]] std::unique_ptr<Object> prefixOperation(const LexemType opType) const override {
         switch (opType) {
             case LexemType::Not:
-                return std::make_unique<BooleanObject>(!_value);
+                return std::make_unique<BooleanObject>(!mValue);
             default:
                 throw std::logic_error("Unsupported operation");
         }
     }
 
     std::unique_ptr<Object> clone() override {
-        return std::make_unique<BooleanObject>(_value);
+        return std::make_unique<BooleanObject>(mValue);
     }
 
     std::string toString() override {
-        return std::to_string(_value);
+        return std::to_string(mValue);
     }
 
    protected:
-    bool _value;
+    bool mValue;
 };
 
 

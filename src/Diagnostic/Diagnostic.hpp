@@ -27,17 +27,17 @@ class DiagnosticFix {
     DiagnosticFix() = default;
 
     [[nodiscard]] const std::vector<Diff>& getDiffs() const {
-        return _diffs;
+        return mDiffs;
     }
     DiagnosticFix& addDiff(const SourceFile& sourceFile,
                            const uint64_t sourceLine,
                            std::string newString) {
-        _diffs.emplace_back(sourceFile, sourceLine, std::move(newString));
+        mDiffs.emplace_back(sourceFile, sourceLine, std::move(newString));
         return *this;
     }
 
    private:
-    std::vector<Diff> _diffs;
+    std::vector<Diff> mDiffs;
 };
 
 // TODO! use builder pattern
@@ -48,36 +48,36 @@ class DiagnosticMessage {
     constexpr explicit DiagnosticMessage(const Severity severity,
                                          std::string message,
                                          std::vector<SourceLocation> relatedCode)
-        : _severity(severity),
-          _message(std::move(message)),
-          _relatedCode(std::move(relatedCode)) {
+        : mSeverity(severity),
+          mMessage(std::move(message)),
+          mRelatedCode(std::move(relatedCode)) {
     }
 
     [[nodiscard]] constexpr Severity getSeverity() const {
-        return _severity;
+        return mSeverity;
     }
 
     [[nodiscard]] constexpr const std::string& getMessage() const {
-        return _message;
+        return mMessage;
     }
 
     [[nodiscard]] constexpr const std::vector<SourceLocation>& getRelatedCode() const {
-        return _relatedCode;
+        return mRelatedCode;
     }
 
     [[nodiscard]] constexpr const std::vector<DiagnosticFix>& getFixes() const {
-        return _fixes;
+        return mFixes;
     }
     constexpr DiagnosticMessage& addFix(const DiagnosticFix& fix) {
-        _fixes.push_back(fix);
+        mFixes.push_back(fix);
         return *this;
     }
 
    private:
-    const Severity _severity;
-    const std::string _message;
-    std::vector<SourceLocation> _relatedCode;
-    std::vector<DiagnosticFix> _fixes;
+    const Severity mSeverity;
+    const std::string mMessage;
+    std::vector<SourceLocation> mRelatedCode;
+    std::vector<DiagnosticFix> mFixes;
 };
 
 class Diagnostic {
@@ -85,14 +85,14 @@ class Diagnostic {
     constexpr Diagnostic() = default;
 
     void addMessage(const DiagnosticMessage& message) {
-        _messages.push_back(message);
+        mMessages.push_back(message);
     }
     [[nodiscard]] const std::vector<DiagnosticMessage>& getMessages() const {
-        return _messages;
+        return mMessages;
     }
 
    private:
-    std::vector<DiagnosticMessage> _messages;
+    std::vector<DiagnosticMessage> mMessages;
 };
 
 constexpr const char* severityToString(const DiagnosticMessage::Severity severity) {

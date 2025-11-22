@@ -12,7 +12,7 @@
 void ModuleDefinitionPass::analyze() {
     stackGuard();
 
-    visit(_ast);
+    visit(mAst);
 }
 
 void ModuleDefinitionPass::visit(Node& node) {
@@ -26,7 +26,7 @@ void ModuleDefinitionPass::visit(Node& node) {
 void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
     stackGuard();
 
-    const auto module = _context.addSymbol<ModuleSymbol>(node.name);
+    const auto module = mContext.addSymbol<ModuleSymbol>(node.name);
     node.symbolRef = module;
 
     module->startDefinition();
@@ -48,6 +48,6 @@ void ModuleDefinitionPass::visit(DeclarationsBlock& node) {
 void ModuleDefinitionPass::visit(FunctionDeclaration& node) {
     stackGuard();
 
-    const auto function = _context.addSymbol<FunctionSymbol>(node.name);
+    const auto function = mContext.addSymbol<FunctionSymbol>(node.name);
     node.symbolRef = function;
 }

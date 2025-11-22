@@ -13,11 +13,11 @@ template <typename T>
 class IntegerObject : public Object {
    public:
     explicit IntegerObject(T integerValue)
-        : _integerValue(integerValue) {
+        : mIntegerValue(integerValue) {
     }
 
     [[nodiscard]] T getValue() const {
-        return _integerValue;
+        return mIntegerValue;
     }
 
     [[nodiscard]] std::unique_ptr<Object> binaryOperation(const LexemType opType,
@@ -25,38 +25,38 @@ class IntegerObject : public Object {
         switch (opType) {
             case LexemType::Equal:
                 return std::make_unique<BooleanObject>(
-                    _integerValue == rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue == rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Unequal:
                 return std::make_unique<BooleanObject>(
-                    _integerValue != rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue != rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Less:
                 return std::make_unique<BooleanObject>(
-                    _integerValue < rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue < rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::LessEqual:
                 return std::make_unique<BooleanObject>(
-                    _integerValue <= rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue <= rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Greater:
                 return std::make_unique<BooleanObject>(
-                    _integerValue > rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue > rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::GreaterEqual:
                 return std::make_unique<BooleanObject>(
-                    _integerValue >= rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue >= rhs.to<const IntegerObject<T>&>().getValue());
 
             case LexemType::Plus:
                 return std::make_unique<IntegerObject<T>>(
-                    _integerValue + rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue + rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Minus:
                 return std::make_unique<IntegerObject<T>>(
-                    _integerValue - rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue - rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Multiply:
                 return std::make_unique<IntegerObject<T>>(
-                    _integerValue * rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue * rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Divide:
                 return std::make_unique<IntegerObject<T>>(
-                    _integerValue / rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue / rhs.to<const IntegerObject<T>&>().getValue());
             case LexemType::Remainder:
                 return std::make_unique<IntegerObject<T>>(
-                    _integerValue % rhs.to<const IntegerObject<T>&>().getValue());
+                    mIntegerValue % rhs.to<const IntegerObject<T>&>().getValue());
             default:
                 throw std::logic_error("Unsupported operation");
         }
@@ -64,22 +64,22 @@ class IntegerObject : public Object {
     [[nodiscard]] std::unique_ptr<Object> prefixOperation(const LexemType opType) const override {
         switch (opType) {
             case LexemType::Minus:
-                return std::make_unique<IntegerObject>(-_integerValue);
+                return std::make_unique<IntegerObject>(-mIntegerValue);
             default:
                 throw std::logic_error("Unsupported operation");
         }
     }
 
     std::unique_ptr<Object> clone() override {
-        return std::make_unique<IntegerObject<T>>(_integerValue);
+        return std::make_unique<IntegerObject<T>>(mIntegerValue);
     }
 
     std::string toString() override {
-        return std::to_string(_integerValue);
+        return std::to_string(mIntegerValue);
     }
 
    protected:
-    T _integerValue;
+    T mIntegerValue;
 };
 
 #endif  // VUG_INTEGEROBJECT_HPP

@@ -10,20 +10,20 @@
 class SourceFile {
    public:
     constexpr SourceFile(std::string name, std::string text)
-        : _name(std::move(name)),
-          _text(std::move(text)) {
+        : mName(std::move(name)),
+          mText(std::move(text)) {
         size_t start = 0;
 
-        while (start < _text.size()) {
-            size_t end = _text.find_first_of("\r\n", start);
+        while (start < mText.size()) {
+            size_t end = mText.find_first_of("\r\n", start);
 
             if (end == std::string::npos) {
-                _textLines.emplace_back(_text.data() + start, _text.size() - start);
+                mTextLines.emplace_back(mText.data() + start, mText.size() - start);
                 break;
             }
 
-            _textLines.emplace_back(_text.data() + start, end - start);
-            if (_text[end] == '\r' && end + 1 < _text.size() && _text[end + 1] == '\n') {
+            mTextLines.emplace_back(mText.data() + start, end - start);
+            if (mText[end] == '\r' && end + 1 < mText.size() && mText[end + 1] == '\n') {
                 end++;
             }
 
@@ -32,19 +32,19 @@ class SourceFile {
     }
 
     [[nodiscard]] constexpr const std::string& getName() const {
-        return _name;
+        return mName;
     }
     [[nodiscard]] constexpr const std::string& getText() const {
-        return _text;
+        return mText;
     }
     [[nodiscard]] constexpr std::string_view getLine(const uint64_t line) const {
-        return _textLines[line - 1];
+        return mTextLines[line - 1];
     }
 
    private:
-    std::string _name;
-    std::string _text;
-    std::vector<std::string_view> _textLines;
+    std::string mName;
+    std::string mText;
+    std::vector<std::string_view> mTextLines;
 };
 
 class SourceManager {
@@ -55,7 +55,7 @@ class SourceManager {
     SourceFile findSourceFile(const std::string& name);
 
    private:
-    std::unordered_map<std::string, SourceFile> _files;
+    std::unordered_map<std::string, SourceFile> mFiles;
 };
 
 #endif  // VUG_SOURCEMANAGER_HPP

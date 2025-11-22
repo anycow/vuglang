@@ -43,8 +43,8 @@ struct StmtResult {
 class Evaluator {
    public:
     explicit Evaluator(Node& ast, const SymbolContext& typeContext)
-        : _ast(ast),
-          _typeContext(typeContext) {
+        : mAst(ast),
+          mTypeContext(typeContext) {
     }
 
     void evaluate();
@@ -70,9 +70,9 @@ class Evaluator {
     std::unique_ptr<Object> evaluateExpression(const PrefixOperation& node);
 
    protected:
-    Node& _ast;
-    const SymbolContext& _typeContext;
-    std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> _localObjects;
+    Node& mAst;
+    const SymbolContext& mTypeContext;
+    std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> mLocalObjects;
 
     StmtResult evaluateStatement(Statement& node);
     std::unique_ptr<Object> evaluateExpression(Expression& node);

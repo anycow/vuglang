@@ -17,14 +17,14 @@ class DiagnosticManager;
 class Parser {
    public:
     explicit Parser(Lexer& lexer, DiagnosticManager& diagnosticManager)
-        : _lexer(lexer),
-          _diagnosticManager(diagnosticManager) {
+        : mLexer(lexer),
+          mDiagnosticManager(diagnosticManager) {
         advance();
     }
 
     Token advance() {
-        _previous = _current;
-        return (_current = _lexer.getToken());
+        mPrevious = mCurrent;
+        return (mCurrent = mLexer.getToken());
     }
 
     std::unique_ptr<Node> program();
@@ -58,19 +58,19 @@ class Parser {
     std::unique_ptr<Expression> primary();
 
    protected:
-    Lexer& _lexer;
-    DiagnosticManager& _diagnosticManager;
+    Lexer& mLexer;
+    DiagnosticManager& mDiagnosticManager;
 
-    Token _current{LexemType::EndOfFile, SourceLocation()};
-    Token _previous{LexemType::EndOfFile, SourceLocation()};
+    Token mCurrent{LexemType::EndOfFile, SourceLocation()};
+    Token mPrevious{LexemType::EndOfFile, SourceLocation()};
 
-    uint32_t _loopNestingDepth = 0;
+    uint32_t mLoopNestingDepth = 0;
 };
 
 class ParsingException : public std::exception {
    public:
     explicit ParsingException(Diagnostic diagnostic)
-        : _diagnostic(std::move(diagnostic)) {
+        : mDiagnostic(std::move(diagnostic)) {
     }
 
     [[nodiscard]] const char* what() const noexcept override {
@@ -78,11 +78,11 @@ class ParsingException : public std::exception {
     }
 
     [[nodiscard]] const Diagnostic& getDiagnostic() const {
-        return _diagnostic;
+        return mDiagnostic;
     }
 
    private:
-    const Diagnostic _diagnostic;
+    const Diagnostic mDiagnostic;
 };
 
 #endif  // VUG_PARSER_HPP

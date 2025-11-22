@@ -10,23 +10,23 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
     for (const auto& message : diagnostic.getMessages()) {
         switch (message.getSeverity()) {
             case DiagnosticMessage::Severity::Fatal:
-                _fatalCount++;
+                mFatalCount++;
                 break;
             case DiagnosticMessage::Severity::Error:
-                _errorCount++;
+                mErrorCount++;
                 break;
             case DiagnosticMessage::Severity::Warning:
-                _warningCount++;
+                mWarningCount++;
                 break;
             case DiagnosticMessage::Severity::Hint:
-                _hintCount++;
+                mHintCount++;
                 break;
             case DiagnosticMessage::Severity::Info:
-                _infoCount++;
+                mInfoCount++;
                 break;
         }
 
-        if (message.getSeverity() <= _requiredSeverity) {
+        if (message.getSeverity() <= mRequiredSeverity) {
             std::cout << severityToString(message.getSeverity()) << ": " << message.getMessage()
                       << std::endl;
 

@@ -28,38 +28,38 @@ class Symbol {
     };
 
     Symbol(const Kind kind, std::string name)
-        : kind_(kind),
-          state_(State::Placeholder),
-          _name(std::move(name)) {
+        : mKind(kind),
+          mState(State::Placeholder),
+          mName(std::move(name)) {
     }
 
     Symbol(const Kind kind, const State state, std::string name)
-        : kind_(kind),
-          state_(state),
-          _name(std::move(name)) {
+        : mKind(kind),
+          mState(state),
+          mName(std::move(name)) {
     }
 
     [[nodiscard]] constexpr Kind getKind() const {
-        return kind_;
+        return mKind;
     }
     [[nodiscard]] constexpr State getState() const {
-        return state_;
+        return mState;
     }
     [[nodiscard]] constexpr const std::string& getName() const {
-        return _name;
+        return mName;
     }
 
     constexpr void startDefinition() {
-        state_ = State::Incomplete;
+        mState = State::Incomplete;
     }
     constexpr void finishDefinition() {
-        state_ = State::Complete;
+        mState = State::Complete;
     }
 
    protected:
-    const Kind kind_;
-    State state_;
-    std::string _name;
+    const Kind mKind;
+    State mState;
+    std::string mName;
 };
 
 class ModuleSymbol : public Symbol {
@@ -69,7 +69,7 @@ class ModuleSymbol : public Symbol {
     }
 
     std::vector<Symbol*> findMember(const std::string& name) const {
-        const auto range = _members.equal_range(name);
+        const auto range = mMembers.equal_range(name);
         std::vector<Symbol*> result;
 
         for (auto iter = range.first; iter != range.second; ++iter) {
@@ -79,11 +79,11 @@ class ModuleSymbol : public Symbol {
         return result;
     }
     void addMember(Symbol& symbol) {
-        _members.insert(std::make_pair(symbol.getName(), &symbol));
+        mMembers.insert(std::make_pair(symbol.getName(), &symbol));
     }
 
    protected:
-    std::unordered_multimap<std::string, Symbol*> _members;
+    std::unordered_multimap<std::string, Symbol*> mMembers;
 };
 
 class TypeSymbol : public Symbol {
@@ -93,14 +93,14 @@ class TypeSymbol : public Symbol {
     }
 
     [[nodiscard]] constexpr Type* getType() const {
-        return _type;
+        return mType;
     }
     constexpr void setType(Type* type) {
-        _type = type;
+        mType = type;
     }
 
    protected:
-    Type* _type{nullptr};
+    Type* mType{nullptr};
 };
 
 class LocalVariableSymbol : public Symbol {
@@ -110,14 +110,14 @@ class LocalVariableSymbol : public Symbol {
     }
 
     [[nodiscard]] constexpr TypeSymbol* getTypeSymbol() const {
-        return _typeSymbol;
+        return mTypeSymbol;
     }
     constexpr void setTypeSymbol(TypeSymbol* type) {
-        _typeSymbol = type;
+        mTypeSymbol = type;
     }
 
    protected:
-    TypeSymbol* _typeSymbol{nullptr};
+    TypeSymbol* mTypeSymbol{nullptr};
 };
 
 class FunctionSymbol : public Symbol {
@@ -127,29 +127,29 @@ class FunctionSymbol : public Symbol {
     }
 
     [[nodiscard]] constexpr const std::vector<LocalVariableSymbol*>& getArguments() const {
-        return _arguments;
+        return mArguments;
     }
     constexpr void addArgument(LocalVariableSymbol& symbol) {
-        _arguments.push_back(&symbol);
+        mArguments.push_back(&symbol);
     }
 
     [[nodiscard]] constexpr StatementsBlock* getDefinition() const {
-        return _definition;
+        return mDefinition;
     }
     constexpr void setDefinition(StatementsBlock& definition) {
-        _definition = &definition;
+        mDefinition = &definition;
     }
 
     [[nodiscard]] constexpr TypeSymbol* getTypeSymbol() const {
-        return _typeSymbol;
+        return mTypeSymbol;
     }
     constexpr void setTypeSymbol(TypeSymbol* type) {
-        _typeSymbol = type;
+        mTypeSymbol = type;
     }
 
    protected:
-    std::vector<LocalVariableSymbol*> _arguments;
-    TypeSymbol* _typeSymbol{nullptr};
-    StatementsBlock* _definition{nullptr};
+    std::vector<LocalVariableSymbol*> mArguments;
+    TypeSymbol* mTypeSymbol{nullptr};
+    StatementsBlock* mDefinition{nullptr};
 };
 #endif  // VUG_SYMBOL_HPP

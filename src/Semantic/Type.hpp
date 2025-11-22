@@ -32,9 +32,9 @@ struct OperationResultType {
 class Type {
    public:
     constexpr explicit Type(SymbolContext& context, std::string typeName, const TypeKind kind)
-        : _context(context),
-          _typeName(std::move(typeName)),
-          _kind(kind) {
+        : mContext(context),
+          mTypeName(std::move(typeName)),
+          mKind(kind) {
     }
 
     virtual ~Type() = default;
@@ -45,11 +45,11 @@ class Type {
     [[nodiscard]] virtual OperationResultType prefixOperationType(LexemType opType) const = 0;
 
     [[nodiscard]] constexpr TypeKind getKind() const {
-        return _kind;
+        return mKind;
     }
 
     [[nodiscard]] constexpr const std::string& getTypeName() const {
-        return _typeName;
+        return mTypeName;
     }
 
     [[nodiscard]] bool isInteger() const;
@@ -62,9 +62,9 @@ class Type {
     }
 
    protected:
-    SymbolContext& _context;
-    std::string _typeName;
-    TypeKind _kind;
+    SymbolContext& mContext;
+    std::string mTypeName;
+    TypeKind mKind;
 };
 
 class UndefinedType : public Type {
@@ -84,15 +84,15 @@ class PrimitiveType : public Type {
                             std::string typeName,
                             const PrimitiveKind primitiveKind)
         : Type(context, std::move(typeName), TypeKind::Primitive),
-          _primitiveKind(primitiveKind) {
+          mPrimitiveKind(primitiveKind) {
     }
 
     [[nodiscard]] constexpr PrimitiveKind getPrimitiveKind() const {
-        return _primitiveKind;
+        return mPrimitiveKind;
     }
 
    protected:
-    PrimitiveKind _primitiveKind;
+    PrimitiveKind mPrimitiveKind;
 };
 
 class BooleanType : public PrimitiveType {
@@ -113,8 +113,8 @@ class IntegerType : public PrimitiveType {
                           const uint32_t bits,
                           const bool isSigned)
         : PrimitiveType(context, std::move(typeName), PrimitiveKind::Integer),
-          _bits(bits),
-          _isSigned(isSigned) {
+          mBits(bits),
+          mIsSigned(isSigned) {
     }
 
     [[nodiscard]] OperationResultType binaryOperationType(LexemType opType,
@@ -122,15 +122,15 @@ class IntegerType : public PrimitiveType {
     [[nodiscard]] OperationResultType prefixOperationType(LexemType opType) const override;
 
     [[nodiscard]] constexpr uint32_t getBits() const {
-        return _bits;
+        return mBits;
     }
     [[nodiscard]] constexpr bool isIsSigned() const {
-        return _isSigned;
+        return mIsSigned;
     }
 
    protected:
-    uint32_t _bits;
-    bool _isSigned;
+    uint32_t mBits;
+    bool mIsSigned;
 };
 
 

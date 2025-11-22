@@ -14,7 +14,7 @@
 void GlobalScopePass::analyze() {
     stackGuard();
 
-    visit(_ast);
+    visit(mAst);
 }
 
 void GlobalScopePass::visit(Node& node) {
@@ -28,17 +28,17 @@ void GlobalScopePass::visit(Node& node) {
 void GlobalScopePass::visit(ModuleDeclaration& node) {
     stackGuard();
 
-    _context.getSymbolTable().openScope();
-    _context.getSymbolTable().insertSymbol(*node.getSymbolPtr());
+    mContext.getSymbolTable().openScope();
+    mContext.getSymbolTable().insertSymbol(*node.getSymbolPtr());
     visit(*node.body);
-    _context.getSymbolTable().closeScope();
+    mContext.getSymbolTable().closeScope();
 }
 void GlobalScopePass::visit(DeclarationsBlock& node) {
     stackGuard();
 
     for (const auto& declaration : node.declarations) {
         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
-            _context.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
+            mContext.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
         }
     }
     for (auto& declaration : node.declarations) {
@@ -50,10 +50,10 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
 
     node.symbolRef->startDefinition();
     for (const auto& parameter : node.parameters) {
-        const auto parameterSymbol = _context.addSymbol<LocalVariableSymbol>(parameter->name);
+        const auto parameterSymbol = mContext.addSymbol<LocalVariableSymbol>(parameter->name);
 
         parameterSymbol->startDefinition();
-        const auto parameterTypeRecord = _context.getSymbolTable().findSymbol(parameter->type);
+        const auto parameterTypeRecord = mContext.getSymbolTable().findSymbol(parameter->type);
         if (parameterTypeRecord.kind == SymbolTable::FindResult::Kind::Successful) {
             if (parameterTypeRecord.record->symbol.getKind() == Symbol::Kind::Type) {
                 parameterSymbol->setTypeSymbol(
@@ -64,7 +64,7 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
                     DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                       std::format("'{}' isn't type", parameter->type),
                                       {node.sourceLocation}));
-                _diagnosticManager.report(diagnostic);
+                mDiagnosticManager.report(diagnostic);
                 return;
             }
         } else {
@@ -73,7 +73,7 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
                 DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                   std::format("Can't find '{}' type", parameter->type),
                                   {node.sourceLocation}));
-            _diagnosticManager.report(diagnostic);
+            mDiagnosticManager.report(diagnostic);
             return;
         }
         parameterSymbol->finishDefinition();
@@ -82,7 +82,7 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         node.symbolRef->addArgument(*parameterSymbol);
     }
 
-    const auto returnTypeRecord = _context.getSymbolTable().findSymbol(node.returnType);
+    const auto returnTypeRecord = mContext.getSymbolTable().findSymbol(node.returnType);
     if (returnTypeRecord.kind == SymbolTable::FindResult::Kind::Successful) {
         if (returnTypeRecord.record->symbol.getKind() == Symbol::Kind::Type) {
             node.symbolRef->setTypeSymbol(
@@ -92,7 +92,7 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
             diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                     std::format("'{}' isn't type", node.returnType),
                                                     {node.sourceLocation}));
-            _diagnosticManager.report(diagnostic);
+            mDiagnosticManager.report(diagnostic);
             return;
         }
     } else {
@@ -101,7 +101,7 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
             DiagnosticMessage(DiagnosticMessage::Severity::Error,
                               std::format("Can't find '{}' type", node.returnType),
                               {node.sourceLocation}));
-        _diagnosticManager.report(diagnostic);
+        mDiagnosticManager.report(diagnostic);
         return;
     }
 

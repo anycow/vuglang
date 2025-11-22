@@ -5,9 +5,9 @@
 #include "SourceManager.hpp"
 
 void SourceManager::insertSourceFile(SourceFile file) {
-    _files.insert({file.getName(), std::move(file)});
+    mFiles.insert({file.getName(), std::move(file)});
 }
 
 SourceFile SourceManager::findSourceFile(const std::string& name) {
-    return _files.find(name)->second;
+    return mFiles.find(name)->second;
 }

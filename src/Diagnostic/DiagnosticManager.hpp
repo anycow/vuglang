@@ -10,38 +10,38 @@
 class DiagnosticManager {
    public:
     constexpr explicit DiagnosticManager(const DiagnosticMessage::Severity requiredSeverity)
-        : _requiredSeverity(requiredSeverity) {
+        : mRequiredSeverity(requiredSeverity) {
     }
 
     void report(const Diagnostic& diagnostic);
 
     [[nodiscard]] constexpr DiagnosticMessage::Severity required_severity() const {
-        return _requiredSeverity;
+        return mRequiredSeverity;
     }
     [[nodiscard]] constexpr uint32_t fatal_count() const {
-        return _fatalCount;
+        return mFatalCount;
     }
     [[nodiscard]] constexpr uint32_t error_count() const {
-        return _errorCount;
+        return mErrorCount;
     }
     [[nodiscard]] constexpr uint32_t warning_count() const {
-        return _warningCount;
+        return mWarningCount;
     }
     [[nodiscard]] constexpr uint32_t hint_count() const {
-        return _hintCount;
+        return mHintCount;
     }
     [[nodiscard]] constexpr uint32_t info_count() const {
-        return _infoCount;
+        return mInfoCount;
     }
 
    private:
-    const DiagnosticMessage::Severity _requiredSeverity;
+    const DiagnosticMessage::Severity mRequiredSeverity;
 
-    uint32_t _fatalCount{};
-    uint32_t _errorCount{};
-    uint32_t _warningCount{};
-    uint32_t _hintCount{};
-    uint32_t _infoCount{};
+    uint32_t mFatalCount{};
+    uint32_t mErrorCount{};
+    uint32_t mWarningCount{};
+    uint32_t mHintCount{};
+    uint32_t mInfoCount{};
 };
 
 

@@ -56,29 +56,29 @@ class SymbolTable {
     FindResult findSymbol(const std::string& name);
 
     [[nodiscard]] size_t getDepth() const {
-        return _scopes.size();
+        return mScopes.size();
     }
     size_t openScope() {
-        _scopes.emplace();
+        mScopes.emplace();
 
         return getDepth();
     }
     size_t closeScope() {
-        for (auto& record : _scopes.top()) {
+        for (auto& record : mScopes.top()) {
             if (record.shadowedRecord) {
-                _names[record.symbol.getName()] = record.shadowedRecord;
+                mNames[record.symbol.getName()] = record.shadowedRecord;
             } else {
-                _names.erase(record.symbol.getName());
+                mNames.erase(record.symbol.getName());
             }
         }
-        _scopes.pop();
+        mScopes.pop();
 
         return getDepth();
     }
 
    protected:
-    std::stack<std::list<SymbolTableRecord>, std::list<std::list<SymbolTableRecord>>> _scopes;
-    std::unordered_map<std::string, const SymbolTableRecord*> _names;
+    std::stack<std::list<SymbolTableRecord>, std::list<std::list<SymbolTableRecord>>> mScopes;
+    std::unordered_map<std::string, const SymbolTableRecord*> mNames;
 };
 
 #endif  // VUG_SYMBOLTABLE_HPP

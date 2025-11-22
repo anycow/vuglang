@@ -112,82 +112,82 @@ class SourceLocation {
                              const int64_t endLine,
                              const int64_t startColumn,
                              const int64_t endColumn)
-        : _sourceFile(sourceFile),
-          _absoluteStart(absoluteStart),
-          _absoluteEnd(absoluteEnd),
-          _startLine(startLine),
-          _endLine(endLine),
-          _startColumn(startColumn),
-          _endColumn(endColumn),
-          _isValid(true) {
+        : mSourceFile(sourceFile),
+          mAbsoluteStart(absoluteStart),
+          mAbsoluteEnd(absoluteEnd),
+          mStartLine(startLine),
+          mEndLine(endLine),
+          mStartColumn(startColumn),
+          mEndColumn(endColumn),
+          mIsValid(true) {
     }
 
     constexpr SourceLocation(const SourceLocation& start, const SourceLocation& end)
-        : _sourceFile(start._sourceFile),
-          _absoluteStart(start._absoluteStart),
-          _absoluteEnd(end._absoluteEnd),
-          _startLine(start._startLine),
-          _endLine(end._endLine),
-          _startColumn(start._startColumn),
-          _endColumn(end._endColumn),
-          _isValid(start.isValid() && end.isValid()) {
+        : mSourceFile(start.mSourceFile),
+          mAbsoluteStart(start.mAbsoluteStart),
+          mAbsoluteEnd(end.mAbsoluteEnd),
+          mStartLine(start.mStartLine),
+          mEndLine(end.mEndLine),
+          mStartColumn(start.mStartColumn),
+          mEndColumn(end.mEndColumn),
+          mIsValid(start.isValid() && end.isValid()) {
     }
 
     constexpr SourceLocation()
-        : _sourceFile(nullptr),
-          _absoluteStart(-1),
-          _absoluteEnd(-1),
-          _startLine(-1),
-          _endLine(-1),
-          _startColumn(-1),
-          _endColumn(-1),
-          _isValid(false) {
+        : mSourceFile(nullptr),
+          mAbsoluteStart(-1),
+          mAbsoluteEnd(-1),
+          mStartLine(-1),
+          mEndLine(-1),
+          mStartColumn(-1),
+          mEndColumn(-1),
+          mIsValid(false) {
     }
 
     [[nodiscard]] constexpr const SourceFile* getSourceFile() const {
-        return _sourceFile;
+        return mSourceFile;
     }
     [[nodiscard]] constexpr int64_t getAbsoluteStart() const {
-        return _absoluteStart;
+        return mAbsoluteStart;
     }
     [[nodiscard]] constexpr int64_t getAbsoluteEnd() const {
-        return _absoluteEnd;
+        return mAbsoluteEnd;
     }
     [[nodiscard]] constexpr int64_t getStartLine() const {
-        return _startLine;
+        return mStartLine;
     }
     [[nodiscard]] constexpr int64_t getEndLine() const {
-        return _endLine;
+        return mEndLine;
     }
     [[nodiscard]] constexpr int64_t getStartColumn() const {
-        return _startColumn;
+        return mStartColumn;
     }
     [[nodiscard]] constexpr int64_t getEndColumn() const {
-        return _endColumn;
+        return mEndColumn;
     }
     [[nodiscard]] constexpr bool isValid() const {
-        return _isValid;
+        return mIsValid;
     }
 
     [[nodiscard]] std::string toString() const {
-        if (_isValid) {
-            return std::to_string(_absoluteStart) + ", " + std::to_string(_absoluteEnd) + ", "
-                   + std::to_string(_startLine) + ", " + std::to_string(_endLine) + ", "
-                   + std::to_string(_startColumn) + ", " + std::to_string(_endColumn);
+        if (mIsValid) {
+            return std::to_string(mAbsoluteStart) + ", " + std::to_string(mAbsoluteEnd) + ", "
+                   + std::to_string(mStartLine) + ", " + std::to_string(mEndLine) + ", "
+                   + std::to_string(mStartColumn) + ", " + std::to_string(mEndColumn);
         } else {
             return "Invalid location";
         }
     }
 
    private:
-    const SourceFile* _sourceFile;
-    int64_t _absoluteStart;
-    int64_t _absoluteEnd;
-    int64_t _startLine;
-    int64_t _endLine;
-    int64_t _startColumn;
-    int64_t _endColumn;
-    bool _isValid;
+    const SourceFile* mSourceFile;
+    int64_t mAbsoluteStart;
+    int64_t mAbsoluteEnd;
+    int64_t mStartLine;
+    int64_t mEndLine;
+    int64_t mStartColumn;
+    int64_t mEndColumn;
+    bool mIsValid;
 };
 
 class Token {
@@ -195,46 +195,46 @@ class Token {
     constexpr Token(const LexemType type,
                     const SourceLocation& sourceLocation,
                     const std::string&& value = "")
-        : _type(type),
-          _sourceLocation(sourceLocation),
-          _value(value) {
+        : mType(type),
+          mSourceLocation(sourceLocation),
+          mValue(value) {
     }
 
     [[nodiscard]] constexpr LexemType getType() const {
-        return _type;
+        return mType;
     }
 
     [[nodiscard]] constexpr const SourceLocation& getSourceLocation() const {
-        return _sourceLocation;
+        return mSourceLocation;
     }
 
     [[nodiscard]] constexpr const std::string& getValue() const {
-        return _value;
+        return mValue;
     }
 
     [[nodiscard]] std::string toString() const {
-        return "Type: " + TokenTypeNames[_type] + " Value: " + (!_value.empty() ? _value : "Empty")
-               + " Location: (" + _sourceLocation.toString() + ")";
+        return "Type: " + TokenTypeNames[mType] + " Value: " + (!mValue.empty() ? mValue : "Empty")
+               + " Location: (" + mSourceLocation.toString() + ")";
     }
 
     bool constexpr operator==(const LexemType& type) const {
-        return _type == type;
+        return mType == type;
     }
     bool constexpr operator!=(const LexemType& type) const {
-        return _type != type;
+        return mType != type;
     }
 
     bool constexpr operator==(const Token& rhs) const {
-        return _type == rhs._type && _value == rhs._value;
+        return mType == rhs.mType && mValue == rhs.mValue;
     }
     bool constexpr operator!=(const Token& rhs) const {
         return !(rhs == *this);
     }
 
    protected:
-    LexemType _type;
-    SourceLocation _sourceLocation;
-    std::string _value;
+    LexemType mType;
+    SourceLocation mSourceLocation;
+    std::string mValue;
 };
 
 #endif  // VUG_TOKEN_HPP

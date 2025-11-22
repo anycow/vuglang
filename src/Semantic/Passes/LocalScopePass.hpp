@@ -16,9 +16,9 @@ class SymbolContext;
 class LocalScopePass : public ASTWalker {
    public:
     LocalScopePass(Node& ast, SymbolContext& context, DiagnosticManager& diagnosticManager)
-        : _ast(ast),
-          _context(context),
-          _diagnosticManager(diagnosticManager) {
+        : mAst(ast),
+          mContext(context),
+          mDiagnosticManager(diagnosticManager) {
     }
 
     void analyze();
@@ -44,12 +44,12 @@ class LocalScopePass : public ASTWalker {
     void visit(Return& node) override;
 
    protected:
-    Node& _ast;
-    SymbolContext& _context;
-    DiagnosticManager& _diagnosticManager;
+    Node& mAst;
+    SymbolContext& mContext;
+    DiagnosticManager& mDiagnosticManager;
 
-    std::stack<While*> _loops;
-    FunctionDeclaration* _currentFunction{nullptr};
+    std::stack<While*> mLoops;
+    FunctionDeclaration* mCurrentFunction{nullptr};
 
     void visit(Node& node) override;
 };

@@ -16,7 +16,7 @@
 class Lexer {
    public:
     explicit Lexer(const SourceFile& source)
-        : _keywords({
+        : mKeywords({
               {"mod", LexemType::Mod},
               {"func", LexemType::Func},
               {"var", LexemType::Var},
@@ -26,7 +26,7 @@ class Lexer {
               {"break", LexemType::Break},
               {"return", LexemType::Return},
           }),
-          _source(source) {
+          mSource(source) {
     }
 
     bool match(const Token& token) {
@@ -39,23 +39,23 @@ class Lexer {
     void revertTo(const Token& token);
 
    protected:
-    std::unordered_map<std::string, LexemType> _keywords;
-    int64_t _pos{0};
-    int64_t _line{1};
-    int64_t _column{0};
-    const SourceFile& _source;
+    std::unordered_map<std::string, LexemType> mKeywords;
+    int64_t mPos{0};
+    int64_t mLine{1};
+    int64_t mColumn{0};
+    const SourceFile& mSource;
 
     char peek() {
-        ++_pos;
-        ++_column;
-        if (_pos <= static_cast<int64_t>(_source.getText().size())) {
-            return _source.getText()[_pos - 1];
+        ++mPos;
+        ++mColumn;
+        if (mPos <= static_cast<int64_t>(mSource.getText().size())) {
+            return mSource.getText()[mPos - 1];
         }
         return '\0';
     }
     [[nodiscard]] char peekCurrent() const {
-        if (_pos <= static_cast<int64_t>(_source.getText().size())) {
-            return _source.getText()[_pos - 1];
+        if (mPos <= static_cast<int64_t>(mSource.getText().size())) {
+            return mSource.getText()[mPos - 1];
         }
         return '\0';
     }
@@ -67,7 +67,7 @@ class Lexer {
     Token getNumber(char firstChar);
 
     inline int64_t getPrevPos() const {
-        return _pos - 1;
+        return mPos - 1;
     }
 };
 

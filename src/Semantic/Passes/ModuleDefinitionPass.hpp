@@ -13,9 +13,9 @@ class SymbolContext;
 class ModuleDefinitionPass : public ASTWalker {
    public:
     ModuleDefinitionPass(Node& ast, SymbolContext& context, DiagnosticManager& diagnosticManager)
-        : _ast(ast),
-          _context(context),
-          _diagnosticManager(diagnosticManager) {
+        : mAst(ast),
+          mContext(context),
+          mDiagnosticManager(diagnosticManager) {
     }
 
     void analyze();
@@ -25,9 +25,9 @@ class ModuleDefinitionPass : public ASTWalker {
     void visit(FunctionDeclaration& node) override;
 
    protected:
-    Node& _ast;
-    SymbolContext& _context;
-    DiagnosticManager& _diagnosticManager;
+    Node& mAst;
+    SymbolContext& mContext;
+    DiagnosticManager& mDiagnosticManager;
 
     void visit(Node& node) override;
 };

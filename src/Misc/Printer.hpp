@@ -11,8 +11,8 @@
 class Printer : public ASTWalker {
    public:
     Printer(Node& ast, const uint32_t tabSize)
-        : _ast(ast),
-          _tabSize(tabSize) {
+        : mAst(ast),
+          mTabSize(tabSize) {
     }
 
     void print();
@@ -42,9 +42,9 @@ class Printer : public ASTWalker {
     void visit(CallFunction& node) override;
 
    protected:
-    Node& _ast;
-    uint32_t _currentDepth = 0;
-    uint32_t _tabSize = 0;
+    Node& mAst;
+    uint32_t mCurrentDepth = 0;
+    uint32_t mTabSize = 0;
 
     void visit(Node& node) override;
     [[nodiscard]] std::string getIndentSpaces() const;
