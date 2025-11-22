@@ -1,6 +1,7 @@
 BasedOnStyle: Google
 IndentWidth: 4
 TabWidth: 4
+LineEnding: LF
 BinPackParameters: false
 BinPackArguments: false
 PackConstructorInitializers: Never
