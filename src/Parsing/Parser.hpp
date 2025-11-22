@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_PARSER_HPP
 #define VUG_PARSER_HPP
@@ -8,18 +9,22 @@
 #include <utility>
 
 #include "AST/ASTNodesForward.hpp"
+#include "Diagnostic/Diagnostic.hpp"
 #include "Lexing/Lexer.hpp"
 
 class DiagnosticManager;
 
 class Parser {
-public:
+   public:
     explicit Parser(Lexer& lexer, DiagnosticManager& diagnosticManager)
-        : _lexer(lexer), _diagnosticManager(diagnosticManager) { advance(); }
+        : mLexer(lexer),
+          mDiagnosticManager(diagnosticManager) {
+        advance();
+    }
 
     Token advance() {
-        _previous = _current;
-        return (_current = _lexer.getToken());
+        mPrevious = mCurrent;
+        return (mCurrent = mLexer.getToken());
     }
 
     std::unique_ptr<Node> program();
@@ -52,31 +57,32 @@ public:
     std::unique_ptr<Expression> unary();
     std::unique_ptr<Expression> primary();
 
-protected:
-    Lexer& _lexer;
-    DiagnosticManager& _diagnosticManager;
+   private:
+    Lexer& mLexer;
+    DiagnosticManager& mDiagnosticManager;
 
-    Token _current{LexemType::EndOfFile, SourceLocation()};
-    Token _previous{LexemType::EndOfFile, SourceLocation()};
+    Token mCurrent{LexemType::EndOfFile, SourceLocation()};
+    Token mPrevious{LexemType::EndOfFile, SourceLocation()};
 
-    uint32_t _loopNestingDepth = 0;
+    uint32_t mLoopNestingDepth = 0;
 };
 
 class ParsingException : public std::exception {
-public:
+   public:
     explicit ParsingException(Diagnostic diagnostic)
-        : _diagnostic(std::move(diagnostic)) {}
+        : mDiagnostic(std::move(diagnostic)) {
+    }
 
     [[nodiscard]] const char* what() const noexcept override {
         return "Uncaught ParsingException";
     }
 
     [[nodiscard]] const Diagnostic& getDiagnostic() const {
-        return _diagnostic;
+        return mDiagnostic;
     }
 
-private:
-    const Diagnostic _diagnostic;
+   private:
+    const Diagnostic mDiagnostic;
 };
 
-#endif//VUG_PARSER_HPP
+#endif  // VUG_PARSER_HPP

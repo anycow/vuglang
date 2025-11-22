@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_TOKEN_HPP
 #define VUG_TOKEN_HPP
@@ -13,7 +14,7 @@ enum class [[maybe_unused]] LexemType : uint32_t {
     Number,
     String,
 
-    //KEYWORDS
+    // KEYWORDS
     Mod,
     Var,
     Func,
@@ -25,7 +26,7 @@ enum class [[maybe_unused]] LexemType : uint32_t {
     Break,
     Return,
 
-    //OPERATORS
+    // OPERATORS
     Plus,
     Minus,
     Multiply,
@@ -62,180 +63,178 @@ enum class [[maybe_unused]] LexemType : uint32_t {
 };
 
 inline std::unordered_map<LexemType, std::string> TokenTypeNames = {
-        {LexemType::Identifier, "Identifier"},
-        {LexemType::Number, "Number"},
-        {LexemType::String, "String"},
-        {LexemType::Mod, "Module"},
-        {LexemType::Var, "Var"},
-        {LexemType::Func, "Function"},
-        {LexemType::Type, "Type"},
-        {LexemType::Decl, "Declare"},
-        {LexemType::While, "While"},
-        {LexemType::If, "If"},
-        {LexemType::Else, "Else"},
-        {LexemType::Plus, "+"},
-        {LexemType::Minus, "-"},
-        {LexemType::Multiply, "*"},
-        {LexemType::Divide, "/"},
-        {LexemType::Remainder, "%"},
-        {LexemType::Not, "!"},
-        {LexemType::LogicOr, "||"},
-        {LexemType::LogicAnd, "&&"},
-        {LexemType::BitOr, "|"},
-        {LexemType::BitXor, "^"},
-        {LexemType::BitAnd, "&"},
-        {LexemType::Assign, "="},
-        {LexemType::Equal, "=="},
-        {LexemType::Unequal, "!="},
-        {LexemType::Less, "<"},
-        {LexemType::LessEqual, "<="},
-        {LexemType::Greater, ">"},
-        {LexemType::GreaterEqual, ">="},
-        {LexemType::Arrow, "->"},
-        {LexemType::LeftRoundBracket, "("},
-        {LexemType::RightRoundBracket, ")"},
-        {LexemType::LeftCurlyBracket, "{"},
-        {LexemType::RightCurlyBracket, "}"},
-        {LexemType::Comma, "Comma"},
-        {LexemType::Semicolon, "Semicolon"},
-        {LexemType::EndOfFile, "EOF"},
+    {LexemType::Identifier, "Identifier"},
+    {LexemType::Number, "Number"},
+    {LexemType::String, "String"},
+    {LexemType::Mod, "Module"},
+    {LexemType::Var, "Var"},
+    {LexemType::Func, "Function"},
+    {LexemType::Type, "Type"},
+    {LexemType::Decl, "Declare"},
+    {LexemType::While, "While"},
+    {LexemType::If, "If"},
+    {LexemType::Else, "Else"},
+    {LexemType::Plus, "+"},
+    {LexemType::Minus, "-"},
+    {LexemType::Multiply, "*"},
+    {LexemType::Divide, "/"},
+    {LexemType::Remainder, "%"},
+    {LexemType::Not, "!"},
+    {LexemType::LogicOr, "||"},
+    {LexemType::LogicAnd, "&&"},
+    {LexemType::BitOr, "|"},
+    {LexemType::BitXor, "^"},
+    {LexemType::BitAnd, "&"},
+    {LexemType::Assign, "="},
+    {LexemType::Equal, "=="},
+    {LexemType::Unequal, "!="},
+    {LexemType::Less, "<"},
+    {LexemType::LessEqual, "<="},
+    {LexemType::Greater, ">"},
+    {LexemType::GreaterEqual, ">="},
+    {LexemType::Arrow, "->"},
+    {LexemType::LeftRoundBracket, "("},
+    {LexemType::RightRoundBracket, ")"},
+    {LexemType::LeftCurlyBracket, "{"},
+    {LexemType::RightCurlyBracket, "}"},
+    {LexemType::Comma, "Comma"},
+    {LexemType::Semicolon, "Semicolon"},
+    {LexemType::EndOfFile, "EOF"},
 };
 
 class SourceFile;
 class SourceLocation {
-public:
-    SourceLocation(const SourceFile* sourceFile,
-                   int64_t absoluteStart,
-                   int64_t absoluteEnd,
-                   int64_t startLine,
-                   int64_t endLine,
-                   int64_t startColumn,
-                   int64_t endColumn)
-        : _sourceFile(sourceFile),
-          _absoluteStart(absoluteStart),
-          _absoluteEnd(absoluteEnd),
-          _startLine(startLine),
-          _endLine(endLine),
-          _startColumn(startColumn),
-          _endColumn(endColumn),
-          _isValid(true) {}
-
-    SourceLocation(const SourceLocation& start,
-                   const SourceLocation& end)
-        : _sourceFile(start._sourceFile),
-          _absoluteStart(start._absoluteStart),
-          _absoluteEnd(end._absoluteEnd),
-          _startLine(start._startLine),
-          _endLine(end._endLine),
-          _startColumn(start._startColumn),
-          _endColumn(end._endColumn),
-          _isValid(start.isValid() && end.isValid()) {}
-
-    explicit SourceLocation()
-        : _sourceFile(nullptr),
-          _absoluteStart(-1),
-          _absoluteEnd(-1),
-          _startLine(-1),
-          _endLine(-1),
-          _startColumn(-1),
-          _endColumn(-1),
-          _isValid(false) {}
-
-    [[nodiscard]] inline const SourceFile* getSourceFile() const {
-        return _sourceFile;
-    }
-    [[nodiscard]] inline int64_t getAbsoluteStart() const {
-        return _absoluteStart;
-    }
-    [[nodiscard]] inline int64_t getAbsoluteEnd() const {
-        return _absoluteEnd;
-    }
-    [[nodiscard]] inline int64_t getStartLine() const {
-        return _startLine;
-    }
-    [[nodiscard]] inline int64_t getEndLine() const {
-        return _endLine;
-    }
-    [[nodiscard]] inline int64_t getStartColumn() const {
-        return _startColumn;
-    }
-    [[nodiscard]] inline int64_t getEndColumn() const {
-        return _endColumn;
-    }
-    [[nodiscard]] inline bool isValid() const {
-        return _isValid;
+   public:
+    constexpr SourceLocation(const SourceFile* sourceFile,
+                             const int64_t absoluteStart,
+                             const int64_t absoluteEnd,
+                             const int64_t startLine,
+                             const int64_t endLine,
+                             const int64_t startColumn,
+                             const int64_t endColumn)
+        : mSourceFile(sourceFile),
+          mAbsoluteStart(absoluteStart),
+          mAbsoluteEnd(absoluteEnd),
+          mStartLine(startLine),
+          mEndLine(endLine),
+          mStartColumn(startColumn),
+          mEndColumn(endColumn),
+          mIsValid(true) {
     }
 
-    [[nodiscard]] inline std::string toString() const {
-        if (_isValid) {
-            return std::to_string(_absoluteStart) + ", " +
-                   std::to_string(_absoluteEnd) + ", " +
-                   std::to_string(_startLine) + ", " +
-                   std::to_string(_endLine) + ", " +
-                   std::to_string(_startColumn) + ", " +
-                   std::to_string(_endColumn);
+    constexpr SourceLocation(const SourceLocation& start, const SourceLocation& end)
+        : mSourceFile(start.mSourceFile),
+          mAbsoluteStart(start.mAbsoluteStart),
+          mAbsoluteEnd(end.mAbsoluteEnd),
+          mStartLine(start.mStartLine),
+          mEndLine(end.mEndLine),
+          mStartColumn(start.mStartColumn),
+          mEndColumn(end.mEndColumn),
+          mIsValid(start.isValid() && end.isValid()) {
+    }
+
+    constexpr SourceLocation()
+        : mSourceFile(nullptr),
+          mAbsoluteStart(-1),
+          mAbsoluteEnd(-1),
+          mStartLine(-1),
+          mEndLine(-1),
+          mStartColumn(-1),
+          mEndColumn(-1),
+          mIsValid(false) {
+    }
+
+    [[nodiscard]] constexpr const SourceFile* getSourceFile() const {
+        return mSourceFile;
+    }
+    [[nodiscard]] constexpr int64_t getAbsoluteStart() const {
+        return mAbsoluteStart;
+    }
+    [[nodiscard]] constexpr int64_t getAbsoluteEnd() const {
+        return mAbsoluteEnd;
+    }
+    [[nodiscard]] constexpr int64_t getStartLine() const {
+        return mStartLine;
+    }
+    [[nodiscard]] constexpr int64_t getEndLine() const {
+        return mEndLine;
+    }
+    [[nodiscard]] constexpr int64_t getStartColumn() const {
+        return mStartColumn;
+    }
+    [[nodiscard]] constexpr int64_t getEndColumn() const {
+        return mEndColumn;
+    }
+    [[nodiscard]] constexpr bool isValid() const {
+        return mIsValid;
+    }
+
+    [[nodiscard]] std::string toString() const {
+        if (mIsValid) {
+            return std::to_string(mAbsoluteStart) + ", " + std::to_string(mAbsoluteEnd) + ", "
+                   + std::to_string(mStartLine) + ", " + std::to_string(mEndLine) + ", "
+                   + std::to_string(mStartColumn) + ", " + std::to_string(mEndColumn);
         } else {
             return "Invalid location";
         }
     }
 
-private:
-    const SourceFile* _sourceFile;
-    int64_t _absoluteStart;
-    int64_t _absoluteEnd;
-    int64_t _startLine;
-    int64_t _endLine;
-    int64_t _startColumn;
-    int64_t _endColumn;
-    bool _isValid;
+   private:
+    const SourceFile* mSourceFile;
+    int64_t mAbsoluteStart;
+    int64_t mAbsoluteEnd;
+    int64_t mStartLine;
+    int64_t mEndLine;
+    int64_t mStartColumn;
+    int64_t mEndColumn;
+    bool mIsValid;
 };
 
 class Token {
-public:
-    Token(LexemType type,
-          SourceLocation sourceLocation,
-          const std::string&& value = "")
-        : _type(type),
-          _sourceLocation(sourceLocation),
-          _value(value) {}
-
-    [[nodiscard]] LexemType getType() const {
-        return _type;
+   public:
+    constexpr Token(const LexemType type,
+                    const SourceLocation& sourceLocation,
+                    const std::string&& value = "")
+        : mType(type),
+          mSourceLocation(sourceLocation),
+          mValue(value) {
     }
 
-    [[nodiscard]] const SourceLocation& getSourceLocation() const {
-        return _sourceLocation;
+    [[nodiscard]] constexpr LexemType getType() const {
+        return mType;
     }
 
-    [[nodiscard]] const std::string& getValue() const {
-        return _value;
+    [[nodiscard]] constexpr const SourceLocation& getSourceLocation() const {
+        return mSourceLocation;
     }
 
-    [[nodiscard]] inline std::string toString() const {
-        return "Type: " + TokenTypeNames[_type] +
-               " Value: " + (!_value.empty() ? _value : "Empty") +
-               " Location: (" + _sourceLocation.toString() + ")";
+    [[nodiscard]] constexpr const std::string& getValue() const {
+        return mValue;
     }
 
-    bool operator==(const LexemType& type) const {
-        return _type == type;
-    }
-    bool operator!=(const LexemType& type) const {
-        return _type != type;
+    [[nodiscard]] std::string toString() const {
+        return "Type: " + TokenTypeNames[mType] + " Value: " + (!mValue.empty() ? mValue : "Empty")
+               + " Location: (" + mSourceLocation.toString() + ")";
     }
 
-    bool operator==(const Token& rhs) const {
-        return _type == rhs._type &&
-               _value == rhs._value;
+    bool constexpr operator==(const LexemType& type) const {
+        return mType == type;
     }
-    bool operator!=(const Token& rhs) const {
+    bool constexpr operator!=(const LexemType& type) const {
+        return mType != type;
+    }
+
+    bool constexpr operator==(const Token& rhs) const {
+        return mType == rhs.mType && mValue == rhs.mValue;
+    }
+    bool constexpr operator!=(const Token& rhs) const {
         return !(rhs == *this);
     }
 
-protected:
-    LexemType _type;
-    SourceLocation _sourceLocation;
-    std::string _value;
+   private:
+    LexemType mType;
+    SourceLocation mSourceLocation;
+    std::string mValue;
 };
 
-#endif// VUG_TOKEN_HPP
+#endif  // VUG_TOKEN_HPP

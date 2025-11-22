@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_BOOLEANOBJECT_HPP
 #define VUG_BOOLEANOBJECT_HPP
@@ -7,46 +8,48 @@
 #include "Object.hpp"
 
 class BooleanObject : public Object {
-public:
-    explicit BooleanObject(bool integerValue)
-        : _booleanValue(integerValue) {}
-
-    [[nodiscard]] bool getValue() const {
-        return _booleanValue;
+   public:
+    explicit BooleanObject(const bool value)
+        : mValue(value) {
     }
 
-    [[nodiscard]] std::unique_ptr<Object> binaryOperation(LexemType opType, const Object& rhs) const override {
+    [[nodiscard]] bool getValue() const {
+        return mValue;
+    }
+
+    [[nodiscard]] std::unique_ptr<Object> binaryOperation(const LexemType opType,
+                                                          const Object& rhs) const override {
         switch (opType) {
             case LexemType::LogicAnd:
-                return std::make_unique<BooleanObject>(_booleanValue &&
-                                                       rhs.to<const BooleanObject&>().getValue());
+                return std::make_unique<BooleanObject>(
+                    mValue && rhs.to<const BooleanObject&>().getValue());
             case LexemType::LogicOr:
-                return std::make_unique<BooleanObject>(_booleanValue ||
-                                                       rhs.to<const BooleanObject&>().getValue());
+                return std::make_unique<BooleanObject>(
+                    mValue || rhs.to<const BooleanObject&>().getValue());
             default:
                 throw std::logic_error("Unsupported operation");
         }
     }
-    [[nodiscard]] std::unique_ptr<Object> prefixOperation(LexemType opType) const override {
+    [[nodiscard]] std::unique_ptr<Object> prefixOperation(const LexemType opType) const override {
         switch (opType) {
             case LexemType::Not:
-                return std::make_unique<BooleanObject>(!_booleanValue);
+                return std::make_unique<BooleanObject>(!mValue);
             default:
                 throw std::logic_error("Unsupported operation");
         }
     }
 
     std::unique_ptr<Object> clone() override {
-        return std::make_unique<BooleanObject>(_booleanValue);
+        return std::make_unique<BooleanObject>(mValue);
     }
 
     std::string toString() override {
-        return std::to_string(_booleanValue);
+        return std::to_string(mValue);
     }
 
-protected:
-    bool _booleanValue;
+   private:
+    bool mValue;
 };
 
 
-#endif//VUG_BOOLEANOBJECT_HPP
+#endif  // VUG_BOOLEANOBJECT_HPP

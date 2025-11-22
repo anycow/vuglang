@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_LOCALVARIABLEDECLARATION_HPP
 #define VUG_LOCALVARIABLEDECLARATION_HPP
@@ -22,11 +23,12 @@ struct LocalVariableDeclaration : public Statement {
     LocalVariableDeclaration(std::string type,
                              std::string name,
                              std::unique_ptr<Expression> value,
-                             SourceLocation sourceLocation)
+                             const SourceLocation& sourceLocation)
         : Statement(Kind::LocalVarDeclaration, sourceLocation),
           type(std::move(type)),
           name(std::move(name)),
-          value(std::move(value)) {}
+          value(std::move(value)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -35,4 +37,4 @@ struct LocalVariableDeclaration : public Statement {
         return evaluator.evaluateStatement(*this);
     }
 };
-#endif//VUG_LOCALVARIABLEDECLARATION_HPP
+#endif  // VUG_LOCALVARIABLEDECLARATION_HPP

@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "ModuleDefinitionPass.hpp"
 
@@ -11,7 +12,7 @@
 void ModuleDefinitionPass::analyze() {
     stackGuard();
 
-    visit(_ast);
+    visit(mAst);
 }
 
 void ModuleDefinitionPass::visit(Node& node) {
@@ -25,13 +26,13 @@ void ModuleDefinitionPass::visit(Node& node) {
 void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
     stackGuard();
 
-    auto module = _context.addSymbol<ModuleSymbol>(node.name);
+    const auto module = mContext.addSymbol<ModuleSymbol>(node.name);
     node.symbolRef = module;
 
     module->startDefinition();
     visit(*node.body);
-    for (const auto& declaration: node.body->declarations) {
-         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
+    for (const auto& declaration : node.body->declarations) {
+        if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
             module->addMember(*declaration->getSymbolPtr());
         }
     }
@@ -40,13 +41,13 @@ void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
 void ModuleDefinitionPass::visit(DeclarationsBlock& node) {
     stackGuard();
 
-    for (auto& declaration: node.declarations) {
+    for (auto& declaration : node.declarations) {
         visit(*declaration);
     }
 }
 void ModuleDefinitionPass::visit(FunctionDeclaration& node) {
     stackGuard();
 
-    auto function = _context.addSymbol<FunctionSymbol>(node.name);
+    const auto function = mContext.addSymbol<FunctionSymbol>(node.name);
     node.symbolRef = function;
 }

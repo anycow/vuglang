@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_LOGGER_HPP
 #define VUG_LOGGER_HPP
@@ -16,17 +17,15 @@ enum class LogLevel : uint32_t {
     Verbose,
 };
 
-template<LogLevel RequiredLevel>
+template <LogLevel RequiredLevel>
 class Logger {
-public:
-    Logger() = default;
+   public:
+    constexpr Logger() = default;
 
-    template<LogLevel Level>
-    inline void log(const std::string& message) const {
+    template <LogLevel Level>
+    constexpr void log(const std::string& message) const {
         if constexpr (Level <= RequiredLevel) {
-            std::cout << levelToString(Level) << ": "
-                      << message
-                      << std::endl;
+            std::cout << levelToString(Level) << ": " << message << std::endl;
 
             if constexpr (Level == LogLevel::Fatal) {
                 std::exit(EXIT_FAILURE);
@@ -34,8 +33,8 @@ public:
         }
     }
 
-protected:
-    [[nodiscard]] inline constexpr const char* levelToString(LogLevel level) const {
+   protected:
+    [[nodiscard]] constexpr const char* levelToString(const LogLevel level) const {
         switch (level) {
             case LogLevel::Fatal:
                 return "Fatal";
@@ -54,4 +53,4 @@ protected:
 };
 
 
-#endif//VUG_LOGGER_HPP
+#endif  // VUG_LOGGER_HPP

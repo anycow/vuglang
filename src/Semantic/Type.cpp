@@ -1,15 +1,19 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #include "Type.hpp"
 
 #include "Semantic/SymbolContext.hpp"
 
 bool Type::isInteger() const {
-    return _kind == TypeKind::Primitive && (static_cast<const PrimitiveType*>(this)->getPrimitiveKind() == PrimitiveKind::Integer);
+    return mKind == TypeKind::Primitive
+           && (static_cast<const PrimitiveType*>(this)->getPrimitiveKind()
+               == PrimitiveKind::Integer);
 }
 
-OperationResultType BooleanType::binaryOperationType(LexemType opType, const Type& rhs) const {
+OperationResultType BooleanType::binaryOperationType(const LexemType opType,
+                                                     const Type& rhs) const {
     switch (opType) {
         case LexemType::Equal:
         case LexemType::Unequal:
@@ -28,7 +32,7 @@ OperationResultType BooleanType::binaryOperationType(LexemType opType, const Typ
             return OperationResultType(false, nullptr);
     }
 }
-OperationResultType BooleanType::prefixOperationType(LexemType opType) const {
+OperationResultType BooleanType::prefixOperationType(const LexemType opType) const {
     switch (opType) {
         case LexemType::Not:
             return OperationResultType(true, this);
@@ -37,7 +41,8 @@ OperationResultType BooleanType::prefixOperationType(LexemType opType) const {
     }
 }
 
-OperationResultType IntegerType::binaryOperationType(LexemType opType, const Type& rhs) const {
+OperationResultType IntegerType::binaryOperationType(const LexemType opType,
+                                                     const Type& rhs) const {
     switch (opType) {
         case LexemType::Equal:
         case LexemType::Unequal:
@@ -46,7 +51,7 @@ OperationResultType IntegerType::binaryOperationType(LexemType opType, const Typ
         case LexemType::Greater:
         case LexemType::GreaterEqual:
             if (*this == rhs) {
-                return OperationResultType(true, _context.getBoolType()->getType());
+                return OperationResultType(true, getContext().getBoolType()->getType());
             } else {
                 return OperationResultType(false, nullptr);
             }
@@ -67,7 +72,7 @@ OperationResultType IntegerType::binaryOperationType(LexemType opType, const Typ
             return OperationResultType(false, nullptr);
     }
 }
-OperationResultType IntegerType::prefixOperationType(LexemType opType) const {
+OperationResultType IntegerType::prefixOperationType(const LexemType opType) const {
     switch (opType) {
         case LexemType::Minus:
             return OperationResultType(true, this);
@@ -76,9 +81,10 @@ OperationResultType IntegerType::prefixOperationType(LexemType opType) const {
     }
 }
 
-OperationResultType UndefinedType::binaryOperationType(LexemType opType, const Type& rhs) const {
+OperationResultType UndefinedType::binaryOperationType(const LexemType opType,
+                                                       const Type& rhs) const {
     return OperationResultType(true, this);
 }
-OperationResultType UndefinedType::prefixOperationType(LexemType opType) const {
+OperationResultType UndefinedType::prefixOperationType(const LexemType opType) const {
     return OperationResultType(true, this);
 }

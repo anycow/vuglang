@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_EVALUATOR_HPP
 #define VUG_EVALUATOR_HPP
@@ -21,33 +22,38 @@ enum class StmtResultKind {
 
 struct StmtResult {
     StmtResultKind resultType;
-    Statement* breakedStmt = nullptr;
+    Statement* const breakedStmt = nullptr;
     std::unique_ptr<Object> returnedObject = nullptr;
 
-    StmtResult(StmtResultKind resultType)
-        : resultType(resultType) {}
+    explicit StmtResult(const StmtResultKind resultType)
+        : resultType(resultType) {
+    }
 
-    StmtResult(Statement* breakedStmt)
+    explicit StmtResult(Statement* const breakedStmt)
         : resultType(StmtResultKind::Break),
-          breakedStmt(breakedStmt) {}
+          breakedStmt(breakedStmt) {
+    }
 
-    StmtResult(std::unique_ptr<Object> returnedObject)
+    explicit StmtResult(std::unique_ptr<Object> returnedObject)
         : resultType(StmtResultKind::Return),
-          returnedObject(std::move(returnedObject)) {}
+          returnedObject(std::move(returnedObject)) {
+    }
 };
 
 class Evaluator {
-public:
-    explicit Evaluator(Node& ast,
-                       const SymbolContext& typeContext)
-        : _ast(ast),
-          _typeContext(typeContext) {}
+   public:
+    explicit Evaluator(Node& ast, const SymbolContext& typeContext)
+        : mAst(ast),
+          mTypeContext(typeContext) {
+    }
 
     void evaluate();
+    StmtResult evaluateStatement(Statement& node);
+    std::unique_ptr<Object> evaluateExpression(Expression& node);
 
-    void evaluateDeclaration(const DeclarationsBlock& node);
-    void evaluateDeclaration(const FunctionDeclaration& node);
-    void evaluateDeclaration(const FunctionParameter& node);
+    void evaluateDeclaration(const DeclarationsBlock& node) const;
+    void evaluateDeclaration(const FunctionDeclaration& node) const;
+    void evaluateDeclaration(const FunctionParameter& node) const;
     void evaluateDeclaration(const ModuleDeclaration& node);
 
     StmtResult evaluateStatement(const Assign& node);
@@ -65,16 +71,15 @@ public:
     std::unique_ptr<Object> evaluateExpression(const BinaryOperation& node);
     std::unique_ptr<Object> evaluateExpression(const PrefixOperation& node);
 
-protected:
-    Node& _ast;
-    const SymbolContext& _typeContext;
-    std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> _localObjects;
+   protected:
+    std::unique_ptr<Object> callFunction(const FunctionSymbol& functionSymbol,
+                                         std::vector<std::unique_ptr<Object>> arguments);
 
-    StmtResult evaluateStatement(Statement& node);
-    std::unique_ptr<Object> evaluateExpression(Expression& node);
-
-    std::unique_ptr<Object> callFunction(const FunctionSymbol& functionSymbol, std::vector<std::unique_ptr<Object>> arguments);
+   private:
+    Node& mAst;
+    const SymbolContext& mTypeContext;
+    std::stack<std::unordered_map<const Symbol*, std::unique_ptr<Object>>> mLocalObjects;
 };
 
 
-#endif//VUG_EVALUATOR_HPP
+#endif  // VUG_EVALUATOR_HPP

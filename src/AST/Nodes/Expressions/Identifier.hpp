@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_IDENTIFIER_HPP
 #define VUG_IDENTIFIER_HPP
@@ -13,10 +14,10 @@ struct Identifier : public Expression {
 
     LocalVariableSymbol* symbolRef{nullptr};
 
-    explicit Identifier(std::string name,
-                        SourceLocation sourceLocation)
+    Identifier(std::string name, const SourceLocation& sourceLocation)
         : Expression(Kind::Identifier, sourceLocation),
-          name(std::move(name)) {}
+          name(std::move(name)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -26,4 +27,4 @@ struct Identifier : public Expression {
     }
 };
 
-#endif//VUG_IDENTIFIER_HPP
+#endif  // VUG_IDENTIFIER_HPP

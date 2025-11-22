@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_BINARYOPERATION_HPP
 #define VUG_BINARYOPERATION_HPP
@@ -13,14 +14,15 @@ struct BinaryOperation : public Expression {
     std::unique_ptr<Expression> left;
     std::unique_ptr<Expression> right;
 
-    BinaryOperation(LexemType operationToken,
+    BinaryOperation(const LexemType operationToken,
                     std::unique_ptr<Expression> left,
                     std::unique_ptr<Expression> right,
-                    SourceLocation sourceLocation)
+                    const SourceLocation& sourceLocation)
         : Expression(Kind::BinaryOperation, sourceLocation),
           operationToken(operationToken),
           left(std::move(left)),
-          right(std::move(right)) {}
+          right(std::move(right)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -31,4 +33,4 @@ struct BinaryOperation : public Expression {
 };
 
 
-#endif//VUG_BINARYOPERATION_HPP
+#endif  // VUG_BINARYOPERATION_HPP

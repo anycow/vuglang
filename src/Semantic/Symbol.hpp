@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_SYMBOL_HPP
 #define VUG_SYMBOL_HPP
@@ -13,7 +14,7 @@
 class Type;
 
 class Symbol {
-public:
+   public:
     enum class Kind {
         Module,
         Type,
@@ -26,131 +27,129 @@ public:
         Complete,
     };
 
-    Symbol(Kind kind,
-           std::string name)
-        : _kind(kind),
-          _state(State::Placeholder),
-          _name(std::move(name)) {}
-
-    Symbol(Kind kind,
-           State state,
-           std::string name)
-        : _kind(kind),
-          _state(state),
-          _name(std::move(name)) {}
-
-    [[nodiscard]] Kind getKind() const noexcept {
-        return _kind;
-    }
-    [[nodiscard]] State getState() const noexcept {
-        return _state;
-    }
-    [[nodiscard]] const std::string& getName() const noexcept {
-        return _name;
+    Symbol(const Kind kind, std::string name)
+        : mKind(kind),
+          mState(State::Placeholder),
+          mName(std::move(name)) {
     }
 
-    void startDefinition() {
-        _state = State::Incomplete;
-    }
-    void finishDefinition() {
-        _state = State::Complete;
+    Symbol(const Kind kind, const State state, std::string name)
+        : mKind(kind),
+          mState(state),
+          mName(std::move(name)) {
     }
 
-protected:
-    const Kind _kind;
-    State _state;
-    std::string _name;
+    [[nodiscard]] constexpr Kind getKind() const {
+        return mKind;
+    }
+    [[nodiscard]] constexpr State getState() const {
+        return mState;
+    }
+    [[nodiscard]] constexpr const std::string& getName() const {
+        return mName;
+    }
+
+    constexpr void startDefinition() {
+        mState = State::Incomplete;
+    }
+    constexpr void finishDefinition() {
+        mState = State::Complete;
+    }
+
+   protected:
+    const Kind mKind;
+    State mState;
+    std::string mName;
 };
 
 class ModuleSymbol : public Symbol {
-public:
-    ModuleSymbol(std::string name)
-        : Symbol(Symbol::Kind::Module, std::move(name)),
-          _members() {}
+   public:
+    explicit ModuleSymbol(std::string name)
+        : Symbol(Kind::Module, std::move(name)) {
+    }
 
     std::vector<Symbol*> findMember(const std::string& name) const {
-        auto range = _members.equal_range(name);
+        const auto range = mMembers.equal_range(name);
         std::vector<Symbol*> result;
 
-        for (auto iter = range.first;
-             iter != range.second;
-             ++iter) {
+        for (auto iter = range.first; iter != range.second; ++iter) {
             result.push_back(iter->second);
         }
 
         return result;
     }
     void addMember(Symbol& symbol) {
-        _members.insert(std::make_pair(symbol.getName(),
-                                       &symbol));
+        mMembers.insert(std::make_pair(symbol.getName(), &symbol));
     }
 
-protected:
-    std::unordered_multimap<std::string, Symbol*> _members;
+   protected:
+    std::unordered_multimap<std::string, Symbol*> mMembers;
 };
 
 class TypeSymbol : public Symbol {
-public:
-    TypeSymbol(std::string name)
-        : Symbol(Symbol::Kind::Type, std::move(name)) {}
-
-    [[nodiscard]] Type* getType() const {
-        return _type;
-    }
-    void setType(Type* type) {
-        _type = type;
+   public:
+    explicit TypeSymbol(std::string name)
+        : Symbol(Kind::Type, std::move(name)) {
     }
 
-protected:
-    Type* _type{nullptr};
+    [[nodiscard]] constexpr Type* getType() const {
+        return mType;
+    }
+    constexpr void setType(Type* type) {
+        mType = type;
+    }
+
+   protected:
+    Type* mType{nullptr};
 };
 
 class LocalVariableSymbol : public Symbol {
-public:
-    LocalVariableSymbol(std::string name)
-        : Symbol(Symbol::Kind::Variable, std::move(name)) {}
-
-    [[nodiscard]] TypeSymbol* getTypeSymbol() const {
-        return _typeSymbol;
-    }
-    void setTypeSymbol(TypeSymbol* type) {
-        _typeSymbol = type;
+   public:
+    explicit LocalVariableSymbol(std::string name)
+        : Symbol(Kind::Variable, std::move(name)) {
     }
 
-protected:
-    TypeSymbol* _typeSymbol{nullptr};
+    [[nodiscard]] constexpr TypeSymbol* getTypeSymbol() const {
+        return mTypeSymbol;
+    }
+    constexpr void setTypeSymbol(TypeSymbol* type) {
+        mTypeSymbol = type;
+    }
+
+   protected:
+    TypeSymbol* mTypeSymbol{nullptr};
 };
 
 class FunctionSymbol : public Symbol {
-public:
-    FunctionSymbol(std::string name)
-        : Symbol(Symbol::Kind::Function, std::move(name)),
-          _arguments() {}
-
-    [[nodiscard]] const std::vector<LocalVariableSymbol*>& getArguments() const {
-        return _arguments;
-    }
-    void addArgument(LocalVariableSymbol& symbol) {
-        _arguments.push_back(&symbol);
+   public:
+    explicit FunctionSymbol(std::string name)
+        : Symbol(Kind::Function, std::move(name)) {
     }
 
-    [[nodiscard]] StatementsBlock* getDefinition() const {
-        return _definition;
+    [[nodiscard]] constexpr const std::vector<LocalVariableSymbol*>& getArguments() const {
+        return mArguments;
     }
-    void setDefinition(StatementsBlock& definition) {
-        _definition = &definition;
-    }
-
-    [[nodiscard]] TypeSymbol* getTypeSymbol() const {
-        return _typeSymbol;
-    }
-    void setTypeSymbol(TypeSymbol* type) {
-        _typeSymbol = type;
+    constexpr void addArgument(LocalVariableSymbol& symbol) {
+        mArguments.push_back(&symbol);
     }
 
-protected:
-    std::vector<LocalVariableSymbol*> _arguments;
-    TypeSymbol* _typeSymbol{nullptr};
-    StatementsBlock* _definition{nullptr};
+    [[nodiscard]] constexpr StatementsBlock* getDefinition() const {
+        return mDefinition;
+    }
+    constexpr void setDefinition(StatementsBlock& definition) {
+        mDefinition = &definition;
+    }
+
+    [[nodiscard]] constexpr TypeSymbol* getTypeSymbol() const {
+        return mTypeSymbol;
+    }
+    constexpr void setTypeSymbol(TypeSymbol* type) {
+        mTypeSymbol = type;
+    }
+
+   protected:
+    std::vector<LocalVariableSymbol*> mArguments;
+    TypeSymbol* mTypeSymbol{nullptr};
+    StatementsBlock* mDefinition{nullptr};
 };
-#endif//VUG_SYMBOL_HPP
+#endif  // VUG_SYMBOL_HPP

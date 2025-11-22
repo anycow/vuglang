@@ -1,5 +1,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+// If a copy of the MPL was not distributed with this file, You can obtain one at
+// https://mozilla.org/MPL/2.0/.
 
 #ifndef VUG_IF_HPP
 #define VUG_IF_HPP
@@ -17,11 +18,12 @@ struct If : public Statement {
     If(std::unique_ptr<Expression> condition,
        std::unique_ptr<StatementsBlock> then,
        std::unique_ptr<Statement> elseThen,
-       SourceLocation sourceLocation)
+       const SourceLocation& sourceLocation)
         : Statement(Kind::If, sourceLocation),
           condition(std::move(condition)),
           then(std::move(then)),
-          elseThen(std::move(elseThen)) {}
+          elseThen(std::move(elseThen)) {
+    }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
@@ -31,4 +33,4 @@ struct If : public Statement {
     }
 };
 
-#endif//VUG_IF_HPP
+#endif  // VUG_IF_HPP
