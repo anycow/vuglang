@@ -131,7 +131,7 @@ void Printer::visit(BinaryOperation& node) {
 
     std::cout << getIndentSpaces()
               << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "BinOp: " << TokenTypeNames[node.operationToken] << std::endl;
+              << "BinOp: " << TokenTypeNames[node.operationType] << std::endl;
 
     visit(*node.left);
     visit(*node.right);

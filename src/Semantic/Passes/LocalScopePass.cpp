@@ -206,7 +206,7 @@ void LocalScopePass::visit(BinaryOperation& node) {
     visit(*node.right);
 
     const auto checkResult
-        = node.left->exprType->binaryOperationType(node.operationToken, *node.right->exprType);
+        = node.left->exprType->binaryOperationType(node.operationType, *node.right->exprType);
 
     if (checkResult.isTypesCorrect) {
         node.exprType = checkResult.resultType;

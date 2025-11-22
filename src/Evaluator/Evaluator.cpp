@@ -130,7 +130,7 @@ std::unique_ptr<Object> Evaluator::evaluateExpression(const BinaryOperation& nod
     const auto left = evaluateExpression(*node.left);
     const auto right = evaluateExpression(*node.right);
 
-    return left->binaryOperation(node.operationToken, *right);
+    return left->binaryOperation(node.operationType, *right);
 }
 std::unique_ptr<Object> Evaluator::evaluateExpression(const CallFunction& node) {
     stackGuard();

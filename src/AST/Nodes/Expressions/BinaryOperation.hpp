@@ -10,16 +10,16 @@
 #include "AST/Nodes/Expression.hpp"
 
 struct BinaryOperation : public Expression {
-    LexemType operationToken;
+    LexemType operationType;
     std::unique_ptr<Expression> left;
     std::unique_ptr<Expression> right;
 
-    BinaryOperation(const LexemType operationToken,
+    BinaryOperation(const LexemType operationType,
                     std::unique_ptr<Expression> left,
                     std::unique_ptr<Expression> right,
                     const SourceLocation& sourceLocation)
         : Expression(Kind::BinaryOperation, sourceLocation),
-          operationToken(operationToken),
+          operationType(operationType),
           left(std::move(left)),
           right(std::move(right)) {
     }
