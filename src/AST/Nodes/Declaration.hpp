@@ -16,7 +16,7 @@ struct Declaration : public Node {
         : Node(nodeType, sourceLocation) {
     }
 
-    bool isDeclaration() override {
+    bool isDeclaration() const override {
         return true;
     }
 
@@ -37,7 +37,7 @@ struct BadDeclaration : public Declaration {
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }
-    bool isInvalid() override {
+    [[nodiscard]] bool isInvalid() const override {
         return true;
     }
 

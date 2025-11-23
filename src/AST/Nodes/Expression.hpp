@@ -20,7 +20,7 @@ struct Expression : public Node {
         : Node(nodeType, sourceLocation) {
     }
 
-    bool isExpression() override {
+    bool isExpression() const override {
         return true;
     }
 
@@ -37,7 +37,7 @@ struct BadExpression : public Expression {
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }
-    bool isInvalid() override {
+    [[nodiscard]] bool isInvalid() const override {
         return true;
     }
 
