@@ -23,6 +23,7 @@
 #include "AST/Nodes/Statement.hpp"
 #include "AST/Nodes/Statements/Assign.hpp"
 #include "AST/Nodes/Statements/Break.hpp"
+#include "AST/Nodes/Statements/ExpressionStatement.hpp"
 #include "AST/Nodes/Statements/If.hpp"
 #include "AST/Nodes/Statements/LocalVariableDeclaration.hpp"
 #include "AST/Nodes/Statements/Print.hpp"

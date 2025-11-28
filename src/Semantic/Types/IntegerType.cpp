@@ -2,44 +2,10 @@
 // If a copy of the MPL was not distributed with this file, You can obtain one at
 // https://mozilla.org/MPL/2.0/.
 
-#include "Type.hpp"
+#include "IntegerType.hpp"
 
 #include "Semantic/SymbolContext.hpp"
-
-bool Type::isInteger() const {
-    return mKind == TypeKind::Primitive
-           && (static_cast<const PrimitiveType*>(this)->getPrimitiveKind()
-               == PrimitiveKind::Integer);
-}
-
-OperationResultType BooleanType::binaryOperationType(const LexemType opType,
-                                                     const Type& rhs) const {
-    switch (opType) {
-        case LexemType::Equal:
-        case LexemType::Unequal:
-        case LexemType::Less:
-        case LexemType::LessEqual:
-        case LexemType::Greater:
-        case LexemType::GreaterEqual:
-        case LexemType::LogicOr:
-        case LexemType::LogicAnd:
-            if (*this == rhs) {
-                return OperationResultType(true, this);
-            } else {
-                return OperationResultType(false, nullptr);
-            }
-        default:
-            return OperationResultType(false, nullptr);
-    }
-}
-OperationResultType BooleanType::prefixOperationType(const LexemType opType) const {
-    switch (opType) {
-        case LexemType::Not:
-            return OperationResultType(true, this);
-        default:
-            return OperationResultType(false, nullptr);
-    }
-}
+#include "Type.hpp"
 
 OperationResultType IntegerType::binaryOperationType(const LexemType opType,
                                                      const Type& rhs) const {
@@ -60,9 +26,9 @@ OperationResultType IntegerType::binaryOperationType(const LexemType opType,
         case LexemType::Multiply:
         case LexemType::Divide:
         case LexemType::Remainder:
+        case LexemType::BitAnd:
         case LexemType::BitOr:
         case LexemType::BitXor:
-        case LexemType::BitAnd:
             if (*this == rhs) {
                 return OperationResultType(true, this);
             } else {
@@ -81,10 +47,14 @@ OperationResultType IntegerType::prefixOperationType(const LexemType opType) con
     }
 }
 
-OperationResultType UndefinedType::binaryOperationType(const LexemType opType,
-                                                       const Type& rhs) const {
-    return OperationResultType(true, this);
+bool IntegerType::isInteger() const {
+    return true;
 }
-OperationResultType UndefinedType::prefixOperationType(const LexemType opType) const {
-    return OperationResultType(true, this);
+
+IntegerType& IntegerType::getInteger() {
+    return *this;
 }
+const IntegerType& IntegerType::getInteger() const {
+    return *this;
+}
+

@@ -53,6 +53,9 @@ class ASTWalker {
     virtual void visit(Break& node) {
         throw std::logic_error("Not implemented");
     }
+    virtual void visit(ExpressionStatement& node) {
+        throw std::logic_error("Not implemented");
+    }
     virtual void visit(CallFunction& node) {
         throw std::logic_error("Not implemented");
     }

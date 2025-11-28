@@ -2,16 +2,14 @@
 // If a copy of the MPL was not distributed with this file, You can obtain one at
 // https://mozilla.org/MPL/2.0/.
 
-#include "Diagnostic/DiagnosticManager.hpp"
-
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 
+#include "Codegen/LLVMCodegen.hpp"
+#include "Diagnostic/DiagnosticManager.hpp"
 #include "Diagnostic/Logger.hpp"
-#include "Evaluator/Evaluator.hpp"
 #include "Lexing/Lexer.hpp"
 #include "Misc/Printer.hpp"
 #include "Misc/SourceManager.hpp"
@@ -25,7 +23,6 @@
 
 int main(int argc, char* argv[]) {
     setStackBottom();
-
     auto diag = Logger<LogLevel::Verbose>();
 
     std::string input;
@@ -74,14 +71,8 @@ int main(int argc, char* argv[]) {
     if (diagnosticManager.error_count() > 0 || diagnosticManager.fatal_count() > 0) {
         return 0;
     }
-    auto start = std::chrono::high_resolution_clock::now();
 
-    auto evaluator = Evaluator(*ast, context);
-    evaluator.evaluate();
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-
-    std::wcout << "Run time: " << duration.count() << std::endl;
+    LLVMCodegen codegen(*ast, context);
+    std::cout << codegen.emit(file.getName()) << std::endl;
     return 0;
 }

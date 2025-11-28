@@ -20,6 +20,7 @@ class Lexer {
               {"mod", LexemType::Mod},
               {"func", LexemType::Func},
               {"var", LexemType::Var},
+              {"import", LexemType::Import},
               {"if", LexemType::If},
               {"else", LexemType::Else},
               {"while", LexemType::While},

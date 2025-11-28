@@ -8,7 +8,7 @@
 #include <string>
 
 #include "Semantic/Symbol.hpp"
-#include "Semantic/Type.hpp"
+#include "Types/Type.hpp"
 
 class SymbolTable;
 
@@ -35,6 +35,14 @@ class SymbolContext {
     }
     [[nodiscard]] constexpr const TypeSymbol* getBoolType() const {
         return mBooleanTypeSymbol;
+    }
+
+    [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getSignedIntegerTypeSymbols() const {
+        return mSignedIntegerTypeSymbols;
+    }
+    [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getUnsignedIntegerTypeSymbols()
+        const {
+        return mUnsignedIntegerTypeSymbols;
     }
 
    private:

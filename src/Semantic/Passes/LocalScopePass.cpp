@@ -9,7 +9,7 @@
 #include "Misc/Stack.hpp"
 #include "Semantic/SymbolContext.hpp"
 #include "Semantic/SymbolTable.hpp"
-#include "Semantic/Type.hpp"
+#include "Semantic/Types/Type.hpp"
 
 void LocalScopePass::analyze() {
     stackGuard();
@@ -64,17 +64,18 @@ void LocalScopePass::visit(DeclarationsBlock& node) {
 }
 void LocalScopePass::visit(FunctionDeclaration& node) {
     stackGuard();
+    if (node.definition) {
+        mCurrentFunction = &node;
 
-    mCurrentFunction = &node;
+        mContext.getSymbolTable().openScope();
+        for (const auto& parameter : node.parameters) {
+            visit(*parameter);
+        }
+        visit(*node.definition);
+        mContext.getSymbolTable().closeScope();
 
-    mContext.getSymbolTable().openScope();
-    for (const auto& parameter : node.parameters) {
-        visit(*parameter);
+        mCurrentFunction = nullptr;
     }
-    visit(*node.definition);
-    mContext.getSymbolTable().closeScope();
-
-    mCurrentFunction = nullptr;
 }
 void LocalScopePass::visit(FunctionParameter& node) {
     stackGuard();
@@ -343,6 +344,11 @@ void LocalScopePass::visit(While& node) {
     mContext.getSymbolTable().closeScope();
 }
 void LocalScopePass::visit(Print& node) {
+    stackGuard();
+
+    visit(*node.expression);
+}
+void LocalScopePass::visit(ExpressionStatement& node) {
     stackGuard();
 
     visit(*node.expression);

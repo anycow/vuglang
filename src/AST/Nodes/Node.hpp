@@ -30,13 +30,14 @@ struct Node {
 
         Assign,
         BinaryOperation,
+        CallFunction,
         Identifier,
         Number,
         PrefixOperation,
 
         StatementBlock,
         Break,
-        CallFunction,
+        ExpressionStatement,
         If,
         Print,
         Return,
@@ -53,16 +54,16 @@ struct Node {
         throw std::logic_error("Not implemented");
     }
 
-    virtual bool isExpression() {
+    [[nodiscard]] virtual bool isExpression() const {
         return false;
     }
-    virtual bool isStatement() {
+    [[nodiscard]] virtual bool isStatement() const {
         return false;
     }
-    virtual bool isDeclaration() {
+    [[nodiscard]] virtual bool isDeclaration() const {
         return false;
     }
-    virtual bool isInvalid() {
+    [[nodiscard]] virtual bool isInvalid() const {
         return false;
     }
 

@@ -1,8 +1,8 @@
 add_executable(Vug Main.cpp)
 target_precompile_headers(Vug PRIVATE pch.hpp)
-target_include_directories(Vug PRIVATE .)
 
 add_subdirectory(AST)
+add_subdirectory(Codegen)
 add_subdirectory(Diagnostic)
 add_subdirectory(Evaluator)
 add_subdirectory(Lexing)
