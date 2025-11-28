@@ -60,7 +60,9 @@ void Printer::visit(FunctionDeclaration& node) {
         visit(*parameter);
     }
 
-    visit(*node.definition);
+    if (node.definition) {
+        visit(*node.definition);
+    }
 
     --mCurrentDepth;
 }
@@ -226,6 +228,16 @@ void Printer::visit(Print& node) {
     ++mCurrentDepth;
 
     std::cout << getIndentSpaces() << "Print: " << std::endl;
+
+    visit(*node.expression);
+
+    --mCurrentDepth;
+}
+void Printer::visit(ExpressionStatement& node) {
+    stackGuard();
+    ++mCurrentDepth;
+
+    std::cout << getIndentSpaces() << "Expression Statement: " << std::endl;
 
     visit(*node.expression);
 

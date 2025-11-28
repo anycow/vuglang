@@ -37,6 +37,14 @@ class SymbolContext {
         return mBooleanTypeSymbol;
     }
 
+    [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getSignedIntegerTypeSymbols() const {
+        return mSignedIntegerTypeSymbols;
+    }
+    [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getUnsignedIntegerTypeSymbols()
+        const {
+        return mUnsignedIntegerTypeSymbols;
+    }
+
    private:
     std::vector<std::unique_ptr<Symbol>> mSymbols;
     std::vector<std::unique_ptr<Type>> mType;

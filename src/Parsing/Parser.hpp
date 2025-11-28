@@ -41,9 +41,10 @@ class Parser {
     std::unique_ptr<Break> breakStmt();
     std::unique_ptr<Return> returnStmt();
     std::unique_ptr<LocalVariableDeclaration> localVariableDeclaration();
-    std::unique_ptr<Statement> varAssign();
+    std::unique_ptr<Statement> varAssignOrExpr();
     std::unique_ptr<StatementsBlock> stmtBlock();
 
+    std::unique_ptr<Expression> functionCall();
     std::unique_ptr<Expression> expr();
     std::unique_ptr<Expression> logicOr();
     std::unique_ptr<Expression> logicAnd();

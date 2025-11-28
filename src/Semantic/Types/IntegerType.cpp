@@ -26,9 +26,9 @@ OperationResultType IntegerType::binaryOperationType(const LexemType opType,
         case LexemType::Multiply:
         case LexemType::Divide:
         case LexemType::Remainder:
+        case LexemType::BitAnd:
         case LexemType::BitOr:
         case LexemType::BitXor:
-        case LexemType::BitAnd:
             if (*this == rhs) {
                 return OperationResultType(true, this);
             } else {

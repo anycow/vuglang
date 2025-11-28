@@ -36,6 +36,7 @@ class LocalScopePass : public ASTWalker {
 
     void visit(Assign& node) override;
     void visit(LocalVariableDeclaration& node) override;
+    void visit(ExpressionStatement& node) override;
     void visit(StatementsBlock& node) override;
     void visit(Break& node) override;
     void visit(If& node) override;

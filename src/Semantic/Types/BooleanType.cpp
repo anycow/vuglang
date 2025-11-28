@@ -15,8 +15,11 @@ OperationResultType BooleanType::binaryOperationType(const LexemType opType,
         case LexemType::LessEqual:
         case LexemType::Greater:
         case LexemType::GreaterEqual:
-        case LexemType::LogicOr:
         case LexemType::LogicAnd:
+        case LexemType::LogicOr:
+        case LexemType::BitAnd:
+        case LexemType::BitOr:
+        case LexemType::BitXor:
             if (*this == rhs) {
                 return OperationResultType(true, this);
             } else {
@@ -38,11 +41,9 @@ OperationResultType BooleanType::prefixOperationType(const LexemType opType) con
 bool BooleanType::isBoolean() const {
     return true;
 }
-
 BooleanType& BooleanType::getBool() {
     return *this;
 }
 const BooleanType& BooleanType::getBool() const {
     return *this;
 }
-

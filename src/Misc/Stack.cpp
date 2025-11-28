@@ -5,7 +5,8 @@
 #include "Stack.hpp"
 
 #ifdef _WIN32
-#include <windows.h>
+
+#include <processthreadsapi.h>
 
 void setStackBottom() {
     uintptr_t low, high;

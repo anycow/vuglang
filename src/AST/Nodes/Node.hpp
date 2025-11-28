@@ -30,13 +30,14 @@ struct Node {
 
         Assign,
         BinaryOperation,
+        CallFunction,
         Identifier,
         Number,
         PrefixOperation,
 
         StatementBlock,
         Break,
-        CallFunction,
+        ExpressionStatement,
         If,
         Print,
         Return,

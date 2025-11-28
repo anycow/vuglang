@@ -25,4 +25,3 @@ class BooleanType : public PrimitiveType {
 };
 
 #endif  // VUG_BOOLEAN_TYPE_HPP
-
