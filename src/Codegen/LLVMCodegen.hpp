@@ -7,6 +7,7 @@
 
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 #include <memory>
 
 #include "AST/ASTNodesForward.hpp"
@@ -83,8 +84,5 @@ class LLVMCodegen {
     std::unordered_map<const Symbol*, llvm::AllocaInst*> mObjects;
     std::unordered_map<const FunctionSymbol*, llvm::Function*> mFunctions;
 };
-class LLVMDeclarationCodegen;
-class LLVMDefinitionCodegen;
-
 
 #endif
