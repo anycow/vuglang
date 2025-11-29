@@ -105,6 +105,8 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         return;
     }
 
-    node.symbolRef->setDefinition(*node.definition);
+    if (node.definition) {
+        node.symbolRef->setDefinition(*node.definition);
+    }
     node.symbolRef->finishDefinition();
 }
