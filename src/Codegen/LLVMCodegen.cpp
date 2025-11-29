@@ -29,7 +29,7 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
 
     mModule->setSourceFileName(fileName);
 
-    auto targetTriple = llvm::sys::getDefaultTargetTriple();
+    auto targetTriple = llvm::Triple(llvm::sys::getDefaultTargetTriple());
     std::string error;
     auto target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
     if (!target) {
@@ -74,6 +74,7 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
     llvm::CGSCCAnalysisManager cgsccAnalysisManager;
     llvm::ModuleAnalysisManager moduleAnalysisManager;
     llvm::PassBuilder passBuilder(targetMachine);
+    passBuilder.registerMachineFunctionAnalyses(machineFunctionAnalysisManager);
     passBuilder.registerFunctionAnalyses(functionAnalysisManager);
     passBuilder.registerLoopAnalyses(loopAnalysisManager);
     passBuilder.registerCGSCCAnalyses(cgsccAnalysisManager);
@@ -81,8 +82,8 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
     passBuilder.crossRegisterProxies(loopAnalysisManager,
                                      functionAnalysisManager,
                                      cgsccAnalysisManager,
-                                     moduleAnalysisManager);
-    passBuilder.registerMachineFunctionAnalyses(machineFunctionAnalysisManager);
+                                     moduleAnalysisManager,
+                                     &machineFunctionAnalysisManager);
 
 
     llvm::ModulePassManager modulePassManager

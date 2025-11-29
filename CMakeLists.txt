@@ -19,11 +19,11 @@ add_subdirectory(src)
 target_include_directories(Vug PRIVATE src)
 
 find_package(LLVM REQUIRED CONFIG)
-include_directories(${LLVM_INCLUDE_DIRS})
+target_include_directories(Vug PRIVATE ${LLVM_INCLUDE_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 execute_process(
-        COMMAND llvm-config --targets-built
+        COMMAND llvm-config-21 --targets-built
         OUTPUT_VARIABLE llvm_targets
         OUTPUT_STRIP_TRAILING_WHITESPACE
 )
