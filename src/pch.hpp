@@ -5,8 +5,6 @@
 #ifndef VUG_PCH_HPP
 #define VUG_PCH_HPP
 
-#define _WIN32_WINNT 0x0602
-
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -29,6 +27,8 @@
 #include <vector>
 
 #ifdef _WIN32
+#define _WIN32_WINNT 0x0602
+#define NOMINMAX
 #include <windows.h>
 #endif
 
