@@ -3,6 +3,7 @@ project(Vug)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
 
 add_compile_options(
         -Wall
@@ -11,7 +12,9 @@ add_compile_options(
         -Wpedantic
         -Wdouble-promotion
         -Wno-unused-parameter
+        -Wno-unused-private-field
         -Wimplicit-fallthrough
+        -Wno-error=unused-variable
         -fstack-usage
 )
 
@@ -19,15 +22,17 @@ add_subdirectory(src)
 target_include_directories(Vug PRIVATE src)
 
 find_package(LLVM REQUIRED CONFIG)
-target_include_directories(Vug PRIVATE ${LLVM_INCLUDE_DIRS})
+target_include_directories(Vug SYSTEM PRIVATE ${LLVM_INCLUDE_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
-execute_process(
-        COMMAND llvm-config-21 --targets-built
-        OUTPUT_VARIABLE llvm_targets
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-string(REGEX REPLACE " " ";" llvm_targets "${llvm_targets}")
+if (NOT DEFINED llvm_targets)
+    execute_process(
+            COMMAND llvm-config-21 --targets-built
+            OUTPUT_VARIABLE llvm_targets
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    string(REGEX REPLACE " " ";" llvm_targets "${llvm_targets}")
+endif ()
 llvm_map_components_to_libnames(llvm_libs
         core
         support
