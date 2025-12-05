@@ -269,7 +269,6 @@ Token Lexer::getToken() {
             case '\r':
                 break;
             case '\t':
-                mColumn += 4;
                 break;
             case '\n':
                 mColumn = 0;
