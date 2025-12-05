@@ -5,6 +5,7 @@
 #include "LLVMCodegen.hpp"
 
 #include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/MC/TargetRegistry.h>
 #include <llvm/Passes/PassBuilder.h>
 #include <llvm/Support/FileSystem.h>
@@ -67,6 +68,11 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
 
     LLVMDefinitionCodegen definitionCodegen(*this);
     definitionCodegen.emit(static_cast<const ModuleDeclaration&>(mAST));
+
+    if (llvm::verifyModule(*mModule, &llvm::errs())) {
+        llvm::errs() << "Module verification failed.\n";
+        std::abort();
+    }
 
     llvm::MachineFunctionAnalysisManager machineFunctionAnalysisManager;
     llvm::LoopAnalysisManager loopAnalysisManager;
