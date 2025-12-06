@@ -7,8 +7,6 @@
 
 #include "AST/Nodes/Node.hpp"
 
-#include "Evaluator/Evaluator.hpp"
-
 class Symbol;
 
 struct Declaration : public Node {
@@ -23,10 +21,6 @@ struct Declaration : public Node {
     [[nodiscard]] virtual Symbol* getSymbolPtr() const {
         return nullptr;
     }
-
-    virtual void evaluate(Evaluator& evaluator) {
-        throw std::logic_error("Not implemented");
-    }
 };
 
 struct BadDeclaration : public Declaration {
@@ -39,10 +33,6 @@ struct BadDeclaration : public Declaration {
     }
     [[nodiscard]] bool isInvalid() const override {
         return true;
-    }
-
-    void evaluate(Evaluator& evaluator) override {
-        throw std::logic_error("Not implemented");
     }
 };
 

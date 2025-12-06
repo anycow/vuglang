@@ -7,8 +7,6 @@
 
 #include "Node.hpp"
 
-#include "Evaluator/Evaluator.hpp"
-
 struct Statement : public Node {
     Statement(const Kind nodeType, const SourceLocation& sourceLocation)
         : Node(nodeType, sourceLocation) {
@@ -16,10 +14,6 @@ struct Statement : public Node {
 
     bool isStatement() const override {
         return true;
-    }
-
-    virtual StmtResult evaluate(Evaluator& evaluator) {
-        throw std::logic_error("Not implemented");
     }
 };
 
@@ -33,10 +27,6 @@ struct BadStatement : public Statement {
     }
     [[nodiscard]] bool isInvalid() const override {
         return true;
-    }
-
-    StmtResult evaluate(Evaluator& evaluator) override {
-        throw std::logic_error("Not implemented");
     }
 };
 

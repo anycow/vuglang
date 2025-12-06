@@ -11,16 +11,14 @@
 struct ExpressionStatement : public Statement {
     std::unique_ptr<Expression> expression;
 
-    ExpressionStatement(std::unique_ptr<Expression> expression, const SourceLocation& sourceLocation)
+    ExpressionStatement(std::unique_ptr<Expression> expression,
+                        const SourceLocation& sourceLocation)
         : Statement(Kind::ExpressionStatement, sourceLocation),
           expression(std::move(expression)) {
     }
 
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
-    }
-    StmtResult evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateStatement(*this);
     }
 };
 

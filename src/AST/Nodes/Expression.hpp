@@ -7,9 +7,6 @@
 
 #include "Node.hpp"
 
-#include "Evaluator/Evaluator.hpp"
-#include "Evaluator/Objects/Object.hpp"
-
 class Type;
 class Object;
 
@@ -23,10 +20,6 @@ struct Expression : public Node {
     bool isExpression() const override {
         return true;
     }
-
-    virtual std::unique_ptr<Object> evaluate(Evaluator& evaluator) {
-        throw std::logic_error("Not implemented");
-    }
 };
 
 struct BadExpression : public Expression {
@@ -39,10 +32,6 @@ struct BadExpression : public Expression {
     }
     [[nodiscard]] bool isInvalid() const override {
         return true;
-    }
-
-    std::unique_ptr<Object> evaluate(Evaluator& evaluator) override {
-        throw std::logic_error("Not implemented");
     }
 };
 

@@ -17,9 +17,6 @@ struct Break : public Statement {
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }
-    StmtResult evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateStatement(*this);
-    }
 };
 
 #endif  // VUG_BREAK_HPP

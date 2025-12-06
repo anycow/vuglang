@@ -26,9 +26,6 @@ struct FunctionParameter : public Declaration {
         return symbolRef;
     }
 
-    void evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateDeclaration(*this);
-    }
     void accept(ASTWalker& walker) override {
         return walker.visit(*this);
     }

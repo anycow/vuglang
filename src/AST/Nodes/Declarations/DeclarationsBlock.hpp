@@ -18,9 +18,6 @@ struct DeclarationsBlock : public Declaration {
           declarations(std::move(declarations)) {
     }
 
-    void evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateDeclaration(*this);
-    }
     void accept(ASTWalker& walker) override {
         return walker.visit(*this);
     }

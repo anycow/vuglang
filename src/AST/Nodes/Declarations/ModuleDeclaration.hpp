@@ -8,7 +8,6 @@
 #include "AST/Nodes/Declaration.hpp"
 
 #include "AST/Nodes/Declarations/DeclarationsBlock.hpp"
-#include "AST/Nodes/Expressions/Identifier.hpp"
 
 struct ModuleDeclaration : public Declaration {
     std::string name;
@@ -28,9 +27,6 @@ struct ModuleDeclaration : public Declaration {
         return symbolRef;
     }
 
-    void evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateDeclaration(*this);
-    }
     void accept(ASTWalker& walker) override {
         return walker.visit(*this);
     }

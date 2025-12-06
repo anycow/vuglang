@@ -19,9 +19,6 @@ struct Print : public Statement {
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }
-    StmtResult evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateStatement(*this);
-    }
 };
 
 #endif  // VUG_PRINT_HPP

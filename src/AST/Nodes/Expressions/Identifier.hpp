@@ -22,9 +22,6 @@ struct Identifier : public Expression {
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }
-    std::unique_ptr<Object> evaluate(Evaluator& evaluator) override {
-        return evaluator.evaluateExpression(*this);
-    }
 };
 
 #endif  // VUG_IDENTIFIER_HPP
