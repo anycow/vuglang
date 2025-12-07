@@ -29,7 +29,6 @@ struct Break;
 struct ExpressionStatement;
 struct If;
 struct LocalVariableDeclaration;
-struct Print;
 struct Return;
 struct StatementsBlock;
 struct While;

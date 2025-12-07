@@ -223,16 +223,6 @@ void Printer::visit(While& node) {
 
     --mCurrentDepth;
 }
-void Printer::visit(Print& node) {
-    stackGuard();
-    ++mCurrentDepth;
-
-    std::cout << getIndentSpaces() << "Print: " << std::endl;
-
-    visit(*node.expression);
-
-    --mCurrentDepth;
-}
 void Printer::visit(ExpressionStatement& node) {
     stackGuard();
     ++mCurrentDepth;

@@ -343,11 +343,6 @@ void LocalScopePass::visit(While& node) {
     mLoops.pop();
     mContext.getSymbolTable().closeScope();
 }
-void LocalScopePass::visit(Print& node) {
-    stackGuard();
-
-    visit(*node.expression);
-}
 void LocalScopePass::visit(ExpressionStatement& node) {
     stackGuard();
 

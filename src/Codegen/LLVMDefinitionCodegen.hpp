@@ -44,7 +44,6 @@ class LLVMDefinitionCodegen {
     void emit(const ExpressionStatement& node);
     void emit(const If& node);
     void emit(const LocalVariableDeclaration& node);
-    void emit(const Print& node);
     void emit(const Return& node);
     void emit(const StatementsBlock& node);
     void emit(const While& node);

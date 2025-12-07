@@ -22,7 +22,6 @@ target_sources(Vug PRIVATE
         Nodes/Statements/Assign.hpp
         Nodes/Statements/Break.hpp
         Nodes/Statements/If.hpp
-        Nodes/Statements/Print.hpp
         Nodes/Statements/Return.hpp
         Nodes/Statements/StatementsBlock.hpp
         Nodes/Statements/LocalVariableDeclaration.hpp

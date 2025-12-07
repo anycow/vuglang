@@ -39,7 +39,6 @@ struct Node {
         Break,
         ExpressionStatement,
         If,
-        Print,
         Return,
         LocalVarDeclaration,
         While,

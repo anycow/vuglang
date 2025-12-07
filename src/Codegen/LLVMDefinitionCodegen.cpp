@@ -48,9 +48,6 @@ void LLVMDefinitionCodegen::emit(const Node& node) {
         case Node::Kind::If:
             emit(static_cast<const If&>(node));
             break;
-        case Node::Kind::Print:
-            emit(static_cast<const Print&>(node));
-            break;
         case Node::Kind::Return:
             emit(static_cast<const Return&>(node));
             break;
@@ -350,9 +347,6 @@ void LLVMDefinitionCodegen::emit(const Statement& node) {
         case Node::Kind::If:
             emit(static_cast<const If&>(node));
             break;
-        case Node::Kind::Print:
-            emit(static_cast<const Print&>(node));
-            break;
         case Node::Kind::Return:
             emit(static_cast<const Return&>(node));
             break;
@@ -426,9 +420,6 @@ void LLVMDefinitionCodegen::emit(const LocalVariableDeclaration& node) {
         = getBuilder().CreateAlloca(getTypes()[node.symbolRef->getTypeSymbol()->getType()]);
     auto* value = emit(*node.value);
     getBuilder().CreateStore(value, getObjects()[node.symbolRef]);
-}
-void LLVMDefinitionCodegen::emit(const Print& node) {
-    stackGuard();
 }
 void LLVMDefinitionCodegen::emit(const Return& node) {
     stackGuard();

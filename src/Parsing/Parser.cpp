@@ -287,15 +287,6 @@ std::unique_ptr<Statement> Parser::stmt() {
                 node = returnStmt();
                 break;
             case LexemType::Identifier:
-                // if (mCurrent.getValue() == "print") {
-                //     advance();
-                //     auto printExpression = expr();
-                //
-                //     node = std::make_unique<Print>(
-                //         std::move(printExpression),
-                //         SourceLocation(startLocation, mPrevious.getSourceLocation()));
-                //     break;
-                // }
                 node = varAssignOrExpr();
                 break;
             default: {

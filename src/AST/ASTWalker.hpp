@@ -65,9 +65,6 @@ class ASTWalker {
     virtual void visit(LocalVariableDeclaration& node) {
         throw std::logic_error("Not implemented");
     }
-    virtual void visit(Print& node) {
-        throw std::logic_error("Not implemented");
-    }
     virtual void visit(Return& node) {
         throw std::logic_error("Not implemented");
     }

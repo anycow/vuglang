@@ -38,7 +38,6 @@ class Printer : public ASTWalker {
     void visit(If& node) override;
     void visit(LocalVariableDeclaration& node) override;
     void visit(ExpressionStatement& node) override;
-    void visit(Print& node) override;
     void visit(Return& node) override;
     void visit(StatementsBlock& node) override;
     void visit(While& node) override;
