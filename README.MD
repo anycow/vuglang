@@ -1,25 +1,24 @@
 # Vug
 
-Vug is a small toy programming language whose purpose is demonstration of basic interpretation/compilation techniques.
+Vug is a small toy programming language whose purpose is the demonstration of compilation techniques.
 
-## Realisation
+## Implementation
 
-Vuglang implement a compiling interpreter (meaning explicitly building an attributed AST) in 6 stages:
+Vuglang implements a compiler (meaning explicitly building an attributed AST) in 8 stages:
 
 1) Lexer (source &rarr; tokens)
-2) [LL(1)](https://en.wikipedia.org/wiki/LL_parser) parsing (tokens &rarr; [AST](https://en.wikipedia.org/wiki/AST))
-3) Module Definition Pass (declare all module and module members)
-4) Global Scope Pass (define all symbols)
-5) Local Scope Pass (process type semantic in functions)
-6) Evaluator (walk on attributed AST and make computation)
+2) [LL](https://en.wikipedia.org/wiki/LL_parser) parser (tokens &rarr; [AST](https://en.wikipedia.org/wiki/AST))
+3) Module definition pass (declare all module and module members)
+4) Global scope pass (define all symbols)
+5) Local scope pass (process type semantic in functions and attribute AST nodes)
+6) LLVM emitter (walks over attributed AST and emit)
+7) LLVM optimization passes
+8) LLVM compiler
 
 ## TODO
 
-- [x] Implement interpreter (evaluator)
+- [x] Implement LLVM-based compilation
 - [x] Implement semi-advanced declaration processing (50/50 yet)
-- [ ] Compilation errors
+- [x] Compilation errors
 - [ ] Document code and language
 - [ ] Implement semi-advanced type system (arrays, references, pointers, const, casts, structs)
-- [ ] Implement stack machine
-- [ ] Implement own register machine and bytecode
-- [ ] Implement translation of own register machine IR to LLVM IR
