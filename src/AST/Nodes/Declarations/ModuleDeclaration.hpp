@@ -23,7 +23,7 @@ struct ModuleDeclaration : public Declaration {
           body(std::move(body)) {
     }
 
-    [[nodiscard]] Symbol* getSymbolPtr() const override {
+    [[nodiscard]] ModuleSymbol* getSymbolPtr() const override {
         return symbolRef;
     }
 

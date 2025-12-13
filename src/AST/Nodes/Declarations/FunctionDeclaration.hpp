@@ -32,7 +32,7 @@ struct FunctionDeclaration : public Declaration {
           definition(std::move(definition)) {
     }
 
-    [[nodiscard]] Symbol* getSymbolPtr() const override {
+    [[nodiscard]] FunctionSymbol* getSymbolPtr() const override {
         return symbolRef;
     }
 

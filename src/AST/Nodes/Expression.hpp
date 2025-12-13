@@ -20,6 +20,10 @@ struct Expression : public Node {
     bool isExpression() const override {
         return true;
     }
+
+    [[nodiscard]] const Type* getExprType() const {
+        return exprType;
+    }
 };
 
 struct BadExpression : public Expression {

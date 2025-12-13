@@ -22,7 +22,7 @@ struct FunctionParameter : public Declaration {
           name(std::move(name)) {
     }
 
-    [[nodiscard]] Symbol* getSymbolPtr() const override {
+    [[nodiscard]] LocalVariableSymbol* getSymbolPtr() const override {
         return symbolRef;
     }
 

@@ -25,6 +25,10 @@ struct Assign : public Statement {
           value(std::move(value)) {
     }
 
+    [[nodiscard]] LocalVariableSymbol* getVariableSymbolPtr() const {
+        return symbolRef;
+    }
+
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }

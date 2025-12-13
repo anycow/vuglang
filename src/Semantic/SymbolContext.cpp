@@ -17,8 +17,8 @@ SymbolContext::SymbolContext(SymbolTable& table)
         auto signedInt = std::make_unique<TypeSymbol>("int" + std::to_string(size));
         auto unsignedInt = std::make_unique<TypeSymbol>("uint" + std::to_string(size));
 
-        mSymbolTable.insertSymbol(*signedInt, false);
-        mSymbolTable.insertSymbol(*unsignedInt, false);
+        mSymbolTable.insertSymbol(*signedInt, false).unwrap();
+        mSymbolTable.insertSymbol(*unsignedInt, false).unwrap();
 
         signedInt->startDefinition();
         mType.push_back(
@@ -42,7 +42,7 @@ SymbolContext::SymbolContext(SymbolTable& table)
     mType.push_back(std::make_unique<BooleanType>(*this, "bool"));
 
     auto boolean = std::make_unique<TypeSymbol>("bool");
-    mSymbolTable.insertSymbol(*boolean, false);
+    mSymbolTable.insertSymbol(*boolean, false).unwrap();
 
     boolean->startDefinition();
     boolean->setType(mType.back().get());

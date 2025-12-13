@@ -6,9 +6,11 @@
 #define VUG_SYMBOLTABLE_HPP
 
 #include <list>
+#include <ostream>
 #include <stack>
 #include <unordered_map>
 
+#include "Misc/Result.hpp"
 #include "Symbol.hpp"
 
 struct SymbolTableRecord {
@@ -29,30 +31,37 @@ class SymbolTable {
    public:
     SymbolTable() = default;
 
-    struct InsertResult {
-        enum class Kind { Successful, NameConflict, ProhibitedShadowing };
+    struct InsertError {
+        enum class Kind { NameConflict, ProhibitedShadowing };
 
         const Kind kind;
         const SymbolTableRecord* conflictingSymbol;
 
-        constexpr explicit InsertResult(const Kind kind, const SymbolTableRecord* conflictingSymbol = nullptr)
+        constexpr explicit InsertError(const Kind kind,
+                                        const SymbolTableRecord* conflictingSymbol = nullptr)
             : kind(kind),
               conflictingSymbol(conflictingSymbol) {
         }
-    };
-    InsertResult insertSymbol(Symbol& symbol, bool canShadowed = true);
 
-    struct FindResult {
-        enum class Kind { Successful, NotFound };
-
-        const Kind kind;
-        const SymbolTableRecord* record;
-
-        constexpr explicit FindResult(const Kind kind, const SymbolTableRecord* record = nullptr)
-            : kind(kind),
-              record(record) {
+        friend std::ostream& operator<<(std::ostream& os, const Kind& kind) {
+            switch (kind) {
+                case Kind::NameConflict:
+                    return os << "NameConflict";
+                case Kind::ProhibitedShadowing:
+                    return os << "ProhibitedShadowing";
+                default:
+                    return os << "Unknown";
+            }
+        }
+        friend std::ostream& operator<<(std::ostream& os, const InsertError& obj) {
+            return os << obj.kind;
         }
     };
+    using InsertResult = Result<void, InsertError>;
+    InsertResult insertSymbol(Symbol& symbol, bool canShadowed = true);
+
+    enum class FindError { NotFound };
+    using FindResult = Result<const SymbolTableRecord*, FindError>;
     FindResult findSymbol(const std::string& name);
 
     [[nodiscard]] size_t getDepth() const {

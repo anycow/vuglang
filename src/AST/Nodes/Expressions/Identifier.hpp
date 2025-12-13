@@ -19,6 +19,10 @@ struct Identifier : public Expression {
           name(std::move(name)) {
     }
 
+    [[nodiscard]] LocalVariableSymbol* getVariableSymbolPtr() const {
+        return symbolRef;
+    }
+
     void accept(ASTWalker& walker) override {
         walker.visit(*this);
     }
