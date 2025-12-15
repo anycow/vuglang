@@ -1,15 +1,34 @@
 Checks: '-*,
-clang-analyzer-*,
 bugprone-*,
-modernize-*,
-readability-*,
-performance-*,
+cert-*,
+clang-analyzer-*,
 cppcoreguidelines-*,
 misc-*,
-cert-*,
+modernize-*,
+performance-*,
+readability-*,
 
--misc-include-cleaner,
+-bugprone-easily-swappable-parameters,
+-*-pro-bounds-pointer-arithmetic,
+-cert-dcl58-cpp,
+-cert-err58-cpp,
+-cppcoreguidelines-avoid-const-or-ref-data-members,
+-cppcoreguidelines-avoid-magic-numbers,
+-cppcoreguidelines-avoid-non-const-global-variables,
+-cppcoreguidelines-pro-type-reinterpret-cast,
+-cppcoreguidelines-pro-type-static-cast-downcast,
+-misc-no-recursion,
+-misc-non-private-member-variables-in-classes,
+-modernize-return-braced-init-list,
 -modernize-use-trailing-return-type,
--cert-dcl58-cpp'
-
-HeaderFilterRegex: "src/"
+-performance-avoid-endl,
+-performance-enum-size,
+-readability-else-after-return,
+-readability-magic-numbers,
+-readability-identifier-length,
+'
+CheckOptions:
+  - key: readability-implicit-bool-conversion.AllowPointerConditions
+    value: true
+  - key: misc-include-cleaner.MissingIncludes
+    value: true

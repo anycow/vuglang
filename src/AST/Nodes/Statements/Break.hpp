@@ -5,12 +5,14 @@
 #ifndef VUG_BREAK_HPP
 #define VUG_BREAK_HPP
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Statement.hpp"
+#include "Lexing/Token.hpp"
 
 struct Break : public Statement {
     Statement* breakedStmt{nullptr};
 
-    Break(const SourceLocation& sourceLocation)
+    explicit Break(const SourceLocation& sourceLocation)
         : Statement(Kind::Break, sourceLocation) {
     }
 

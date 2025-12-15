@@ -3,8 +3,14 @@
 // https://mozilla.org/MPL/2.0/.
 
 #include "Lexer.hpp"
+
+#include <cctype>
 #include <stdexcept>
-#include "Token.hpp"
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Lexing/Token.hpp"
 
 Token Lexer::getToken() {
     while (true) {
@@ -267,7 +273,6 @@ Token Lexer::getToken() {
 
             case ' ':
             case '\r':
-                break;
             case '\t':
                 break;
             case '\n':
@@ -314,24 +319,24 @@ Token Lexer::getString() {
     const auto startColumn = mColumn;
 
     while (true) {
-        const char c = peek();
+        const char character = peek();
 
-        if (c == '\0') {
+        if (character == '\0') {
             throw std::logic_error("Bad lexing");
         }
-        if (c == '\r') {
+        if (character == '\r') {
             continue;
         }
-        if (c == '\n') {
+        if (character == '\n') {
             mColumn = 0;
             ++mLine;
         }
 
-        if (c == '"') {
+        if (character == '"') {
             break;
         }
 
-        string.push_back(c);
+        string.push_back(character);
     }
     return {LexemType::String,
             SourceLocation(&mSource,
@@ -352,15 +357,15 @@ Token Lexer::getIdentifier(const char firstChar) {
     string.push_back(firstChar);
 
     while (true) {
-        const char c = peek();
+        const char character = peek();
 
-        if (!isalpha(c) && !isdigit(c)) {
+        if ((std::isalpha(character) == 0) && (std::isdigit(character) == 0)) {
             mPos--;
             mColumn--;
             break;
         }
 
-        string.push_back(c);
+        string.push_back(character);
     }
 
     const auto keyword = mKeywords.find(string);
@@ -397,15 +402,15 @@ Token Lexer::getNumber(const char firstChar) {
     const auto startColumn = mColumn;
 
     while (true) {
-        const char c = peek();
+        const char character = peek();
 
-        if (!isdigit(c)) {
+        if (isdigit(character) == 0) {
             mPos--;
             mColumn--;
             break;
         }
 
-        string.push_back(c);
+        string.push_back(character);
     }
 
     return {

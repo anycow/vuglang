@@ -4,6 +4,12 @@
 
 #include "LLVMDeclarationCodegen.hpp"
 
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Type.h>
+#include <stdexcept>
+#include <vector>
+
 #include "AST/ASTNodes.hpp"
 #include "Codegen/LLVMCodegen.hpp"
 #include "Misc/Stack.hpp"
@@ -44,7 +50,8 @@ void LLVMDeclarationCodegen::emit(const FunctionDeclaration& node) {
     stackGuard();
 
     std::vector<llvm::Type*> parameters;
-    for (auto& parameter : node.parameters) {
+    parameters.reserve(node.parameters.size());
+    for (const auto& parameter : node.parameters) {
         parameters.emplace_back(
             getTypes()[parameter->symbolRef->getTypeSymbol()->getType()]);
     }

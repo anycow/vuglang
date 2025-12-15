@@ -5,7 +5,10 @@
 #ifndef VUG_SYMBOLCONTEXT_HPP
 #define VUG_SYMBOLCONTEXT_HPP
 
-#include <string>
+#include <cstdint>
+#include <memory>
+#include <unordered_map>
+#include <vector>
 
 #include "Semantic/Symbol.hpp"
 #include "Types/Type.hpp"
@@ -37,7 +40,8 @@ class SymbolContext {
         return mBooleanTypeSymbol;
     }
 
-    [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getSignedIntegerTypeSymbols() const {
+    [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getSignedIntegerTypeSymbols()
+        const {
         return mSignedIntegerTypeSymbols;
     }
     [[nodiscard]] std::unordered_map<uint32_t, const TypeSymbol*> getUnsignedIntegerTypeSymbols()

@@ -4,15 +4,18 @@
 
 #include "UndefinedType.hpp"
 
-OperationResultType UndefinedType::binaryOperationType(const LexemType opType,
-                                                       const Type& rhs) const {
+#include "Lexing/Token.hpp"
+#include "Semantic/Types/Type.hpp"
+
+OperationResultType UndefinedType::binaryOperationType([[maybe_unused]] const LexemType opType,
+                                                       [[maybe_unused]] const Type& rhs) const {
     return OperationResultType(true, this);
 }
-OperationResultType UndefinedType::prefixOperationType(const LexemType opType) const {
+OperationResultType UndefinedType::prefixOperationType(
+    [[maybe_unused]] const LexemType opType) const {
     return OperationResultType(true, this);
 }
 
 bool UndefinedType::isUndefined() const {
     return true;
 }
-

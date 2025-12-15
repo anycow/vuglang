@@ -5,12 +5,17 @@
 #include "Printer.hpp"
 
 #include <iostream>
+#include <string>
 
 #include "AST/ASTNodes.hpp"
+#include "Lexing/Token.hpp"
 #include "Misc/Stack.hpp"
+#include "Semantic/Types/Type.hpp"
 
 std::string Printer::getIndentSpaces() const {
-    return std::string((mCurrentDepth - 1) * mTabSize, '-');
+    return std::string(
+        static_cast<std::basic_string<char>::size_type>((mCurrentDepth - 1) * mTabSize),
+        '-');
 }
 
 void Printer::print() {
@@ -24,7 +29,7 @@ void Printer::visit(Node& node) {
     node.accept(*this);
 }
 
-void Printer::visit(BadDeclaration& node) {
+void Printer::visit([[maybe_unused]] BadDeclaration& node) {
     stackGuard();
     ++mCurrentDepth;
 
@@ -32,7 +37,7 @@ void Printer::visit(BadDeclaration& node) {
 
     --mCurrentDepth;
 }
-void Printer::visit(BadExpression& node) {
+void Printer::visit([[maybe_unused]] BadExpression& node) {
     stackGuard();
     ++mCurrentDepth;
 
@@ -40,7 +45,7 @@ void Printer::visit(BadExpression& node) {
 
     --mCurrentDepth;
 }
-void Printer::visit(BadStatement& node) {
+void Printer::visit([[maybe_unused]] BadStatement& node) {
     stackGuard();
     ++mCurrentDepth;
 
@@ -177,7 +182,7 @@ void Printer::visit(StatementsBlock& node) {
 
     --mCurrentDepth;
 }
-void Printer::visit(Break& node) {
+void Printer::visit([[maybe_unused]] Break& node) {
     stackGuard();
     ++mCurrentDepth;
 

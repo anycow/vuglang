@@ -5,9 +5,13 @@
 #ifndef VUG_DECLARATIONSBLOCK_HPP
 #define VUG_DECLARATIONSBLOCK_HPP
 
+#include <memory>
 #include <utility>
+#include <vector>
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Declaration.hpp"
+#include "Lexing/Token.hpp"
 
 struct DeclarationsBlock : public Declaration {
     std::vector<std::unique_ptr<Declaration>> declarations;
@@ -19,7 +23,7 @@ struct DeclarationsBlock : public Declaration {
     }
 
     void accept(ASTWalker& walker) override {
-        return walker.visit(*this);
+        walker.visit(*this);
     }
 };
 

@@ -5,6 +5,7 @@
 #ifndef VUG_UNDEFINED_TYPE_HPP
 #define VUG_UNDEFINED_TYPE_HPP
 
+#include "Lexing/Token.hpp"
 #include "Type.hpp"
 
 class SymbolContext;
@@ -23,4 +24,3 @@ class UndefinedType : public Type {
 };
 
 #endif  // VUG_UNDEFINED_TYPE_HPP
-

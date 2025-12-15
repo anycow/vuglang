@@ -5,7 +5,13 @@
 #ifndef VUG_SOURCEMANAGER_HPP
 #define VUG_SOURCEMANAGER_HPP
 
+#include <cstddef>
+#include <cstdint>
 #include <string>
+#include <string_view>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 class SourceFile {
    public:

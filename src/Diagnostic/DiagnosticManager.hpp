@@ -5,6 +5,8 @@
 #ifndef VUG_DIAGNOSTICMANAGER_HPP
 #define VUG_DIAGNOSTICMANAGER_HPP
 
+#include <cstdint>
+
 #include "Diagnostic/Diagnostic.hpp"
 
 class DiagnosticManager {

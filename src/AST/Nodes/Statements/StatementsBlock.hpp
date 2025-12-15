@@ -5,9 +5,13 @@
 #ifndef VUG_STATEMENTSBLOCK_HPP
 #define VUG_STATEMENTSBLOCK_HPP
 
+#include <memory>
+#include <utility>
 #include <vector>
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Statement.hpp"
+#include "Lexing/Token.hpp"
 
 struct StatementsBlock : public Statement {
     std::vector<std::unique_ptr<Statement>> statements;

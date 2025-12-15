@@ -5,8 +5,12 @@
 #ifndef VUG_LLVMDEFINITIONCODEGEN_HPP
 #define VUG_LLVMDEFINITIONCODEGEN_HPP
 
+#include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Instructions.h>
+#include <llvm/IR/LLVMContext.h>
+
+#include <stack>
 #include <unordered_map>
 
 #include "AST/ASTNodesForward.hpp"
@@ -16,7 +20,6 @@ class FunctionSymbol;
 class Symbol;
 class Type;
 class LLVMCodegen;
-
 
 class LLVMDefinitionCodegen {
    public:

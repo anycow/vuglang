@@ -5,9 +5,12 @@
 #ifndef VUG_BINARYOPERATION_HPP
 #define VUG_BINARYOPERATION_HPP
 
+#include <memory>
 #include <utility>
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
+#include "Lexing/Token.hpp"
 
 struct BinaryOperation : public Expression {
     LexemType operationType;

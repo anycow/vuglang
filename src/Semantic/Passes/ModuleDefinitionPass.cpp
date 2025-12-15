@@ -6,8 +6,8 @@
 
 #include "AST/ASTNodes.hpp"
 #include "Misc/Stack.hpp"
+#include "Semantic/Symbol.hpp"
 #include "Semantic/SymbolContext.hpp"
-
 
 void ModuleDefinitionPass::analyze() {
     stackGuard();
@@ -26,7 +26,7 @@ void ModuleDefinitionPass::visit(Node& node) {
 void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
     stackGuard();
 
-    const auto module = mContext.addSymbol<ModuleSymbol>(node.name);
+    auto* const module = mContext.addSymbol<ModuleSymbol>(node.name);
     node.symbolRef = module;
 
     module->startDefinition();
@@ -48,6 +48,6 @@ void ModuleDefinitionPass::visit(DeclarationsBlock& node) {
 void ModuleDefinitionPass::visit(FunctionDeclaration& node) {
     stackGuard();
 
-    const auto function = mContext.addSymbol<FunctionSymbol>(node.name);
+    auto* const function = mContext.addSymbol<FunctionSymbol>(node.name);
     node.symbolRef = function;
 }

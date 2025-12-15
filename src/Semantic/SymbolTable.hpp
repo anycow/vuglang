@@ -5,9 +5,11 @@
 #ifndef VUG_SYMBOLTABLE_HPP
 #define VUG_SYMBOLTABLE_HPP
 
+#include <cstddef>
 #include <list>
 #include <ostream>
 #include <stack>
+#include <string>
 #include <unordered_map>
 
 #include "Misc/Result.hpp"
@@ -38,7 +40,7 @@ class SymbolTable {
         const SymbolTableRecord* conflictingSymbol;
 
         constexpr explicit InsertError(const Kind kind,
-                                        const SymbolTableRecord* conflictingSymbol = nullptr)
+                                       const SymbolTableRecord* conflictingSymbol = nullptr)
             : kind(kind),
               conflictingSymbol(conflictingSymbol) {
         }

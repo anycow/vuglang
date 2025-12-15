@@ -5,7 +5,9 @@
 #ifndef VUG_RESULT_HPP
 #define VUG_RESULT_HPP
 
+#include <cstdlib>
 #include <iostream>
+#include <optional>
 #include <variant>
 
 template <typename T, typename E>

@@ -5,6 +5,9 @@
 #ifndef VUG_PRINTER_HPP
 #define VUG_PRINTER_HPP
 
+#include <cstdint>
+#include <string>
+
 #include "AST/ASTNodes.hpp"
 #include "AST/ASTWalker.hpp"
 

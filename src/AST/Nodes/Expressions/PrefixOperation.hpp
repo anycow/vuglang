@@ -5,7 +5,12 @@
 #ifndef VUG_PREFIXOPERATION_HPP
 #define VUG_PREFIXOPERATION_HPP
 
+#include <memory>
+#include <utility>
+
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
+#include "Lexing/Token.hpp"
 
 struct PrefixOperation : public Expression {
     LexemType operationType;

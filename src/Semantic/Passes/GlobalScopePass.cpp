@@ -4,12 +4,16 @@
 
 #include "GlobalScopePass.hpp"
 
+#include <format>
+#include <memory>
+
 #include "AST/ASTNodes.hpp"
+#include "Diagnostic/Diagnostic.hpp"
 #include "Diagnostic/DiagnosticManager.hpp"
 #include "Misc/Stack.hpp"
+#include "Semantic/Symbol.hpp"
 #include "Semantic/SymbolContext.hpp"
 #include "Semantic/SymbolTable.hpp"
-
 
 void GlobalScopePass::analyze() {
     stackGuard();
@@ -92,7 +96,7 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
 
     node.symbolRef->startDefinition();
     for (const auto& parameter : node.parameters) {
-        const auto parameterSymbol = mContext.addSymbol<LocalVariableSymbol>(parameter->name);
+        auto* const parameterSymbol = mContext.addSymbol<LocalVariableSymbol>(parameter->name);
 
         parameterSymbol->startDefinition();
         const auto result = mContext.getSymbolTable().findSymbol(parameter->type);

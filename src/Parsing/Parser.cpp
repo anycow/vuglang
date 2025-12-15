@@ -2,13 +2,19 @@
 // If a copy of the MPL was not distributed with this file, You can obtain one at
 // https://mozilla.org/MPL/2.0/.
 
-
-#include <memory>
-
 #include "Parser.hpp"
 
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "AST/ASTNodes.hpp"
+#include "Diagnostic/Diagnostic.hpp"
 #include "Diagnostic/DiagnosticManager.hpp"
+#include "Lexing/Token.hpp"
 #include "Misc/Stack.hpp"
 
 std::unique_ptr<Node> Parser::program() {
@@ -34,7 +40,6 @@ std::unique_ptr<Declaration> Parser::declaration() {
             case LexemType::Mod:
                 return moduleDeclaration();
             case LexemType::Func:
-                return functionDeclaration();
             case LexemType::Import:
                 return functionDeclaration();
             default:

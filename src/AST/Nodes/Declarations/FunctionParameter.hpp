@@ -5,9 +5,16 @@
 #ifndef VUG_PARAMETER_HPP
 #define VUG_PARAMETER_HPP
 
-#include "AST/Nodes/Declaration.hpp"
+#include <memory>
+#include <string>
+#include <utility>
 
-#include "AST/Nodes/Expressions/Identifier.hpp"
+#include "AST/ASTWalker.hpp"
+#include "AST/Nodes/Declaration.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Symbol.hpp"
+
+struct Expression;
 
 struct FunctionParameter : public Declaration {
     std::string type;
@@ -27,7 +34,7 @@ struct FunctionParameter : public Declaration {
     }
 
     void accept(ASTWalker& walker) override {
-        return walker.visit(*this);
+        walker.visit(*this);
     }
 };
 

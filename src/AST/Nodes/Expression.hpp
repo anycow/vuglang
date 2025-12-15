@@ -5,7 +5,9 @@
 #ifndef VUG_EXPRESSION_HPP
 #define VUG_EXPRESSION_HPP
 
-#include "Node.hpp"
+#include "AST/ASTWalker.hpp"
+#include "Lexing/Token.hpp"
+#include "AST/Nodes/Node.hpp"
 
 class Type;
 class Object;
@@ -17,7 +19,7 @@ struct Expression : public Node {
         : Node(nodeType, sourceLocation) {
     }
 
-    bool isExpression() const override {
+    [[nodiscard]] bool isExpression() const override {
         return true;
     }
 

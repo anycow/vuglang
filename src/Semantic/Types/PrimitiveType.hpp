@@ -5,6 +5,9 @@
 #ifndef VUG_PRIMITIVE_TYPE_HPP
 #define VUG_PRIMITIVE_TYPE_HPP
 
+#include <string>
+#include <utility>
+
 #include "Type.hpp"
 
 class SymbolContext;
@@ -31,4 +34,3 @@ class PrimitiveType : public Type {
 };
 
 #endif  // VUG_PRIMITIVE_TYPE_HPP
-

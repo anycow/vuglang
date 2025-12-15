@@ -5,23 +5,22 @@
 #ifndef VUG_STACK_HPP
 #define VUG_STACK_HPP
 
+#include <cstdint>
+#include <cstdlib>
 #include <filesystem>
-#include <format>
 #include <iostream>
 #include <source_location>
+#include <stdexcept>
 
 thread_local inline uintptr_t stackBottom = 0;
-constexpr size_t stackEpsilon = 128 * 1024;
+constexpr size_t stackEpsilon = static_cast<const size_t>(128 * 1024);
 
 void setStackBottom();
 
 inline bool checkStackCapacity() {
     const size_t freeStack = std::abs(reinterpret_cast<intptr_t>(__builtin_frame_address(0))
                                       - static_cast<intptr_t>(stackBottom));
-    if (freeStack < stackEpsilon) {
-        return false;
-    }
-    return true;
+    return freeStack >= stackEpsilon;
 }
 
 #ifdef _WIN32

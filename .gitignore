@@ -1,5 +1,6 @@
 .*/
 *.patch
 
+.clangd
 *.exe
 *.o

@@ -5,6 +5,7 @@
 #ifndef VUG_MODULEDEFINITIONPASS_HPP
 #define VUG_MODULEDEFINITIONPASS_HPP
 
+#include "AST/ASTNodesForward.hpp"
 #include "AST/ASTWalker.hpp"
 
 class DiagnosticManager;

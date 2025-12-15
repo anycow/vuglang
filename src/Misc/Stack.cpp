@@ -6,10 +6,16 @@
 
 #ifdef _WIN32
 
+#define _WIN32_WINNT 0x0602  // NOLINT(*-reserved-identifier)
+#define NOMINMAX
+#include <windows.h>
+
 #include <processthreadsapi.h>
+#include <cstdint>
 
 void setStackBottom() {
-    uintptr_t low, high;
+    uintptr_t low{};
+    uintptr_t high{};
     GetCurrentThreadStackLimits(&low, &high);
     stackBottom = low;
 }

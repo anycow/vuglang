@@ -5,7 +5,15 @@
 #ifndef VUG_CALLFUNCTION_HPP
 #define VUG_CALLFUNCTION_HPP
 
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Symbol.hpp"
 
 struct CallFunction : public Expression {
     std::string name;

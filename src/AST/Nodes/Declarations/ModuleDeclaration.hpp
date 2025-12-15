@@ -5,9 +5,15 @@
 #ifndef VUG_MODULEDECLARATION_HPP
 #define VUG_MODULEDECLARATION_HPP
 
-#include "AST/Nodes/Declaration.hpp"
+#include <memory>
+#include <string>
+#include <utility>
 
+#include "AST/ASTWalker.hpp"
+#include "AST/Nodes/Declaration.hpp"
 #include "AST/Nodes/Declarations/DeclarationsBlock.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Symbol.hpp"
 
 struct ModuleDeclaration : public Declaration {
     std::string name;
@@ -28,7 +34,7 @@ struct ModuleDeclaration : public Declaration {
     }
 
     void accept(ASTWalker& walker) override {
-        return walker.visit(*this);
+        walker.visit(*this);
     }
 };
 

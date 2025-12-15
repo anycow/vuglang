@@ -5,14 +5,10 @@
 #ifndef VUG_NODE_HPP
 #define VUG_NODE_HPP
 
-#include <memory>
-#include <string>
-#include <vector>
+#include <stdexcept>
 
-#include "AST/ASTNodesForward.hpp"
 #include "AST/ASTWalker.hpp"
 #include "Lexing/Token.hpp"
-#include "Semantic/Symbol.hpp"
 
 struct Node {
     enum class Kind {
@@ -48,8 +44,12 @@ struct Node {
     const SourceLocation sourceLocation;
 
     virtual ~Node() = default;
+    Node(const Node& other) = default;
+    Node(Node&& other) noexcept = default;
+    Node& operator=(const Node& other) = delete;
+    Node& operator=(Node&& other) noexcept = delete;
 
-    virtual void accept(ASTWalker& walker) {
+    virtual void accept([[maybe_unused]] ASTWalker& walker) {
         throw std::logic_error("Not implemented");
     }
 

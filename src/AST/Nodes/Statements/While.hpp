@@ -5,8 +5,14 @@
 #ifndef VUG_WHILE_HPP
 #define VUG_WHILE_HPP
 
+#include <memory>
+#include <utility>
+
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
+#include "AST/Nodes/Statement.hpp"
 #include "AST/Nodes/Statements/StatementsBlock.hpp"
+#include "Lexing/Token.hpp"
 
 struct While : public Statement {
     std::unique_ptr<Expression> condition;

@@ -4,6 +4,11 @@
 
 #include "SymbolContext.hpp"
 
+#include <memory>
+#include <string>
+#include <utility>
+
+#include "Semantic/Symbol.hpp"
 #include "Semantic/SymbolTable.hpp"
 #include "Semantic/Types/BooleanType.hpp"
 #include "Semantic/Types/IntegerType.hpp"

@@ -5,8 +5,10 @@
 #ifndef VUG_DIAGNOSTIC_HPP
 #define VUG_DIAGNOSTIC_HPP
 
+#include <cstdint>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "Lexing/Token.hpp"
 
@@ -43,7 +45,7 @@ class DiagnosticFix {
 // TODO! use builder pattern
 class DiagnosticMessage {
    public:
-    enum class Severity { Fatal, Error, Warning, Hint, Info };
+    enum class Severity : uint8_t { Fatal, Error, Warning, Hint, Info };
 
     constexpr explicit DiagnosticMessage(const Severity severity,
                                          std::string message,

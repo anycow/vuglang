@@ -5,11 +5,15 @@
 #ifndef VUG_LOCALVARIABLEDECLARATION_HPP
 #define VUG_LOCALVARIABLEDECLARATION_HPP
 
+#include <memory>
+#include <string>
 #include <utility>
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
 #include "AST/Nodes/Statement.hpp"
-#include "Semantic/Types/Type.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Symbol.hpp"
 
 struct LocalVariableDeclaration : public Statement {
     std::string type;

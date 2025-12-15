@@ -5,8 +5,8 @@
 #ifndef VUG_GLOBALSCOPEPASS_HPP
 #define VUG_GLOBALSCOPEPASS_HPP
 
+#include "AST/ASTNodesForward.hpp"
 #include "AST/ASTWalker.hpp"
-
 
 class DiagnosticManager;
 class SymbolContext;

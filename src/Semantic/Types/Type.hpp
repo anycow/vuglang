@@ -5,9 +5,10 @@
 #ifndef VUG_TYPE_HPP
 #define VUG_TYPE_HPP
 
+#include <string>
 #include <utility>
 
-#include "Lexing/Lexer.hpp"
+#include "Lexing/Token.hpp"
 
 class SymbolContext;
 class Type;
@@ -44,6 +45,10 @@ class Type {
     }
 
     virtual ~Type() = default;
+    Type(const Type&) = default;
+    Type& operator=(const Type&) = delete;
+    Type(Type&&) = default;
+    Type& operator=(Type&&) = delete;
 
     [[nodiscard]] virtual OperationResultType binaryOperationType(LexemType opType,
                                                                   const Type& rhs) const

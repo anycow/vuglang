@@ -14,4 +14,3 @@ PrimitiveType& PrimitiveType::getPrimitive() {
 const PrimitiveType& PrimitiveType::getPrimitive() const {
     return *this;
 }
-

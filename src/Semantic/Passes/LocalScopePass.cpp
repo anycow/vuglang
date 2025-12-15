@@ -4,9 +4,14 @@
 
 #include "LocalScopePass.hpp"
 
+#include <cstddef>
+#include <format>
+
 #include "AST/ASTNodes.hpp"
+#include "Diagnostic/Diagnostic.hpp"
 #include "Diagnostic/DiagnosticManager.hpp"
 #include "Misc/Stack.hpp"
+#include "Semantic/Symbol.hpp"
 #include "Semantic/SymbolContext.hpp"
 #include "Semantic/SymbolTable.hpp"
 #include "Semantic/Types/Type.hpp"
@@ -302,7 +307,7 @@ void LocalScopePass::visit(LocalVariableDeclaration& node) {
         return;
     }
 
-    const auto symbol = mContext.addSymbol<LocalVariableSymbol>(node.name);
+    auto* const symbol = mContext.addSymbol<LocalVariableSymbol>(node.name);
     symbol->setTypeSymbol(static_cast<TypeSymbol*>(&typeFindResult.value()->symbol));
     node.symbolRef = symbol;
 

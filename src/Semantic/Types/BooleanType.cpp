@@ -4,7 +4,8 @@
 
 #include "BooleanType.hpp"
 
-#include "Type.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Types/Type.hpp"
 
 OperationResultType BooleanType::binaryOperationType(const LexemType opType,
                                                      const Type& rhs) const {

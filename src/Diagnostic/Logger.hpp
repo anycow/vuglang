@@ -6,10 +6,11 @@
 #define VUG_LOGGER_HPP
 
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
-enum class LogLevel : uint32_t {
+enum class LogLevel : uint8_t {
     Fatal,
     Error,
     Warning,
@@ -28,7 +29,7 @@ class Logger {
             std::cout << levelToString(Level) << ": " << message << std::endl;
 
             if constexpr (Level == LogLevel::Fatal) {
-                std::exit(EXIT_FAILURE);
+                std::abort();
             }
         }
     }

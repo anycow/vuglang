@@ -4,16 +4,31 @@
 
 #include "LLVMCodegen.hpp"
 
+#include <llvm/Analysis/CGSCCPassManager.h>
+#include <llvm/Analysis/LoopAnalysisManager.h>
+#include <llvm/CodeGen/MachineFunctionAnalysisManager.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/PassManager.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/MC/TargetRegistry.h>
+#include <llvm/Passes/OptimizationLevel.h>
 #include <llvm/Passes/PassBuilder.h>
+#include <llvm/Support/CodeGen.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/raw_ostream.h>
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/TargetParser/Host.h>
+#include <llvm/TargetParser/Triple.h>
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <system_error>
 
-#include "AST/ASTNodes.hpp"
+#include "AST/Nodes/Declarations/ModuleDeclaration.hpp"
+#include "AST/Nodes/Node.hpp"
 #include "Codegen/LLVMDeclarationCodegen.hpp"
 #include "Codegen/LLVMDefinitionCodegen.hpp"
 #include "Misc/Stack.hpp"
@@ -32,15 +47,15 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
 
     auto targetTriple = llvm::Triple(llvm::sys::getDefaultTargetTriple());
     std::string error;
-    auto target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
+    const auto* target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
     if (!target) {
         std::cerr << error;
         std::abort();
     }
 
-    auto cpu = "generic";
-    auto features = "";
-    llvm::TargetOptions opt;
+    const auto* cpu = "generic";
+    const auto* features = "";
+    const llvm::TargetOptions opt;
     auto* targetMachine
         = target->createTargetMachine(targetTriple, cpu, features, opt, llvm::Reloc::Static);
     mModule->setTargetTriple(targetTriple);
@@ -97,10 +112,10 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
 
     modulePassManager.run(*mModule, moduleAnalysisManager);
 
-    std::error_code ec;
-    llvm::raw_fd_ostream dest("output.o", ec, llvm::sys::fs::OF_None);
-    if (ec) {
-        std::cerr << "Could not open file: " << ec.message() << "\n";
+    std::error_code errorCode;
+    llvm::raw_fd_ostream dest("output.o", errorCode, llvm::sys::fs::OF_None);
+    if (errorCode) {
+        std::cerr << "Could not open file: " << errorCode.message() << "\n";
         std::abort();
     }
 

@@ -8,7 +8,9 @@
 #include <string>
 #include <utility>
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
+#include "Lexing/Token.hpp"
 
 struct Number : public Expression {
     std::string number;

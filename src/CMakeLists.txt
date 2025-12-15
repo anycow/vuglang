@@ -1,5 +1,4 @@
 add_executable(Vug Main.cpp)
-target_precompile_headers(Vug PRIVATE pch.hpp)
 
 add_subdirectory(AST)
 add_subdirectory(Codegen)

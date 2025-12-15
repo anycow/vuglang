@@ -7,8 +7,8 @@
 
 #include <stack>
 
+#include "AST/ASTNodesForward.hpp"
 #include "AST/ASTWalker.hpp"
-
 
 class DiagnosticManager;
 class SymbolContext;

@@ -5,7 +5,9 @@
 #ifndef VUG_DECLARATION_HPP
 #define VUG_DECLARATION_HPP
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Node.hpp"
+#include "Lexing/Token.hpp"
 
 class Symbol;
 
@@ -14,7 +16,7 @@ struct Declaration : public Node {
         : Node(nodeType, sourceLocation) {
     }
 
-    bool isDeclaration() const override {
+    [[nodiscard]] bool isDeclaration() const override {
         return true;
     }
 

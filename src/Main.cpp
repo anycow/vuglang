@@ -6,11 +6,15 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "Codegen/LLVMCodegen.hpp"
+#include "Diagnostic/Diagnostic.hpp"
 #include "Diagnostic/DiagnosticManager.hpp"
 #include "Diagnostic/Logger.hpp"
 #include "Lexing/Lexer.hpp"
+#include "Lexing/Token.hpp"
 #include "Misc/Printer.hpp"
 #include "Misc/SourceManager.hpp"
 #include "Misc/Stack.hpp"

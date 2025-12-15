@@ -7,6 +7,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "AST/ASTNodesForward.hpp"
@@ -56,7 +57,7 @@ class Symbol {
         mState = State::Complete;
     }
 
-   protected:
+   private:
     const Kind mKind;
     State mState;
     std::string mName;
@@ -68,7 +69,7 @@ class ModuleSymbol : public Symbol {
         : Symbol(Kind::Module, std::move(name)) {
     }
 
-    std::vector<Symbol*> findMember(const std::string& name) const {
+    [[nodiscard]] std::vector<Symbol*> findMember(const std::string& name) const {
         const auto range = mMembers.equal_range(name);
         std::vector<Symbol*> result;
 
@@ -82,7 +83,7 @@ class ModuleSymbol : public Symbol {
         mMembers.insert(std::make_pair(symbol.getName(), &symbol));
     }
 
-   protected:
+   private:
     std::unordered_multimap<std::string, Symbol*> mMembers;
 };
 
@@ -99,7 +100,7 @@ class TypeSymbol : public Symbol {
         mType = type;
     }
 
-   protected:
+   private:
     Type* mType{nullptr};
 };
 
@@ -116,7 +117,7 @@ class LocalVariableSymbol : public Symbol {
         mTypeSymbol = type;
     }
 
-   protected:
+   private:
     TypeSymbol* mTypeSymbol{nullptr};
 };
 
@@ -147,7 +148,7 @@ class FunctionSymbol : public Symbol {
         mTypeSymbol = type;
     }
 
-   protected:
+   private:
     std::vector<LocalVariableSymbol*> mArguments;
     TypeSymbol* mTypeSymbol{nullptr};
     StatementsBlock* mDefinition{nullptr};

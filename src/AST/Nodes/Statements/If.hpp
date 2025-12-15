@@ -5,10 +5,14 @@
 #ifndef VUG_IF_HPP
 #define VUG_IF_HPP
 
-#include "AST/Nodes/Statement.hpp"
+#include <memory>
+#include <utility>
 
+#include "AST/ASTWalker.hpp"
+#include "AST/Nodes/Statement.hpp"
 #include "AST/Nodes/Expression.hpp"
-#include "StatementsBlock.hpp"
+#include "Lexing/Token.hpp"
+#include "AST/Nodes/Statements/StatementsBlock.hpp"
 
 struct If : public Statement {
     std::unique_ptr<Expression> condition;

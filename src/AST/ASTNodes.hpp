@@ -5,29 +5,31 @@
 #ifndef VUG_ASTNODES_HPP
 #define VUG_ASTNODES_HPP
 
-#include "AST/Nodes/Node.hpp"
+// For some reason, in clangd, "IWYU pragma: begin_exports" doesn't work properly.
 
-#include "AST/Nodes/Declaration.hpp"
-#include "AST/Nodes/Declarations/DeclarationsBlock.hpp"
-#include "AST/Nodes/Declarations/FunctionDeclaration.hpp"
-#include "AST/Nodes/Declarations/FunctionParameter.hpp"
-#include "AST/Nodes/Declarations/ModuleDeclaration.hpp"
+#include "AST/Nodes/Node.hpp"  // IWYU pragma: export
 
-#include "AST/Nodes/Expression.hpp"
-#include "AST/Nodes/Expressions/BinaryOperation.hpp"
-#include "AST/Nodes/Expressions/CallFunction.hpp"
-#include "AST/Nodes/Expressions/Identifier.hpp"
-#include "AST/Nodes/Expressions/Number.hpp"
-#include "AST/Nodes/Expressions/PrefixOperation.hpp"
+#include "AST/Nodes/Declaration.hpp"                       // IWYU pragma: export
+#include "AST/Nodes/Declarations/DeclarationsBlock.hpp"    // IWYU pragma: export
+#include "AST/Nodes/Declarations/FunctionDeclaration.hpp"  // IWYU pragma: export
+#include "AST/Nodes/Declarations/FunctionParameter.hpp"    // IWYU pragma: export
+#include "AST/Nodes/Declarations/ModuleDeclaration.hpp"    // IWYU pragma: export
 
-#include "AST/Nodes/Statement.hpp"
-#include "AST/Nodes/Statements/Assign.hpp"
-#include "AST/Nodes/Statements/Break.hpp"
-#include "AST/Nodes/Statements/ExpressionStatement.hpp"
-#include "AST/Nodes/Statements/If.hpp"
-#include "AST/Nodes/Statements/LocalVariableDeclaration.hpp"
-#include "AST/Nodes/Statements/Return.hpp"
-#include "AST/Nodes/Statements/StatementsBlock.hpp"
-#include "AST/Nodes/Statements/While.hpp"
+#include "AST/Nodes/Expression.hpp"                   // IWYU pragma: export
+#include "AST/Nodes/Expressions/BinaryOperation.hpp"  // IWYU pragma: export
+#include "AST/Nodes/Expressions/CallFunction.hpp"     // IWYU pragma: export
+#include "AST/Nodes/Expressions/Identifier.hpp"       // IWYU pragma: export
+#include "AST/Nodes/Expressions/Number.hpp"           // IWYU pragma: export
+#include "AST/Nodes/Expressions/PrefixOperation.hpp"  // IWYU pragma: export
+
+#include "AST/Nodes/Statement.hpp"                            // IWYU pragma: export
+#include "AST/Nodes/Statements/Assign.hpp"                    // IWYU pragma: export
+#include "AST/Nodes/Statements/Break.hpp"                     // IWYU pragma: export
+#include "AST/Nodes/Statements/ExpressionStatement.hpp"       // IWYU pragma: export
+#include "AST/Nodes/Statements/If.hpp"                        // IWYU pragma: export
+#include "AST/Nodes/Statements/LocalVariableDeclaration.hpp"  // IWYU pragma: export
+#include "AST/Nodes/Statements/Return.hpp"                    // IWYU pragma: export
+#include "AST/Nodes/Statements/StatementsBlock.hpp"           // IWYU pragma: export
+#include "AST/Nodes/Statements/While.hpp"                     // IWYU pragma: export
 
 #endif  // VUG_ASTNODES_HPP

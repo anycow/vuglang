@@ -5,9 +5,14 @@
 #ifndef VUG_ASSIGN_HPP
 #define VUG_ASSIGN_HPP
 
-#include "AST/Nodes/Statement.hpp"
+#include <memory>
+#include <string>
+#include <utility>
 
-#include "AST/Nodes/Expressions/Identifier.hpp"
+#include "AST/ASTWalker.hpp"
+#include "AST/Nodes/Expression.hpp"
+#include "AST/Nodes/Statement.hpp"
+#include "Lexing/Token.hpp"
 
 class LocalVariableSymbol;
 

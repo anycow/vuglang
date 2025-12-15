@@ -5,8 +5,13 @@
 #ifndef VUG_RETURN_HPP
 #define VUG_RETURN_HPP
 
+#include <memory>
+#include <utility>
+
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
 #include "AST/Nodes/Statement.hpp"
+#include "Lexing/Token.hpp"
 
 struct Return : public Statement {
     std::unique_ptr<Expression> returnExpression;

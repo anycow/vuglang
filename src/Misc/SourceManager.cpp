@@ -4,6 +4,9 @@
 
 #include "SourceManager.hpp"
 
+#include <string>
+#include <utility>
+
 void SourceManager::insertSourceFile(SourceFile file) {
     mFiles.insert({file.getName(), std::move(file)});
 }

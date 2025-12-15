@@ -5,7 +5,13 @@
 #ifndef VUG_INTEGER_TYPE_HPP
 #define VUG_INTEGER_TYPE_HPP
 
-#include "PrimitiveType.hpp"
+#include <cstdint>
+#include <string>
+#include <utility>
+
+#include "Lexing/Token.hpp"
+#include "Semantic/Types/PrimitiveType.hpp"
+#include "Semantic/Types/Type.hpp"
 
 class SymbolContext;
 
@@ -41,4 +47,3 @@ class IntegerType : public PrimitiveType {
 };
 
 #endif  // VUG_INTEGER_TYPE_HPP
-

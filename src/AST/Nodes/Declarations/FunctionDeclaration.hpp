@@ -5,12 +5,17 @@
 #ifndef VUG_FUNCTIONDECLARATION_HPP
 #define VUG_FUNCTIONDECLARATION_HPP
 
-#include "AST/Nodes/Declaration.hpp"
-
+#include <memory>
+#include <string>
 #include <utility>
+#include <vector>
 
+#include "AST/ASTWalker.hpp"
+#include "AST/Nodes/Declaration.hpp"
 #include "AST/Nodes/Declarations/FunctionParameter.hpp"
 #include "AST/Nodes/Statements/StatementsBlock.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Symbol.hpp"
 
 struct FunctionDeclaration : public Declaration {
     std::string name;
@@ -37,7 +42,7 @@ struct FunctionDeclaration : public Declaration {
     }
 
     void accept(ASTWalker& walker) override {
-        return walker.visit(*this);
+        walker.visit(*this);
     }
 };
 

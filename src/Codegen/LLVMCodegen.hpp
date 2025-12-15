@@ -6,9 +6,13 @@
 #define VUG_LLVMCODEGEN_HPP
 
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/Type.h>
 #include <memory>
+#include <string>
+#include <unordered_map>
 
 #include "AST/ASTNodesForward.hpp"
 

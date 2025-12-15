@@ -5,8 +5,13 @@
 #ifndef VUG_EXPRESSIONSTATEMENT_HPP
 #define VUG_EXPRESSIONSTATEMENT_HPP
 
+#include <memory>
+#include <utility>
+
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
 #include "AST/Nodes/Statement.hpp"
+#include "Lexing/Token.hpp"
 
 struct ExpressionStatement : public Statement {
     std::unique_ptr<Expression> expression;

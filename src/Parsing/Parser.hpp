@@ -5,12 +5,15 @@
 #ifndef VUG_PARSER_HPP
 #define VUG_PARSER_HPP
 
+#include <cstdint>
+#include <exception>
 #include <memory>
 #include <utility>
 
 #include "AST/ASTNodesForward.hpp"
 #include "Diagnostic/Diagnostic.hpp"
 #include "Lexing/Lexer.hpp"
+#include "Lexing/Token.hpp"
 
 class DiagnosticManager;
 
@@ -44,7 +47,6 @@ class Parser {
     std::unique_ptr<Statement> varAssignOrExpr();
     std::unique_ptr<StatementsBlock> stmtBlock();
 
-    std::unique_ptr<Expression> functionCall();
     std::unique_ptr<Expression> expr();
     std::unique_ptr<Expression> logicOr();
     std::unique_ptr<Expression> logicAnd();

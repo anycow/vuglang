@@ -4,6 +4,11 @@
 
 #include "SymbolTable.hpp"
 
+#include <string>
+
+#include "Misc/Result.hpp"
+#include "Semantic/Symbol.hpp"
+
 Result<void, SymbolTable::InsertError> SymbolTable::insertSymbol(Symbol& symbol,
                                                                  const bool canShadowed) {
     auto& record = mScopes.top().emplace_back(symbol, getDepth(), canShadowed);
@@ -12,7 +17,7 @@ Result<void, SymbolTable::InsertError> SymbolTable::insertSymbol(Symbol& symbol,
     if (it == mNames.end()) {
         mNames.insert({record.symbol.getName(), &record});
     } else {
-        auto shadowedRecord = it->second;
+        const auto* shadowedRecord = it->second;
 
         if (shadowedRecord->depth != record.depth) {
             if (shadowedRecord->canShadowed) {

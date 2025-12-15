@@ -6,8 +6,12 @@
 #define VUG_IDENTIFIER_HPP
 
 #include <string>
+#include <utility>
 
+#include "AST/ASTWalker.hpp"
 #include "AST/Nodes/Expression.hpp"
+#include "Lexing/Token.hpp"
+#include "Semantic/Symbol.hpp"
 
 struct Identifier : public Expression {
     std::string name;

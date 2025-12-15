@@ -4,6 +4,13 @@
 
 #include "DiagnosticManager.hpp"
 
+#include <cctype>
+#include <cstddef>
+#include <cstdint>
+#include <iomanip>
+#include <iostream>
+
+#include "Diagnostic/Diagnostic.hpp"
 #include "Misc/SourceManager.hpp"
 
 void DiagnosticManager::report(const Diagnostic& diagnostic) {
@@ -37,7 +44,7 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
 
                         size_t start = 0;
                         for (; start < line.size()
-                               && std::isspace(static_cast<unsigned char>(line[start]));
+                               && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
                         }
 
@@ -53,7 +60,7 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
                         auto line = diff.sourceFile.getLine(diff.sourceLine);
                         size_t start = 0;
                         for (; start < line.size()
-                               && std::isspace(static_cast<unsigned char>(line[start]));
+                               && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
                         }
                         std::cout << "-" << std::setw(3) << diff.sourceLine << "| "
@@ -64,7 +71,7 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
                         auto line = diff.newString;
                         size_t start = 0;
                         for (; start < line.size()
-                               && std::isspace(static_cast<unsigned char>(line[start]));
+                               && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
                         }
                         std::cout << "+" << std::setw(3) << diff.sourceLine << "| "

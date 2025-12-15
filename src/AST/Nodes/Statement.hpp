@@ -5,14 +5,16 @@
 #ifndef VUG_STATEMENT_HPP
 #define VUG_STATEMENT_HPP
 
-#include "Node.hpp"
+#include "AST/ASTWalker.hpp"
+#include "AST/Nodes/Node.hpp"
+#include "Lexing/Token.hpp"
 
 struct Statement : public Node {
     Statement(const Kind nodeType, const SourceLocation& sourceLocation)
         : Node(nodeType, sourceLocation) {
     }
 
-    bool isStatement() const override {
+    [[nodiscard]] bool isStatement() const override {
         return true;
     }
 };

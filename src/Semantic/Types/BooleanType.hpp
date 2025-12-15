@@ -5,7 +5,12 @@
 #ifndef VUG_BOOLEAN_TYPE_HPP
 #define VUG_BOOLEAN_TYPE_HPP
 
-#include "PrimitiveType.hpp"
+#include <string>
+#include <utility>
+
+#include "Lexing/Token.hpp"
+#include "Semantic/Types/PrimitiveType.hpp"
+#include "Semantic/Types/Type.hpp"
 
 class SymbolContext;
 

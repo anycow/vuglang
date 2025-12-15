@@ -5,13 +5,14 @@
 #ifndef VUG_LEXER_HPP
 #define VUG_LEXER_HPP
 
+#include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
-#include "Diagnostic/Logger.hpp"
 #include "Misc/SourceManager.hpp"
-#include "Token.hpp"
+#include "Lexing/Token.hpp"
 
 class Lexer {
    public:
@@ -43,18 +44,18 @@ class Lexer {
     char peek() {
         ++mPos;
         ++mColumn;
-        if (mPos <= static_cast<int64_t>(mSource.getText().size())) {
+        if (std::cmp_less_equal(mPos ,mSource.getText().size())) {
             return mSource.getText()[mPos - 1];
         }
         return '\0';
     }
     [[nodiscard]] char peekCurrent() const {
-        if (mPos <= static_cast<int64_t>(mSource.getText().size())) {
+        if (std::cmp_less_equal(mPos ,mSource.getText().size())) {
             return mSource.getText()[mPos - 1];
         }
         return '\0';
     }
-    inline int64_t getPrevPos() const {
+    [[nodiscard]] int64_t getPrevPos() const {
         return mPos - 1;
     }
 

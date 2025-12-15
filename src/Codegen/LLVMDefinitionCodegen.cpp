@@ -4,8 +4,18 @@
 
 #include "LLVMDefinitionCodegen.hpp"
 
+#include <llvm/ADT/APInt.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Value.h>
+#include <cstddef>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+
 #include "AST/ASTNodes.hpp"
 #include "Codegen/LLVMCodegen.hpp"
+#include "Lexing/Token.hpp"
 #include "Misc/Stack.hpp"
 #include "Semantic/Types/IntegerType.hpp"
 
@@ -312,7 +322,8 @@ llvm::Value* LLVMDefinitionCodegen::emit(const CallFunction& node) {
     auto* function = getFunctions()[node.symbolRef];
 
     std::vector<llvm::Value*> arguments;
-    for (auto& expression : node.arguments) {
+    arguments.reserve(node.arguments.size());
+    for (const auto& expression : node.arguments) {
         arguments.emplace_back(emit(*expression));
     }
     return getBuilder().CreateCall(function, arguments);
@@ -445,7 +456,7 @@ void LLVMDefinitionCodegen::emit(const While& node) {
     setBlock(conditionBlock);
     getBuilder().CreateCondBr(emit(*node.condition), bodyBlock, mergeBlock);
 
-    mCycles.push(CycleInfo(mergeBlock));
+    mCycles.emplace(mergeBlock);
     setBlock(bodyBlock);
     emit(*node.body);
     getBuilder().CreateBr(conditionBlock);

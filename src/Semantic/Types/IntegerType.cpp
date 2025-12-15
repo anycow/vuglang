@@ -4,8 +4,9 @@
 
 #include "IntegerType.hpp"
 
+#include "Lexing/Token.hpp"
 #include "Semantic/SymbolContext.hpp"
-#include "Type.hpp"
+#include "Semantic/Types/Type.hpp"
 
 OperationResultType IntegerType::binaryOperationType(const LexemType opType,
                                                      const Type& rhs) const {
@@ -57,4 +58,3 @@ IntegerType& IntegerType::getInteger() {
 const IntegerType& IntegerType::getInteger() const {
     return *this;
 }
-
