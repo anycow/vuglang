@@ -37,11 +37,6 @@
 
 std::string LLVMCodegen::emit(const std::string& fileName) {
     stackGuard();
-    llvm::InitializeAllTargetInfos();
-    llvm::InitializeAllTargets();
-    llvm::InitializeAllTargetMCs();
-    llvm::InitializeAllAsmParsers();
-    llvm::InitializeAllAsmPrinters();
 
     mModule->setSourceFileName(fileName);
 

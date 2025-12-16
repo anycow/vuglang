@@ -2,6 +2,8 @@
 // If a copy of the MPL was not distributed with this file, You can obtain one at
 // https://mozilla.org/MPL/2.0/.
 
+#include <llvm/Support/ManagedStatic.h>
+#include <llvm/Support/TargetSelect.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -28,6 +30,12 @@
 int main(int argc, char* argv[]) {
     setStackBottom();
     auto diag = Logger<LogLevel::Verbose>();
+
+    llvm::InitializeAllTargetInfos();
+    llvm::InitializeAllTargets();
+    llvm::InitializeAllTargetMCs();
+    llvm::InitializeAllAsmParsers();
+    llvm::InitializeAllAsmPrinters();
 
     std::string input;
 
@@ -78,5 +86,7 @@ int main(int argc, char* argv[]) {
 
     LLVMCodegen codegen(*ast, context);
     std::cout << codegen.emit(file.getName()) << std::endl;
+
+    llvm::llvm_shutdown();
     return 0;
 }
