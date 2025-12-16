@@ -133,9 +133,10 @@ void LLVMDefinitionCodegen::emit(const FunctionDeclaration& node) {
         if (lastBlock->empty()) {
             if (&function->getEntryBlock() != lastBlock && lastBlock->use_empty()) {
                 lastBlock->eraseFromParent();
+                lastBlock = nullptr;
             }
         }
-        if (!lastBlock->getTerminator()) {
+        if (lastBlock && !lastBlock->getTerminator()) {
             getBuilder().CreateRet(llvm::PoisonValue::get(function->getReturnType()));
         }
         getBuilder().ClearInsertionPoint();
