@@ -40,6 +40,12 @@ class Symbol {
           mName(std::move(name)) {
     }
 
+    virtual ~Symbol() = default;
+    Symbol(const Symbol&) = default;
+    Symbol(Symbol&&) = default;
+    Symbol& operator=(const Symbol&) = delete;
+    Symbol& operator=(Symbol&&) = delete;
+
     [[nodiscard]] constexpr Kind getKind() const {
         return mKind;
     }
