@@ -49,7 +49,7 @@ std::unique_ptr<Declaration> Parser::declaration() {
         mDiagnosticManager.report(exception.getDiagnostic());
 
         int64_t level = 0;
-        while (true) {
+        while (mCurrent != LexemType::EndOfFile) {
             if (mCurrent == LexemType::LeftCurlyBracket) {
                 level++;
             } else if (mCurrent == LexemType::RightCurlyBracket) {
