@@ -284,10 +284,12 @@ Token Lexer::getToken() {
                 return {LexemType::EndOfFile, SourceLocation()};
 
             default:
-                if (c >= '0' && c <= '9') {
+                if (std::isdigit(c) != 0) {
                     return getNumber(c);
-                } else {
+                } else if ((std::isalpha(c) != 0) || (c == '_')) {
                     return getIdentifier(c);
+                } else {
+                    throw std::logic_error("Bad lexing");
                 }
         }
     }
@@ -359,7 +361,7 @@ Token Lexer::getIdentifier(const char firstChar) {
     while (true) {
         const char character = peek();
 
-        if ((std::isalpha(character) == 0) && (std::isdigit(character) == 0)) {
+        if ((std::isalnum(character) == 0) && (character != '_')) {
             mPos--;
             mColumn--;
             break;
