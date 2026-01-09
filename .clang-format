@@ -9,6 +9,7 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ColumnLimit: 100
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
 AllowShortLoopsOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Never
@@ -24,4 +25,5 @@ InsertNewlineAtEOF: true
 
 AlignAfterOpenBracket: Align
 MaxEmptyLinesToKeep: 2
-BreakBeforeBinaryOperators: All
+BreakBinaryOperations: OnePerLine
+BreakBeforeBinaryOperators: true

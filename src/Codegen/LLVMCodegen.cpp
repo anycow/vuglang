@@ -6,6 +6,7 @@
 
 #include <llvm/Analysis/CGSCCPassManager.h>
 #include <llvm/Analysis/LoopAnalysisManager.h>
+#include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/CodeGen/MachineFunctionAnalysisManager.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -25,7 +26,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <system_error>
 
 #include "AST/Nodes/Declarations/ModuleDeclaration.hpp"
 #include "AST/Nodes/Node.hpp"
@@ -35,26 +35,37 @@
 #include "Semantic/SymbolContext.hpp"
 #include "Semantic/Types/IntegerType.hpp"
 
-std::string LLVMCodegen::emit(const std::string& fileName) {
+void LLVMCodegen::emit() {
     stackGuard();
 
-    mModule->setSourceFileName(fileName);
+    mModule->setSourceFileName(mInputName);
 
-    auto targetTriple = llvm::Triple(llvm::sys::getDefaultTargetTriple());
     std::string error;
-    const auto* target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
-    if (!target) {
+    mTarget = llvm::TargetRegistry::lookupTarget(mTargetTriple, error);
+    if (!mTarget) {
         std::cerr << error;
         std::abort();
     }
 
-    const auto* cpu = "generic";
-    const auto* features = "";
-    const llvm::TargetOptions opt;
-    auto* targetMachine
-        = target->createTargetMachine(targetTriple, cpu, features, opt, llvm::Reloc::Static);
-    mModule->setTargetTriple(targetTriple);
-    mModule->setDataLayout(targetMachine->createDataLayout());
+    const llvm::TargetOptions targetOptions;
+    mTargetMachine = mTarget->createTargetMachine(
+        mTargetTriple,
+        mCodegenOptions.cpu,
+        mCodegenOptions.features,
+        targetOptions,
+        (mCodegenOptions.picLevel == 0) ? llvm::Reloc::Static : llvm::Reloc::PIC_,
+        mCodegenOptions.codeModel,
+        *llvm::CodeGenOpt::getLevel(
+            static_cast<int>(mCodegenOptions.optimizationLevel.getSpeedupLevel())));
+    mModule->setTargetTriple(mTargetTriple);
+    mModule->setDataLayout(mTargetMachine->createDataLayout());
+    mModule->setPICLevel(mCodegenOptions.picLevel);
+    mModule->setPIELevel(mCodegenOptions.pieLevel);
+
+    llvm::TargetLibraryInfoImpl targetLibraryInfo(mTargetTriple);
+    if (!mCodegenOptions.hasBuiltin) {
+        targetLibraryInfo.disableAllFunctions();
+    }
 
     for (auto& symbol : mSymbolContext.getSignedIntegerTypeSymbols()) {
         mTypes.emplace(
@@ -79,9 +90,9 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
     LLVMDefinitionCodegen definitionCodegen(*this);
     definitionCodegen.emit(static_cast<const ModuleDeclaration&>(mAST));
 
-    if (llvm::verifyModule(*mModule, &llvm::errs())) {
+    if (mCodegenOptions.verify && llvm::verifyModule(*mModule, &llvm::errs())) {
         llvm::errs() << "Module verification failed.\n";
-        std::abort();
+        std::exit(-1);
     }
 
     llvm::MachineFunctionAnalysisManager machineFunctionAnalysisManager;
@@ -89,7 +100,10 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
     llvm::FunctionAnalysisManager functionAnalysisManager;
     llvm::CGSCCAnalysisManager cgsccAnalysisManager;
     llvm::ModuleAnalysisManager moduleAnalysisManager;
-    llvm::PassBuilder passBuilder(targetMachine);
+    llvm::PassBuilder passBuilder(mTargetMachine);
+    functionAnalysisManager.registerPass([&] {
+        return llvm::TargetLibraryAnalysis(targetLibraryInfo);
+    });
     passBuilder.registerMachineFunctionAnalyses(machineFunctionAnalysisManager);
     passBuilder.registerFunctionAnalyses(functionAnalysisManager);
     passBuilder.registerLoopAnalyses(loopAnalysisManager);
@@ -101,34 +115,8 @@ std::string LLVMCodegen::emit(const std::string& fileName) {
                                      moduleAnalysisManager,
                                      &machineFunctionAnalysisManager);
 
-
     llvm::ModulePassManager modulePassManager
-        = passBuilder.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O2);
+        = passBuilder.buildPerModuleDefaultPipeline(mCodegenOptions.optimizationLevel);
 
     modulePassManager.run(*mModule, moduleAnalysisManager);
-
-    std::error_code errorCode;
-    llvm::raw_fd_ostream dest("output.o", errorCode, llvm::sys::fs::OF_None);
-    if (errorCode) {
-        std::cerr << "Could not open file: " << errorCode.message() << "\n";
-        std::abort();
-    }
-
-    llvm::legacy::PassManager emitPass;
-    if (targetMachine->addPassesToEmitFile(emitPass,
-                                           dest,
-                                           nullptr,
-                                           llvm::CodeGenFileType::ObjectFile)) {
-        std::cerr << "TargetMachine can't emit a file\n";
-        std::abort();
-    }
-
-    emitPass.run(*mModule);
-    dest.flush();
-
-    std::string moduleString;
-    llvm::raw_string_ostream stream(moduleString);
-    mModule->print(stream, nullptr);
-
-    return moduleString;
 }
