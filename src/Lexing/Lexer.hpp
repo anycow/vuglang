@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "Misc/SourceManager.hpp"
 #include "Lexing/Token.hpp"
+#include "Misc/SourceManager.hpp"
 
 class Lexer {
    public:
@@ -44,13 +44,13 @@ class Lexer {
     char peek() {
         ++mPos;
         ++mColumn;
-        if (std::cmp_less_equal(mPos ,mSource.getText().size())) {
+        if (std::cmp_less_equal(mPos, mSource.getText().size())) {
             return mSource.getText()[mPos - 1];
         }
         return '\0';
     }
     [[nodiscard]] char peekCurrent() const {
-        if (std::cmp_less_equal(mPos ,mSource.getText().size())) {
+        if (std::cmp_less_equal(mPos, mSource.getText().size())) {
             return mSource.getText()[mPos - 1];
         }
         return '\0';

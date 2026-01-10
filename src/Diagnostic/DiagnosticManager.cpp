@@ -34,8 +34,11 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
         }
 
         if (message.getSeverity() <= mRequiredSeverity) {
-            std::cout << severityToString(message.getSeverity()) << ": " << message.getMessage()
-                      << std::endl;
+            std::cout
+                << severityToString(message.getSeverity())
+                << ": "
+                << message.getMessage()
+                << std::endl;
 
             for (const auto& code : message.getRelatedCode()) {
                 if (code.isValid()) {
@@ -43,7 +46,7 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
                         auto line = code.getSourceFile()->getLine(i);
 
                         size_t start = 0;
-                        for (; start < line.size()
+                        for (; (start < line.size())
                                && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
                         }
@@ -59,23 +62,33 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
                     for (const auto& diff : fix.getDiffs()) {
                         auto line = diff.sourceFile.getLine(diff.sourceLine);
                         size_t start = 0;
-                        for (; start < line.size()
+                        for (; (start < line.size())
                                && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
                         }
-                        std::cout << "-" << std::setw(3) << diff.sourceLine << "| "
-                                  << line.substr(start) << std::endl;
+                        std::cout
+                            << "-"
+                            << std::setw(3)
+                            << diff.sourceLine
+                            << "| "
+                            << line.substr(start)
+                            << std::endl;
                     }
 
                     for (const auto& diff : fix.getDiffs()) {
                         auto line = diff.newString;
                         size_t start = 0;
-                        for (; start < line.size()
+                        for (; (start < line.size())
                                && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
                         }
-                        std::cout << "+" << std::setw(3) << diff.sourceLine << "| "
-                                  << line.substr(start) << std::endl;
+                        std::cout
+                            << "+"
+                            << std::setw(3)
+                            << diff.sourceLine
+                            << "| "
+                            << line.substr(start)
+                            << std::endl;
                     }
                 }
             }

@@ -171,9 +171,17 @@ class SourceLocation {
 
     [[nodiscard]] std::string toString() const {
         if (mIsValid) {
-            return std::to_string(mAbsoluteStart) + ", " + std::to_string(mAbsoluteEnd) + ", "
-                   + std::to_string(mStartLine) + ", " + std::to_string(mEndLine) + ", "
-                   + std::to_string(mStartColumn) + ", " + std::to_string(mEndColumn);
+            return std::to_string(mAbsoluteStart)
+                   + ", "
+                   + std::to_string(mAbsoluteEnd)
+                   + ", "
+                   + std::to_string(mStartLine)
+                   + ", "
+                   + std::to_string(mEndLine)
+                   + ", "
+                   + std::to_string(mStartColumn)
+                   + ", "
+                   + std::to_string(mEndColumn);
         } else {
             return "Invalid location";
         }
@@ -213,8 +221,13 @@ class Token {
     }
 
     [[nodiscard]] std::string toString() const {
-        return "Type: " + TokenTypeNames[mType] + " Value: " + (!mValue.empty() ? mValue : "Empty")
-               + " Location: (" + mSourceLocation.toString() + ")";
+        return "Type: "
+               + TokenTypeNames[mType]
+               + " Value: "
+               + (!mValue.empty() ? mValue : "Empty")
+               + " Location: ("
+               + mSourceLocation.toString()
+               + ")";
     }
 
     bool constexpr operator==(const LexemType& type) const {
