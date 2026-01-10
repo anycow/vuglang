@@ -4,7 +4,7 @@
 
 #include "ModuleDefinitionPass.hpp"
 
-#include "AST/ASTNodes.hpp"
+#include "AST/Declarations.hpp"
 #include "Misc/Stack.hpp"
 #include "Semantic/Symbol.hpp"
 #include "Semantic/SymbolContext.hpp"
@@ -26,12 +26,12 @@ void ModuleDefinitionPass::visit(Node& node) {
 void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
     stackGuard();
 
-    auto* const module = mContext.addSymbol<ModuleSymbol>(node.name);
-    node.symbolRef = module;
+    auto* const module = mContext.addSymbol<ModuleSymbol>(node.getName().getValue());
+    node.setSymbolRef(module);
 
     module->startDefinition();
-    visit(*node.body);
-    for (const auto& declaration : node.body->declarations) {
+    visit(*node.getBody());
+    for (const auto& declaration : node.getBody()->getDeclarations()) {
         if (!declaration->isInvalid() && declaration->getSymbolPtr()) {
             module->addMember(*declaration->getSymbolPtr());
         }
@@ -41,13 +41,13 @@ void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
 void ModuleDefinitionPass::visit(DeclarationsBlock& node) {
     stackGuard();
 
-    for (auto& declaration : node.declarations) {
+    for (const auto& declaration : node.getDeclarations()) {
         visit(*declaration);
     }
 }
 void ModuleDefinitionPass::visit(FunctionDeclaration& node) {
     stackGuard();
 
-    auto* const function = mContext.addSymbol<FunctionSymbol>(node.name);
-    node.symbolRef = function;
+    auto* const function = mContext.addSymbol<FunctionSymbol>(node.getName().getValue());
+    node.setSymbolRef(function);
 }

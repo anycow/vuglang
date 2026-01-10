@@ -10,20 +10,20 @@
 #include <stdexcept>
 #include <vector>
 
-#include "AST/ASTNodes.hpp"
+#include "AST/Declarations.hpp"
 #include "Codegen/LLVMCodegen.hpp"
 #include "Misc/Stack.hpp"
 
 void LLVMDeclarationCodegen::emit(const ModuleDeclaration& node) {
     stackGuard();
 
-    emit(*node.body);
+    emit(*node.getBody());
 }
 
 void LLVMDeclarationCodegen::emit(const Declaration& node) {
     stackGuard();
 
-    switch (node.kind) {
+    switch (node.getKind()) {
         case Node::Kind::DeclarationsBlock:
             emit(static_cast<const DeclarationsBlock&>(node));
             break;
@@ -41,7 +41,7 @@ void LLVMDeclarationCodegen::emit(const Declaration& node) {
 void LLVMDeclarationCodegen::emit(const DeclarationsBlock& node) {
     stackGuard();
 
-    for (const auto& declaration : node.declarations) {
+    for (const auto& declaration : node.getDeclarations()) {
         emit(*declaration);
     }
 }
@@ -50,20 +50,19 @@ void LLVMDeclarationCodegen::emit(const FunctionDeclaration& node) {
     stackGuard();
 
     std::vector<llvm::Type*> parameters;
-    parameters.reserve(node.parameters.size());
-    for (const auto& parameter : node.parameters) {
-        parameters.emplace_back(
-            getTypes()[parameter->symbolRef->getTypeSymbol()->getType()]);
+    parameters.reserve(node.getParameters().size());
+    for (const auto& parameter : node.getParameters()) {
+        parameters.emplace_back(getTypes()[parameter->getSymbolRef()->getTypeSymbol()->getType()]);
     }
 
     auto* functionType
-        = llvm::FunctionType::get(getTypes()[node.symbolRef->getTypeSymbol()->getType()],
+        = llvm::FunctionType::get(getTypes()[node.getSymbolRef()->getTypeSymbol()->getType()],
                                   parameters,
                                   false);
     auto* function = llvm::Function::Create(functionType,
                                             llvm::Function::ExternalLinkage,
-                                            node.name,
+                                            node.getName().getValue(),
                                             &getModule());
 
-    getFunctions()[node.symbolRef] = function;
+    getFunctions()[node.getSymbolRef()] = function;
 }

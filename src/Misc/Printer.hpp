@@ -8,8 +8,11 @@
 #include <cstdint>
 #include <string>
 
-#include "AST/ASTNodes.hpp"
 #include "AST/ASTWalker.hpp"
+#include "AST/Declarations.hpp"
+#include "AST/Expressions.hpp"
+#include "AST/Node.hpp"
+#include "AST/Statements.hpp"
 
 class Printer : public ASTWalker {
    public:

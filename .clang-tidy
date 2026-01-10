@@ -33,4 +33,4 @@ CheckOptions:
   - key: misc-include-cleaner.MissingIncludes
     value: true
   - key: readability-function-cognitive-complexity.Threshold
-    value: 50
+    value: 60

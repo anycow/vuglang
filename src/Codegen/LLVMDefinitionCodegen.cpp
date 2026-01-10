@@ -11,9 +11,12 @@
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
-#include "AST/ASTNodes.hpp"
+#include "AST/Declarations.hpp"
+#include "AST/Expressions.hpp"
+#include "AST/Statements.hpp"
 #include "Codegen/LLVMCodegen.hpp"
 #include "Lexing/Token.hpp"
 #include "Misc/Stack.hpp"
@@ -30,7 +33,7 @@ void LLVMDefinitionCodegen::emit(const Node& node) {
         emit(static_cast<const Statement&>(node));
     }
 
-    switch (node.kind) {
+    switch (node.getKind()) {
         case Node::Kind::Assign:
             emit(static_cast<const Assign&>(node));
             break;
@@ -75,7 +78,7 @@ void LLVMDefinitionCodegen::emit(const Node& node) {
 void LLVMDefinitionCodegen::emit(const Declaration& node) {
     stackGuard();
 
-    switch (node.kind) {
+    switch (node.getKind()) {
         case Node::Kind::DeclarationsBlock:
             emit(static_cast<const DeclarationsBlock&>(node));
             break;
@@ -92,15 +95,15 @@ void LLVMDefinitionCodegen::emit(const Declaration& node) {
 void LLVMDefinitionCodegen::emit(const ModuleDeclaration& node) {
     stackGuard();
 
-    if (node.body) {
-        emit(*node.body);
+    if (node.getBody()) {
+        emit(*node.getBody());
     }
 }
 void LLVMDefinitionCodegen::emit(const DeclarationsBlock& node) {
     stackGuard();
 
-    for (const auto& declaration : node.declarations) {
-        if (declaration->kind == Node::Kind::FunctionDeclaration) {
+    for (const auto& declaration : node.getDeclarations()) {
+        if (declaration->getKind() == Node::Kind::FunctionDeclaration) {
             emit(static_cast<const FunctionDeclaration&>(*declaration));
         }
     }
@@ -108,8 +111,8 @@ void LLVMDefinitionCodegen::emit(const DeclarationsBlock& node) {
 void LLVMDefinitionCodegen::emit(const FunctionDeclaration& node) {
     stackGuard();
 
-    if (node.definition) {
-        auto* function = getFunctions()[node.symbolRef];
+    if (node.getDefinition()) {
+        auto* function = getFunctions()[node.getSymbolRef()];
         if (!function) {
             throw std::logic_error("function not declared");
         }
@@ -117,17 +120,18 @@ void LLVMDefinitionCodegen::emit(const FunctionDeclaration& node) {
         llvm::BasicBlock* body = llvm::BasicBlock::Create(getContext(), "", function);
         getBuilder().SetInsertPoint(body);
 
-        for (size_t i = 0; i < node.parameters.size(); ++i) {
+        for (size_t i = 0; i < node.getParameters().size(); ++i) {
             auto* parameter = function->getArg(i);
 
-            parameter->setName(node.parameters[i]->name);
-            getObjects()[node.parameters[i]->symbolRef]
+            parameter->setName(node.getParameters()[i]->getName().getValue());
+            getObjects()[node.getParameters()[i]->getSymbolRef()]
                 = getBuilder().CreateAlloca(parameter->getType());
-            getObjects()[node.parameters[i]->symbolRef];
-            getBuilder().CreateStore(parameter, getObjects()[node.parameters[i]->symbolRef]);
+            getObjects()[node.getParameters()[i]->getSymbolRef()];
+            getBuilder().CreateStore(parameter,
+                                     getObjects()[node.getParameters()[i]->getSymbolRef()]);
         }
 
-        emit(*node.definition);
+        emit(*node.getDefinition());
 
         auto* lastBlock = getBuilder().GetInsertBlock();
         if (lastBlock->empty()) {
@@ -146,7 +150,7 @@ void LLVMDefinitionCodegen::emit(const FunctionDeclaration& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const Expression& node) {
     stackGuard();
 
-    switch (node.kind) {
+    switch (node.getKind()) {
         case Node::Kind::BinaryOperation:
             return emit(static_cast<const BinaryOperation&>(node));
         case Node::Kind::PrefixOperation:
@@ -164,12 +168,12 @@ llvm::Value* LLVMDefinitionCodegen::emit(const Expression& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
     stackGuard();
 
-    if (node.left->exprType->isInteger() && node.right->exprType->isInteger()) {
-        auto* left = emit(*node.left);
-        auto* right = emit(*node.right);
+    if (node.getLeft()->getExprType()->isInteger() && node.getRight()->getExprType()->isInteger()) {
+        auto* left = emit(*node.getLeft());
+        auto* right = emit(*node.getRight());
 
-        if (node.left->exprType->getInteger().isSigned()) {
-            switch (node.operationType) {
+        if (node.getLeft()->getExprType()->getInteger().isSigned()) {
+            switch (node.getOperationType()) {
                 case LexemType::Plus:
                     return getBuilder().CreateAdd(left, right, "", false, true);
                 case LexemType::Minus:
@@ -203,7 +207,7 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
                     throw std::logic_error("unreachable");
             }
         } else {
-            switch (node.operationType) {
+            switch (node.getOperationType()) {
                 case LexemType::Plus:
                     return getBuilder().CreateAdd(left, right);
                 case LexemType::Minus:
@@ -237,12 +241,16 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
                     throw std::logic_error("unreachable");
             }
         }
-    } else if (node.left->exprType->isBoolean() && node.right->exprType->isBoolean()) {
-        if (node.operationType != LexemType::LogicAnd && node.operationType != LexemType::LogicOr) {
-            auto* left = emit(*node.left);
-            auto* right = emit(*node.right);
+    } else if (node.getLeft()->getExprType()->isBoolean()
+               && node.getRight()->getExprType()->isBoolean()) {
+        if (node.getOperationType()
+            != LexemType::LogicAnd
+            && node.getOperationType()
+            != LexemType::LogicOr) {
+            auto* left = emit(*node.getLeft());
+            auto* right = emit(*node.getRight());
 
-            switch (node.operationType) {
+            switch (node.getOperationType()) {
                 case LexemType::BitAnd:
                     return getBuilder().CreateAnd(left, right);
                 case LexemType::BitOr:
@@ -253,9 +261,9 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
                     throw std::logic_error("unreachable");
             }
         } else {
-            auto* left = emit(*node.left);
+            auto* left = emit(*node.getLeft());
 
-            switch (node.operationType) {
+            switch (node.getOperationType()) {
                 case LexemType::LogicAnd: {
                     auto* leftBlock = llvm::BasicBlock::Create(getContext());
                     auto* rightBlock = llvm::BasicBlock::Create(getContext());
@@ -266,11 +274,11 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
                     getBuilder().CreateCondBr(left, rightBlock, mergeBlock);
 
                     setBlock(rightBlock);
-                    auto* right = emit(*node.right);
+                    auto* right = emit(*node.getRight());
                     getBuilder().CreateBr(mergeBlock);
 
                     setBlock(mergeBlock);
-                    auto* result = getBuilder().CreatePHI(getTypes()[node.exprType], 2);
+                    auto* result = getBuilder().CreatePHI(getTypes()[node.getExprType()], 2);
                     result->addIncoming(llvm::ConstantInt::getBool(getContext(), false), leftBlock);
                     result->addIncoming(right, rightBlock);
 
@@ -286,11 +294,11 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
                     getBuilder().CreateCondBr(left, mergeBlock, rightBlock);
 
                     setBlock(rightBlock);
-                    auto* right = emit(*node.right);
+                    auto* right = emit(*node.getRight());
                     getBuilder().CreateBr(mergeBlock);
 
                     setBlock(mergeBlock);
-                    auto* result = getBuilder().CreatePHI(getTypes()[node.exprType], 2);
+                    auto* result = getBuilder().CreatePHI(getTypes()[node.getExprType()], 2);
                     result->addIncoming(llvm::ConstantInt::getBool(getContext(), true), leftBlock);
                     result->addIncoming(right, rightBlock);
 
@@ -307,8 +315,8 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const PrefixOperation& node) {
     stackGuard();
 
-    auto* right = emit(*node.right);
-    switch (node.operationType) {
+    auto* right = emit(*node.getRight());
+    switch (node.getOperationType()) {
         case LexemType::Minus:
             return getBuilder().CreateSub(llvm::ConstantInt::get(right->getType(), 0), right);
         case LexemType::Not:
@@ -320,11 +328,11 @@ llvm::Value* LLVMDefinitionCodegen::emit(const PrefixOperation& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const CallFunction& node) {
     stackGuard();
 
-    auto* function = getFunctions()[node.symbolRef];
+    auto* function = getFunctions()[node.getSymbolRef()];
 
     std::vector<llvm::Value*> arguments;
-    arguments.reserve(node.arguments.size());
-    for (const auto& expression : node.arguments) {
+    arguments.reserve(node.getArguments().size());
+    for (const auto& expression : node.getArguments()) {
         arguments.emplace_back(emit(*expression));
     }
     return getBuilder().CreateCall(function, arguments);
@@ -332,18 +340,19 @@ llvm::Value* LLVMDefinitionCodegen::emit(const CallFunction& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const Identifier& node) {
     stackGuard();
 
-    auto* var = getObjects()[node.symbolRef];
+    auto* var = getObjects()[node.getSymbolRef()];
     return getBuilder().CreateLoad(var->getAllocatedType(), var);
 }
 llvm::Value* LLVMDefinitionCodegen::emit(const Number& node) {
     stackGuard();
-    return llvm::ConstantInt::get(getContext(), llvm::APInt(32, node.number, 10));
+    return llvm::ConstantInt::get(getContext(),
+                                  llvm::APInt(32, std::stoi(node.getNumber().getValue()), true));
 }
 
 void LLVMDefinitionCodegen::emit(const Statement& node) {
     stackGuard();
 
-    switch (node.kind) {
+    switch (node.getKind()) {
         case Node::Kind::StatementBlock:
             emit(static_cast<const StatementsBlock&>(node));
             break;
@@ -375,8 +384,8 @@ void LLVMDefinitionCodegen::emit(const Statement& node) {
 void LLVMDefinitionCodegen::emit(const Assign& node) {
     stackGuard();
 
-    auto* value = emit(*node.value);
-    getBuilder().CreateStore(value, getObjects()[node.symbolRef]);
+    auto* value = emit(*node.getValue());
+    getBuilder().CreateStore(value, getObjects()[node.getSymbolRef()]);
 }
 void LLVMDefinitionCodegen::emit([[maybe_unused]] const Break& node) {
     stackGuard();
@@ -392,17 +401,17 @@ void LLVMDefinitionCodegen::emit([[maybe_unused]] const Break& node) {
 void LLVMDefinitionCodegen::emit(const ExpressionStatement& node) {
     stackGuard();
 
-    emit(*node.expression);
+    emit(*node.getExpression());
 }
 void LLVMDefinitionCodegen::emit(const If& node) {
     stackGuard();
 
-    auto* condition = emit(*node.condition);
+    auto* condition = emit(*node.getCondition());
     auto* thenBlock = llvm::BasicBlock::Create(getContext());
     auto* mergeBlock = llvm::BasicBlock::Create(getContext());
     llvm::BasicBlock* elseBlock = nullptr;
 
-    if (node.elseThen) {
+    if (node.getElseThen()) {
         elseBlock = llvm::BasicBlock::Create(getContext());
         getBuilder().CreateCondBr(condition, thenBlock, elseBlock);
     } else {
@@ -410,14 +419,14 @@ void LLVMDefinitionCodegen::emit(const If& node) {
     }
 
     setBlock(thenBlock);
-    emit(*node.then);
+    emit(*node.getThen());
     if (!getBuilder().GetInsertBlock()->getTerminator()) {
         getBuilder().CreateBr(mergeBlock);
     }
 
     if (elseBlock) {
         setBlock(elseBlock);
-        emit(*node.elseThen);
+        emit(*node.getElseThen());
         if (!getBuilder().GetInsertBlock()->getTerminator()) {
             getBuilder().CreateBr(mergeBlock);
         }
@@ -428,21 +437,21 @@ void LLVMDefinitionCodegen::emit(const If& node) {
 void LLVMDefinitionCodegen::emit(const LocalVariableDeclaration& node) {
     stackGuard();
 
-    getObjects()[node.symbolRef]
-        = getBuilder().CreateAlloca(getTypes()[node.symbolRef->getTypeSymbol()->getType()]);
-    auto* value = emit(*node.value);
-    getBuilder().CreateStore(value, getObjects()[node.symbolRef]);
+    getObjects()[node.getSymbolRef()]
+        = getBuilder().CreateAlloca(getTypes()[node.getSymbolRef()->getTypeSymbol()->getType()]);
+    auto* value = emit(*node.getValue());
+    getBuilder().CreateStore(value, getObjects()[node.getSymbolRef()]);
 }
 void LLVMDefinitionCodegen::emit(const Return& node) {
     stackGuard();
 
-    getBuilder().CreateRet(emit(*node.returnExpression));
+    getBuilder().CreateRet(emit(*node.getReturnExpression()));
     setBlock(llvm::BasicBlock::Create(getContext()));
 }
 void LLVMDefinitionCodegen::emit(const StatementsBlock& node) {
     stackGuard();
 
-    for (const auto& statement : node.statements) {
+    for (const auto& statement : node.getStatements()) {
         emit(*statement);
     }
 }
@@ -455,11 +464,11 @@ void LLVMDefinitionCodegen::emit(const While& node) {
 
     getBuilder().CreateBr(conditionBlock);
     setBlock(conditionBlock);
-    getBuilder().CreateCondBr(emit(*node.condition), bodyBlock, mergeBlock);
+    getBuilder().CreateCondBr(emit(*node.getCondition()), bodyBlock, mergeBlock);
 
     mCycles.emplace(mergeBlock);
     setBlock(bodyBlock);
-    emit(*node.body);
+    emit(*node.getBody());
     getBuilder().CreateBr(conditionBlock);
     mCycles.pop();
 

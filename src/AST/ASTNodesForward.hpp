@@ -7,32 +7,32 @@
 
 // For some reason, in clangd, "IWYU pragma: begin_exports" doesn't work properly.
 
-struct Node;  // IWYU pragma: export
+class Node;  // IWYU pragma: export
 
-struct Declaration;          // IWYU pragma: export
-struct BadDeclaration;       // IWYU pragma: export
-struct DeclarationsBlock;    // IWYU pragma: export
-struct FunctionDeclaration;  // IWYU pragma: export
-struct FunctionParameter;    // IWYU pragma: export
-struct ModuleDeclaration;    // IWYU pragma: export
+class Declaration;          // IWYU pragma: export
+class BadDeclaration;       // IWYU pragma: export
+class DeclarationsBlock;    // IWYU pragma: export
+class FunctionDeclaration;  // IWYU pragma: export
+class FunctionParameter;    // IWYU pragma: export
+class ModuleDeclaration;    // IWYU pragma: export
 
-struct Expression;       // IWYU pragma: export
-struct BadExpression;    // IWYU pragma: export
-struct BinaryOperation;  // IWYU pragma: export
-struct CallFunction;     // IWYU pragma: export
-struct Identifier;       // IWYU pragma: export
-struct Number;           // IWYU pragma: export
-struct PrefixOperation;  // IWYU pragma: export
+class Expression;       // IWYU pragma: export
+class BadExpression;    // IWYU pragma: export
+class BinaryOperation;  // IWYU pragma: export
+class CallFunction;     // IWYU pragma: export
+class Identifier;       // IWYU pragma: export
+class Number;           // IWYU pragma: export
+class PrefixOperation;  // IWYU pragma: export
 
-struct Statement;                 // IWYU pragma: export
-struct BadStatement;              // IWYU pragma: export
-struct Assign;                    // IWYU pragma: export
-struct Break;                     // IWYU pragma: export
-struct ExpressionStatement;       // IWYU pragma: export
-struct If;                        // IWYU pragma: export
-struct LocalVariableDeclaration;  // IWYU pragma: export
-struct Return;                    // IWYU pragma: export
-struct StatementsBlock;           // IWYU pragma: export
-struct While;                     // IWYU pragma: export
+class Statement;                 // IWYU pragma: export
+class BadStatement;              // IWYU pragma: export
+class Assign;                    // IWYU pragma: export
+class Break;                     // IWYU pragma: export
+class ExpressionStatement;       // IWYU pragma: export
+class If;                        // IWYU pragma: export
+class LocalVariableDeclaration;  // IWYU pragma: export
+class Return;                    // IWYU pragma: export
+class StatementsBlock;           // IWYU pragma: export
+class While;                     // IWYU pragma: export
 
 #endif  // VUG_ASTNODESFORWARD_HPP

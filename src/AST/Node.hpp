@@ -2,15 +2,16 @@
 // If a copy of the MPL was not distributed with this file, You can obtain one at
 // https://mozilla.org/MPL/2.0/.
 
-#ifndef VUG_NODE_HPP
-#define VUG_NODE_HPP
+#ifndef NODE_HPP
+#define NODE_HPP
 
 #include <stdexcept>
 
-#include "AST/ASTWalker.hpp"
 #include "Lexing/Token.hpp"
 
-struct Node {
+class ASTWalker;
+class Node {
+   public:
     enum class Kind {
         None,
 
@@ -40,9 +41,6 @@ struct Node {
         While,
     };
 
-    const Kind kind;
-    const SourceLocation sourceLocation;
-
     virtual ~Node() = default;
     Node(const Node& other) = default;
     Node(Node&& other) noexcept = default;
@@ -66,12 +64,24 @@ struct Node {
         return false;
     }
 
+    [[nodiscard]] Kind getKind() const {
+        return mKind;
+    }
+
+    [[nodiscard]] const SourceLocation& getSourceLocation() const {
+        return mSourceLocation;
+    }
+
    protected:
     Node(const Kind nodeType, const SourceLocation& sourceLocation)
-        : kind(nodeType),
-          sourceLocation(sourceLocation) {
+        : mKind(nodeType),
+          mSourceLocation(sourceLocation) {
     }
+
+   private:
+    const Kind mKind;
+    const SourceLocation mSourceLocation;
 };
 
 
-#endif  // VUG_NODE_HPP
+#endif  // NODE_HPP

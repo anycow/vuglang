@@ -26,8 +26,12 @@ inline bool checkStackCapacity() {
 #ifdef _WIN32
 inline void stackGuard(const std::source_location location = std::source_location::current()) {
     if (!checkStackCapacity()) {
-        std::cerr << "Stack Overflow at " << location.function_name() << " in "
-                  << std::filesystem::path(location.file_name()).filename() << std::endl;
+        std::cerr
+            << "Stack Overflow at "
+            << location.function_name()
+            << " in "
+            << std::filesystem::path(location.file_name()).filename()
+            << std::endl;
         throw std::overflow_error(("Stack overflow"));
     }
 }

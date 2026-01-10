@@ -27,8 +27,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "AST/Nodes/Declarations/ModuleDeclaration.hpp"
-#include "AST/Nodes/Node.hpp"
+#include "AST/Declarations.hpp"
 #include "Codegen/LLVMDeclarationCodegen.hpp"
 #include "Codegen/LLVMDefinitionCodegen.hpp"
 #include "Misc/Stack.hpp"
@@ -81,7 +80,7 @@ void LLVMCodegen::emit() {
     }
     mTypes.emplace(mSymbolContext.getBoolType()->getType(), llvm::IntegerType::get(*mContext, 1));
 
-    if (mAST.kind != Node::Kind::ModuleDeclaration) {
+    if (mAST.getKind() != Node::Kind::ModuleDeclaration) {
         throw std::logic_error("unreachable");
     }
     LLVMDeclarationCodegen declarationCodegen(*this);

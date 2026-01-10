@@ -7,7 +7,10 @@
 #include <iostream>
 #include <string>
 
-#include "AST/ASTNodes.hpp"
+#include "AST/Declarations.hpp"
+#include "AST/Expressions.hpp"
+#include "AST/Node.hpp"
+#include "AST/Statements.hpp"
 #include "Lexing/Token.hpp"
 #include "Misc/Stack.hpp"
 #include "Semantic/Types/Type.hpp"
@@ -58,15 +61,20 @@ void Printer::visit(FunctionDeclaration& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces() << "Function Declaration: " << node.returnType << ' '
-              << node.name << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << "Function Declaration: "
+        << node.getReturnType().getValue()
+        << ' '
+        << node.getName().getValue()
+        << std::endl;
 
-    for (const auto& parameter : node.parameters) {
+    for (const auto& parameter : node.getParameters()) {
         visit(*parameter);
     }
 
-    if (node.definition) {
-        visit(*node.definition);
+    if (node.getDefinition()) {
+        visit(*node.getDefinition());
     }
 
     --mCurrentDepth;
@@ -75,8 +83,13 @@ void Printer::visit(FunctionParameter& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces() << "Function Parameter: " << node.type << ' ' << node.name
-              << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << "Function Parameter: "
+        << node.getType().getValue()
+        << ' '
+        << node.getName().getValue()
+        << std::endl;
 
     --mCurrentDepth;
 }
@@ -84,9 +97,13 @@ void Printer::visit(ModuleDeclaration& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces() << "Module Declaration: " << node.name << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << "Module Declaration: "
+        << node.getName().getValue()
+        << std::endl;
 
-    visit(*node.body);
+    visit(*node.getBody());
 
     --mCurrentDepth;
 }
@@ -95,7 +112,7 @@ void Printer::visit(DeclarationsBlock& node) {
     ++mCurrentDepth;
 
     std::cout << getIndentSpaces() << "Declarations Block: " << std::endl;
-    for (const auto& declaration : node.declarations) {
+    for (const auto& declaration : node.getDeclarations()) {
         visit(*declaration);
     }
 
@@ -106,9 +123,9 @@ void Printer::visit(Assign& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces() << "Assign: " << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Assign: " << node.getName().getValue() << std::endl;
 
-    visit(*node.value);
+    visit(*node.getValue());
 
     --mCurrentDepth;
 }
@@ -116,9 +133,12 @@ void Printer::visit(Number& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces()
-              << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "Number: " << node.number << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << (node.getExprType() != nullptr ? "(" + node.getExprType()->getTypeName() + ")" : "")
+        << "Number: "
+        << node.getNumber().getValue()
+        << std::endl;
 
     --mCurrentDepth;
 }
@@ -126,9 +146,12 @@ void Printer::visit(Identifier& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces()
-              << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "Identifier: " << node.name << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << (node.getExprType() != nullptr ? "(" + node.getExprType()->getTypeName() + ")" : "")
+        << "Identifier: "
+        << node.getName().getValue()
+        << std::endl;
 
     --mCurrentDepth;
 }
@@ -136,12 +159,15 @@ void Printer::visit(BinaryOperation& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces()
-              << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "BinOp: " << TokenTypeNames[node.operationType] << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << (node.getExprType() != nullptr ? "(" + node.getExprType()->getTypeName() + ")" : "")
+        << "BinOp: "
+        << TokenTypeNames[node.getOperationType()]
+        << std::endl;
 
-    visit(*node.left);
-    visit(*node.right);
+    visit(*node.getLeft());
+    visit(*node.getRight());
 
     --mCurrentDepth;
 }
@@ -149,11 +175,14 @@ void Printer::visit(PrefixOperation& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces()
-              << (node.exprType != nullptr ? "(" + node.exprType->getTypeName() + ")" : "")
-              << "PrefixOp: " << TokenTypeNames[node.operationType] << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << (node.getExprType() != nullptr ? "(" + node.getExprType()->getTypeName() + ")" : "")
+        << "PrefixOp: "
+        << TokenTypeNames[node.getOperationType()]
+        << std::endl;
 
-    visit(*node.right);
+    visit(*node.getRight());
 
     --mCurrentDepth;
 }
@@ -161,11 +190,16 @@ void Printer::visit(LocalVariableDeclaration& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces() << "Var Declaration: " << node.type << " " << node.name
-              << std::endl;
+    std::cout
+        << getIndentSpaces()
+        << "Var Declaration: "
+        << node.getType().getValue()
+        << " "
+        << node.getName().getValue()
+        << std::endl;
 
-    if (node.value != nullptr) {
-        visit(*node.value);
+    if (node.getValue() != nullptr) {
+        visit(*node.getValue());
     }
 
     --mCurrentDepth;
@@ -176,7 +210,7 @@ void Printer::visit(StatementsBlock& node) {
 
     std::cout << getIndentSpaces() << "Block: " << std::endl;
 
-    for (const auto& item : node.statements) {
+    for (const auto& item : node.getStatements()) {
         visit(*item);
     }
 
@@ -194,9 +228,9 @@ void Printer::visit(CallFunction& node) {
     stackGuard();
     ++mCurrentDepth;
 
-    std::cout << getIndentSpaces() << "Call: " << node.name << std::endl;
+    std::cout << getIndentSpaces() << "Call: " << node.getName().getValue() << std::endl;
 
-    for (const auto& argument : node.arguments) {
+    for (const auto& argument : node.getArguments()) {
         visit(*argument);
     }
 
@@ -208,11 +242,11 @@ void Printer::visit(If& node) {
 
     std::cout << getIndentSpaces() << "If: " << std::endl;
 
-    visit(*node.condition);
-    visit(*node.then);
+    visit(*node.getCondition());
+    visit(*node.getThen());
 
-    if (node.elseThen != nullptr) {
-        visit(*node.elseThen);
+    if (node.getElseThen() != nullptr) {
+        visit(*node.getElseThen());
     }
 
     --mCurrentDepth;
@@ -223,8 +257,8 @@ void Printer::visit(While& node) {
 
     std::cout << getIndentSpaces() << "While: " << std::endl;
 
-    visit(*node.condition);
-    visit(*node.body);
+    visit(*node.getCondition());
+    visit(*node.getBody());
 
     --mCurrentDepth;
 }
@@ -234,7 +268,7 @@ void Printer::visit(ExpressionStatement& node) {
 
     std::cout << getIndentSpaces() << "Expression Statement: " << std::endl;
 
-    visit(*node.expression);
+    visit(*node.getExpression());
 
     --mCurrentDepth;
 }
@@ -244,7 +278,7 @@ void Printer::visit(Return& node) {
 
     std::cout << getIndentSpaces() << "Return: " << std::endl;
 
-    visit(*node.returnExpression);
+    visit(*node.getReturnExpression());
 
     --mCurrentDepth;
 }

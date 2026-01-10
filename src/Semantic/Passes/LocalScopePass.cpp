@@ -7,7 +7,10 @@
 #include <cstddef>
 #include <format>
 
-#include "AST/ASTNodes.hpp"
+#include "AST/Declarations.hpp"
+#include "AST/Expressions.hpp"
+#include "AST/Node.hpp"
+#include "AST/Statements.hpp"
 #include "Diagnostic/Diagnostic.hpp"
 #include "Diagnostic/DiagnosticManager.hpp"
 #include "Misc/Stack.hpp"
@@ -36,30 +39,31 @@ void LocalScopePass::visit(ModuleDeclaration& node) {
     if (result.isError()) {
         if (result.error().kind == SymbolTable::InsertError::Kind::NameConflict) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                    std::format("redefinition of '{}'", node.name),
-                                                    {node.sourceLocation}));
+            diagnostic.addMessage(
+                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                  std::format("redefinition of '{}'", node.getName().getValue()),
+                                  {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         } else if (result.error().kind == SymbolTable::InsertError::Kind::ProhibitedShadowing) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(
-                DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                  std::format("shadowing of '{}' is prohibited", node.name),
-                                  {node.sourceLocation}));
+            diagnostic.addMessage(DiagnosticMessage(
+                DiagnosticMessage::Severity::Error,
+                std::format("shadowing of '{}' is prohibited", node.getName().getValue()),
+                {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         }
     }
 
     mContext.getSymbolTable().openScope();
-    visit(*node.body);
+    visit(*node.getBody());
     mContext.getSymbolTable().closeScope();
 }
 void LocalScopePass::visit(DeclarationsBlock& node) {
     stackGuard();
 
-    for (const auto& declaration : node.declarations) {
+    for (const auto& declaration : node.getDeclarations()) {
         if (declaration->isInvalid() || !declaration->getSymbolPtr()) {
             continue;
         }
@@ -71,7 +75,7 @@ void LocalScopePass::visit(DeclarationsBlock& node) {
                 diagnostic.addMessage(DiagnosticMessage(
                     DiagnosticMessage::Severity::Error,
                     std::format("redefinition of '{}'", declaration->getSymbolPtr()->getName()),
-                    {node.sourceLocation}));
+                    {node.getSourceLocation()}));
                 mDiagnosticManager.report(diagnostic);
                 return;
             } else if (result.error().kind == SymbolTable::InsertError::Kind::ProhibitedShadowing) {
@@ -80,27 +84,27 @@ void LocalScopePass::visit(DeclarationsBlock& node) {
                     DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                       std::format("shadowing of '{}' is prohibited",
                                                   declaration->getSymbolPtr()->getName()),
-                                      {node.sourceLocation}));
+                                      {node.getSourceLocation()}));
                 mDiagnosticManager.report(diagnostic);
                 return;
             }
         }
     }
-    for (auto& declaration : node.declarations) {
+    for (const auto& declaration : node.getDeclarations()) {
         visit(*declaration);
     }
 }
 void LocalScopePass::visit(FunctionDeclaration& node) {
     stackGuard();
 
-    if (node.definition) {
+    if (node.getDefinition()) {
         mCurrentFunction = &node;
 
         mContext.getSymbolTable().openScope();
-        for (const auto& parameter : node.parameters) {
+        for (const auto& parameter : node.getParameters()) {
             visit(*parameter);
         }
-        visit(*node.definition);
+        visit(*node.getDefinition());
         mContext.getSymbolTable().closeScope();
 
         mCurrentFunction = nullptr;
@@ -113,17 +117,18 @@ void LocalScopePass::visit(FunctionParameter& node) {
     if (result.isError()) {
         if (result.error().kind == SymbolTable::InsertError::Kind::NameConflict) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                    std::format("redefinition of '{}'", node.name),
-                                                    {node.sourceLocation}));
+            diagnostic.addMessage(
+                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                  std::format("redefinition of '{}'", node.getName().getValue()),
+                                  {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         } else if (result.error().kind == SymbolTable::InsertError::Kind::ProhibitedShadowing) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(
-                DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                  std::format("shadowing of '{}' is prohibited", node.name),
-                                  {node.sourceLocation}));
+            diagnostic.addMessage(DiagnosticMessage(
+                DiagnosticMessage::Severity::Error,
+                std::format("shadowing of '{}' is prohibited", node.getName().getValue()),
+                {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         }
@@ -133,32 +138,35 @@ void LocalScopePass::visit(FunctionParameter& node) {
 void LocalScopePass::visit(Assign& node) {
     stackGuard();
 
-    visit(*node.value);
+    visit(*node.getValue());
 
-    const auto result = mContext.getSymbolTable().findSymbol(node.name);
+    const auto result = mContext.getSymbolTable().findSymbol(node.getName().getValue());
     if (result.isError()) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("can't find '{}'", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("can't find '{}'", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
     if (result.value()->symbol.getKind() != Symbol::Kind::Variable) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("'{}' isn't variable", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("'{}' isn't variable", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
-    node.symbolRef = static_cast<LocalVariableSymbol*>(&result.value()->symbol);
+    node.setSymbolRef(static_cast<LocalVariableSymbol*>(&result.value()->symbol));
 
-    if (*node.getVariableSymbolPtr()->getTypeSymbol()->getType() != *node.value->getExprType()) {
+    if (*node.getVariableSymbolPtr()->getTypeSymbol()->getType()
+        != *node.getValue()->getExprType()) {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                 std::format("incompatible types"),
-                                                {node.sourceLocation}));
+                                                {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
@@ -167,49 +175,52 @@ void LocalScopePass::visit(Assign& node) {
 void LocalScopePass::visit(CallFunction& node) {
     stackGuard();
 
-    const auto result = mContext.getSymbolTable().findSymbol(node.name);
+    const auto result = mContext.getSymbolTable().findSymbol(node.getName().getValue());
 
     if (result.isError()) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("undeclared function '{}'", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("undeclared function '{}'", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
     if (result.value()->symbol.getKind() != Symbol::Kind::Function) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("'{}' isn't function", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("'{}' isn't function", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
 
     auto& functionSymbol = static_cast<FunctionSymbol&>(result.value()->symbol);
 
-    node.symbolRef = &functionSymbol;
-    node.exprType = functionSymbol.getTypeSymbol()->getType();
+    node.setSymbolRef(&functionSymbol);
+    node.setExprType(functionSymbol.getTypeSymbol()->getType());
 
-    if (node.arguments.size() != functionSymbol.getArguments().size()) {
+    if (node.getArguments().size() != functionSymbol.getArguments().size()) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("different argument count", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("different argument count", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
 
     size_t index = 0;
-    for (const auto& argument : node.arguments) {
+    for (const auto& argument : node.getArguments()) {
         visit(*argument);
-        if (argument->exprType
+        if (argument->getExprType()
             != functionSymbol.getArguments()[index]->getTypeSymbol()->getType()) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(
-                DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                  std::format("incompatible types of arguments", node.name),
-                                  {node.sourceLocation}));
+            diagnostic.addMessage(DiagnosticMessage(
+                DiagnosticMessage::Severity::Error,
+                std::format("incompatible types of arguments", node.getName().getValue()),
+                {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         }
@@ -219,49 +230,52 @@ void LocalScopePass::visit(CallFunction& node) {
 void LocalScopePass::visit(Number& node) {
     stackGuard();
 
-    node.exprType = mContext.getIntType(32, true)->getType();
+    node.setExprType(mContext.getIntType(32, true)->getType());
 }
 void LocalScopePass::visit(Identifier& node) {
     stackGuard();
 
-    const auto result = mContext.getSymbolTable().findSymbol(node.name);
+    const auto result = mContext.getSymbolTable().findSymbol(node.getName().getValue());
 
     if (result.isError()) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("undeclared variable '{}'", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("undeclared variable '{}'", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
     if (result.value()->symbol.getKind() != Symbol::Kind::Variable) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("'{}' isn't variable", node.name),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("'{}' isn't variable", node.getName().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
 
-    node.symbolRef = static_cast<LocalVariableSymbol*>(&result.value()->symbol);
-    node.exprType = node.getVariableSymbolPtr()->getTypeSymbol()->getType();
+    node.setSymbolRef(static_cast<LocalVariableSymbol*>(&result.value()->symbol));
+    node.setExprType(node.getVariableSymbolPtr()->getTypeSymbol()->getType());
 }
 void LocalScopePass::visit(BinaryOperation& node) {
     stackGuard();
 
-    visit(*node.left);
-    visit(*node.right);
+    visit(*node.getLeft());
+    visit(*node.getRight());
 
     const auto checkResult
-        = node.left->exprType->binaryOperationType(node.operationType, *node.right->exprType);
+        = node.getLeft()->getExprType()->binaryOperationType(node.getOperationType(),
+                                                             *node.getRight()->getExprType());
 
     if (checkResult.isTypesCorrect) {
-        node.exprType = checkResult.resultType;
+        node.setExprType(checkResult.resultType);
     } else {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                 std::format("incompatible types"),
-                                                {node.sourceLocation}));
+                                                {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
@@ -270,17 +284,18 @@ void LocalScopePass::visit(BinaryOperation& node) {
 void LocalScopePass::visit(PrefixOperation& node) {
     stackGuard();
 
-    visit(*node.right);
+    visit(*node.getRight());
 
-    const auto checkResult = node.right->exprType->prefixOperationType(node.operationType);
+    const auto checkResult
+        = node.getRight()->getExprType()->prefixOperationType(node.getOperationType());
 
     if (checkResult.isTypesCorrect) {
-        node.exprType = checkResult.resultType;
+        node.setExprType(checkResult.resultType);
     } else {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                 std::format("incompatible types"),
-                                                {node.sourceLocation}));
+                                                {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
@@ -288,58 +303,62 @@ void LocalScopePass::visit(PrefixOperation& node) {
 void LocalScopePass::visit(LocalVariableDeclaration& node) {
     stackGuard();
 
-    const auto typeFindResult = mContext.getSymbolTable().findSymbol(node.type);
+    const auto typeFindResult = mContext.getSymbolTable().findSymbol(node.getType().getValue());
 
     if (typeFindResult.isError()) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("undeclared type {}", node.type),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("undeclared type {}", node.getType().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
     if (typeFindResult.value()->symbol.getKind() != Symbol::Kind::Type) {
         auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                std::format("{} isn't type", node.type),
-                                                {node.sourceLocation}));
+        diagnostic.addMessage(
+            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                              std::format("{} isn't type", node.getType().getValue()),
+                              {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
 
-    auto* const symbol = mContext.addSymbol<LocalVariableSymbol>(node.name);
+    auto* const symbol = mContext.addSymbol<LocalVariableSymbol>(node.getName().getValue());
     symbol->setTypeSymbol(static_cast<TypeSymbol*>(&typeFindResult.value()->symbol));
-    node.symbolRef = symbol;
+    node.setSymbolRef(symbol);
 
     const auto insertResult = mContext.getSymbolTable().insertSymbol(*node.getVariableSymbolPtr());
     if (insertResult.isError()) {
         if (insertResult.error().kind == SymbolTable::InsertError::Kind::NameConflict) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                                    std::format("redefinition of '{}'", node.name),
-                                                    {node.sourceLocation}));
+            diagnostic.addMessage(
+                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                                  std::format("redefinition of '{}'", node.getName().getValue()),
+                                  {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         } else if (insertResult.error().kind
                    == SymbolTable::InsertError::Kind::ProhibitedShadowing) {
             auto diagnostic = Diagnostic();
-            diagnostic.addMessage(
-                DiagnosticMessage(DiagnosticMessage::Severity::Error,
-                                  std::format("shadowing of '{}' is prohibited", node.name),
-                                  {node.sourceLocation}));
+            diagnostic.addMessage(DiagnosticMessage(
+                DiagnosticMessage::Severity::Error,
+                std::format("shadowing of '{}' is prohibited", node.getName().getValue()),
+                {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         }
     }
 
-    if (node.value != nullptr) {
-        visit(*node.value);
+    if (node.getValue() != nullptr) {
+        visit(*node.getValue());
 
-        if (*node.value->exprType != *node.getVariableSymbolPtr()->getTypeSymbol()->getType()) {
+        if (*node.getValue()->getExprType()
+            != *node.getVariableSymbolPtr()->getTypeSymbol()->getType()) {
             auto diagnostic = Diagnostic();
             diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                     std::format("incompatible types"),
-                                                    {node.sourceLocation}));
+                                                    {node.getSourceLocation()}));
             mDiagnosticManager.report(diagnostic);
             return;
         }
@@ -348,8 +367,8 @@ void LocalScopePass::visit(LocalVariableDeclaration& node) {
 void LocalScopePass::visit(StatementsBlock& node) {
     stackGuard();
 
-    for (const auto& stmt : node.statements) {
-        if (stmt->kind == Node::Kind::StatementBlock) {
+    for (const auto& stmt : node.getStatements()) {
+        if (stmt->getKind() == Node::Kind::StatementBlock) {
             mContext.getSymbolTable().openScope();
             visit(*stmt);
             mContext.getSymbolTable().closeScope();
@@ -365,24 +384,24 @@ void LocalScopePass::visit(Break& node) {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                 std::format("break outisde loop"),
-                                                {node.sourceLocation}));
+                                                {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }
-    node.breakedStmt = mLoops.top();
+    node.setBreakedStmt(mLoops.top());
 }
 void LocalScopePass::visit(If& node) {
     stackGuard();
 
-    visit(*node.condition);
+    visit(*node.getCondition());
 
     mContext.getSymbolTable().openScope();
-    visit(*node.then);
+    visit(*node.getThen());
     mContext.getSymbolTable().closeScope();
 
-    if (node.elseThen != nullptr) {
+    if (node.getElseThen() != nullptr) {
         mContext.getSymbolTable().openScope();
-        visit(*node.elseThen);
+        visit(*node.getElseThen());
         mContext.getSymbolTable().closeScope();
     }
 }
@@ -392,8 +411,8 @@ void LocalScopePass::visit(While& node) {
     mLoops.push(&node);
     mContext.getSymbolTable().openScope();
 
-    visit(*node.condition);
-    for (const auto& stmt : node.body->statements) {
+    visit(*node.getCondition());
+    for (const auto& stmt : node.getBody()->getStatements()) {
         visit(*stmt);
     }
 
@@ -403,18 +422,18 @@ void LocalScopePass::visit(While& node) {
 void LocalScopePass::visit(ExpressionStatement& node) {
     stackGuard();
 
-    visit(*node.expression);
+    visit(*node.getExpression());
 }
 void LocalScopePass::visit(Return& node) {
     stackGuard();
 
-    visit(*node.returnExpression);
-    if (node.returnExpression->exprType
+    visit(*node.getReturnExpression());
+    if (node.getReturnExpression()->getExprType()
         != mCurrentFunction->getSymbolPtr()->getTypeSymbol()->getType()) {
         auto diagnostic = Diagnostic();
         diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
                                                 std::format("bad return type"),
-                                                {node.sourceLocation}));
+                                                {node.getSourceLocation()}));
         mDiagnosticManager.report(diagnostic);
         return;
     }

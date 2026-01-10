@@ -19,12 +19,11 @@
 #include <unordered_map>
 #include <utility>
 
-#include "AST/ASTNodesForward.hpp"
-
 namespace llvm {
 class Target;
 class TargetMachine;
 }  // namespace llvm
+class Node;
 class Symbol;
 class FunctionSymbol;
 class SymbolContext;
@@ -126,7 +125,6 @@ class LLVMCodegen {
     std::unique_ptr<llvm::LLVMContext> mContext;
     std::unique_ptr<llvm::Module> mModule;
     std::unique_ptr<llvm::IRBuilder<>> mBuilder;
-
 
     std::unordered_map<const Type*, llvm::Type*> mTypes;
     std::unordered_map<const Symbol*, llvm::AllocaInst*> mObjects;
