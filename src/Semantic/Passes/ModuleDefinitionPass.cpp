@@ -26,7 +26,7 @@ void ModuleDefinitionPass::visit(Node& node) {
 void ModuleDefinitionPass::visit(ModuleDeclaration& node) {
     stackGuard();
 
-    auto* const module = mContext.addSymbol<ModuleSymbol>(node.getName().getValue());
+    auto* const module{mContext.addSymbol<ModuleSymbol>(node.getName().getValue())};
     node.setSymbolRef(module);
 
     module->startDefinition();
@@ -48,6 +48,6 @@ void ModuleDefinitionPass::visit(DeclarationsBlock& node) {
 void ModuleDefinitionPass::visit(FunctionDeclaration& node) {
     stackGuard();
 
-    auto* const function = mContext.addSymbol<FunctionSymbol>(node.getName().getValue());
+    auto* const function{mContext.addSymbol<FunctionSymbol>(node.getName().getValue())};
     node.setSymbolRef(function);
 }

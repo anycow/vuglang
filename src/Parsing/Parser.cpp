@@ -23,12 +23,12 @@
 std::unique_ptr<Node> Parser::program() {
     stackGuard();
 
-    auto program = declaration();
+    auto program{declaration()};
     if (mCurrent != LexemType::EndOfFile) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "unexpected token",
-                                                {mPrevious.getSourceLocation()}));
+                                                {mPrevious.getSourceLocation()}});
         mDiagnosticManager.report(diagnostic);
     }
 
@@ -46,12 +46,12 @@ std::unique_ptr<Declaration> Parser::declaration() {
             case LexemType::Import:
                 return functionDeclaration();
             default:
-                throw std::logic_error("Syntax error");
+                throw std::logic_error{"Syntax error"};
         }
     } catch (ParsingException& exception) {
         mDiagnosticManager.report(exception.getDiagnostic());
 
-        int64_t level = 0;
+        int64_t level{0};
         while (mCurrent != LexemType::EndOfFile) {
             if (mCurrent == LexemType::LeftCurlyBracket) {
                 level++;
@@ -77,157 +77,157 @@ std::unique_ptr<Declaration> Parser::declaration() {
 }
 std::unique_ptr<DeclarationsBlock> Parser::declarationsBlock() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::LeftCurlyBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '{'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token leftBracket = mCurrent;
+    Token leftBracket{mCurrent};
 
     advance();
     std::vector<std::unique_ptr<Declaration>> declarations;
     while (mCurrent != LexemType::RightCurlyBracket) {
         if (mCurrent == LexemType::EndOfFile) {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            auto diagnostic{Diagnostic()};
+            diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                     "expected '}'",
-                                                    {mPrevious.getSourceLocation()}));
-            throw ParsingException(std::move(diagnostic));
+                                                    {mPrevious.getSourceLocation()}});
+            throw ParsingException{std::move(diagnostic)};
         }
 
         declarations.push_back(declaration());
     }
-    Token rightBracket = mCurrent;
+    Token rightBracket{mCurrent};
     advance();
 
     return std::make_unique<DeclarationsBlock>(
         std::move(leftBracket),
         std::move(rightBracket),
         std::move(declarations),
-        SourceLocation(startLocation, mPrevious.getSourceLocation()));
+        SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<ModuleDeclaration> Parser::moduleDeclaration() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent.getType() != LexemType::Mod) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'mod'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto modKeyword = mCurrent;
+    auto modKeyword{mCurrent};
 
     advance();
     if (mCurrent.getType() != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected module name",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto name = mCurrent;
+    auto name{mCurrent};
 
     advance();
-    auto body = declarationsBlock();
+    auto body{declarationsBlock()};
 
     return std::make_unique<ModuleDeclaration>(
         std::move(modKeyword),
         std::move(name),
         std::move(body),
-        SourceLocation(startLocation, mPrevious.getSourceLocation()));
+        SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    bool isImported = false;
+    bool isImported{false};
     if (mCurrent == LexemType::Import) {
         isImported = true;
         advance();
     }
 
     if (mCurrent != LexemType::Func) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'func'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token funcKeyword = mCurrent;
+    Token funcKeyword{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected function name",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto name = mCurrent;
+    auto name{mCurrent};
 
     advance();
     if (mCurrent != LexemType::LeftRoundBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '('",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token leftBracket = mCurrent;
+    Token leftBracket{mCurrent};
 
     advance();
     std::vector<std::unique_ptr<FunctionParameter>> parameters;
     while (mCurrent != LexemType::RightRoundBracket) {
-        auto parameter = functionParameter();
+        auto parameter{functionParameter()};
         parameters.push_back(std::move(parameter));
 
         if (mCurrent == LexemType::Comma) {
             advance();
         } else if (mCurrent != LexemType::RightRoundBracket) {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            auto diagnostic{Diagnostic()};
+            diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                     "expected ',' or ')'",
-                                                    {mPrevious.getSourceLocation()}));
-            throw ParsingException(std::move(diagnostic));
+                                                    {mPrevious.getSourceLocation()}});
+            throw ParsingException{std::move(diagnostic)};
         }
     }
-    Token rightBracket = mCurrent;
+    Token rightBracket{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Arrow) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '->' before function type",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto arrow = mCurrent;
+    auto arrow{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected function type name",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto returnType = mCurrent;
+    auto returnType{mCurrent};
 
     advance();
     std::unique_ptr<StatementsBlock> functionBody;
     if (isImported) {
         if (mCurrent != LexemType::Semicolon) {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            auto diagnostic{Diagnostic()};
+            diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                     "expected semicolon",
-                                                    {mPrevious.getSourceLocation()}));
-            throw ParsingException(std::move(diagnostic));
+                                                    {mPrevious.getSourceLocation()}});
+            throw ParsingException{std::move(diagnostic)};
         }
         advance();
     } else {
@@ -243,42 +243,42 @@ std::unique_ptr<FunctionDeclaration> Parser::functionDeclaration() {
         std::move(returnType),
         std::move(parameters),
         std::move(functionBody),
-        SourceLocation(startLocation, mPrevious.getSourceLocation()));
+        SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<FunctionParameter> Parser::functionParameter() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected parameter type name",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto type = mCurrent;
+    auto type{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected parameter name",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto name = mCurrent;
+    auto name{mCurrent};
 
     advance();
     return std::make_unique<FunctionParameter>(
         std::move(type),
         std::move(name),
-        SourceLocation(startLocation, mPrevious.getSourceLocation()));
+        SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 
 std::unique_ptr<Statement> Parser::stmt() {
     try {
         stackGuard();
-        const auto startLocation = mCurrent.getSourceLocation();
+        const auto startLocation{mCurrent.getSourceLocation()};
 
         std::unique_ptr<Statement> node;
         switch (mCurrent.getType()) {
@@ -316,21 +316,21 @@ std::unique_ptr<Statement> Parser::stmt() {
             && node->getKind()
             != Node::Kind::StatementBlock) {
             if (mCurrent != LexemType::Semicolon) {
-                auto diagnostic = Diagnostic();
+                auto diagnostic{Diagnostic()};
 
-                const auto errorLine = mPrevious.getSourceLocation().getSourceFile()->getLine(
-                    mPrevious.getSourceLocation().getEndLine());
-                auto fixLine = std::string(errorLine.begin(), errorLine.end());
+                const auto errorLine{mPrevious.getSourceLocation().getSourceFile()->getLine(
+                    mPrevious.getSourceLocation().getEndLine())};
+                auto fixLine{std::string{errorLine.begin(), errorLine.end()}};
                 fixLine.insert(fixLine.begin() + mPrevious.getSourceLocation().getEndColumn(), ';');
 
-                diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                         "expected semicolon",
-                                                        {mPrevious.getSourceLocation()})
-                                          .addFix(DiagnosticFix().addDiff(
+                                                        {mPrevious.getSourceLocation()}}
+                                          .addFix(DiagnosticFix{}.addDiff(
                                               *mPrevious.getSourceLocation().getSourceFile(),
                                               mPrevious.getSourceLocation().getEndLine(),
                                               fixLine)));
-                throw ParsingException(std::move(diagnostic));
+                throw ParsingException{std::move(diagnostic)};
             }
             advance();
         }
@@ -339,7 +339,7 @@ std::unique_ptr<Statement> Parser::stmt() {
     } catch (ParsingException& exception) {
         mDiagnosticManager.report(exception.getDiagnostic());
 
-        int64_t level = 0;
+        int64_t level{0};
         while (true) {
             if (mCurrent == LexemType::LeftCurlyBracket) {
                 level++;
@@ -361,40 +361,40 @@ std::unique_ptr<Statement> Parser::stmt() {
 }
 std::unique_ptr<If> Parser::ifStmt() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::If) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'if'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto ifKeyword = mCurrent;
+    auto ifKeyword{mCurrent};
 
     advance();
     if (mCurrent != LexemType::LeftRoundBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '(' after 'if'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token leftBracket = mCurrent;
+    Token leftBracket{mCurrent};
 
     advance();
-    auto condition = expr();
+    auto condition{expr()};
     if (mCurrent != LexemType::RightRoundBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected ')'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token rightBracket = mCurrent;
+    Token rightBracket{mCurrent};
 
     advance();
-    auto then = stmtBlock();
+    auto then{stmtBlock()};
     if (mCurrent == LexemType::Else) {
         advance();
 
@@ -411,7 +411,7 @@ std::unique_ptr<If> Parser::ifStmt() {
                                     std::move(condition),
                                     std::move(then),
                                     std::move(elseThen),
-                                    SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                                    SourceLocation{startLocation, mPrevious.getSourceLocation()});
     } else {
         return std::make_unique<If>(std::move(ifKeyword),
                                     std::move(leftBracket),
@@ -419,46 +419,46 @@ std::unique_ptr<If> Parser::ifStmt() {
                                     std::move(condition),
                                     std::move(then),
                                     nullptr,
-                                    SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                                    SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 }
 std::unique_ptr<While> Parser::whileStmt() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::While) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'while'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto whileKeyword = mCurrent;
+    auto whileKeyword{mCurrent};
 
     advance();
     if (mCurrent != LexemType::LeftRoundBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '(' after 'while'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token leftBracket = mCurrent;
+    Token leftBracket{mCurrent};
 
     advance();
-    auto condition = expr();
+    auto condition{expr()};
     if (mCurrent != LexemType::RightRoundBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected ')'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token rightBracket = mCurrent;
+    Token rightBracket{mCurrent};
 
     advance();
     ++mLoopNestingDepth;
-    auto body = stmtBlock();
+    auto body{stmtBlock()};
     --mLoopNestingDepth;
 
     return std::make_unique<While>(std::move(whileKeyword),
@@ -466,99 +466,99 @@ std::unique_ptr<While> Parser::whileStmt() {
                                    std::move(rightBracket),
                                    std::move(condition),
                                    std::move(body),
-                                   SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                                   SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<Break> Parser::breakStmt() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::Break) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'break'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto breakKeyword = mCurrent;
+    auto breakKeyword{mCurrent};
 
     advance();
     if (mLoopNestingDepth > 0) {
         return std::make_unique<Break>(
             std::move(breakKeyword),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     } else {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "break operator outside loop body",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
 }
 std::unique_ptr<Return> Parser::returnStmt() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::Return) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'return'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto returnKeyword = mCurrent;
+    auto returnKeyword{mCurrent};
 
     advance();
-    auto returnExpression = expr();
+    auto returnExpression{expr()};
 
     return std::make_unique<Return>(std::move(returnKeyword),
                                     std::move(returnExpression),
-                                    SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                                    SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::Var) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected 'var'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto varKeyword = mCurrent;
+    auto varKeyword{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected type name in var declaration",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto type = mCurrent;
+    auto type{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected variable name in var declaration",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto name = mCurrent;
+    auto name{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Assign) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '=' after var declaration",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto assignToken = mCurrent;
+    auto assignToken{mCurrent};
 
     advance();
-    auto value = expr();
+    auto value{expr()};
 
     return std::make_unique<LocalVariableDeclaration>(
         std::move(varKeyword),
@@ -566,21 +566,21 @@ std::unique_ptr<LocalVariableDeclaration> Parser::localVariableDeclaration() {
         std::move(name),
         std::move(assignToken),
         std::move(value),
-        SourceLocation(startLocation, mPrevious.getSourceLocation()));
+        SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<Statement> Parser::varAssignOrExpr() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto previous = mPrevious;
+    auto previous{mPrevious};
     if (mCurrent != LexemType::Identifier) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected name",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    auto name = mCurrent;
+    auto name{mCurrent};
 
     advance();
     if (mCurrent != LexemType::Assign) {
@@ -589,50 +589,50 @@ std::unique_ptr<Statement> Parser::varAssignOrExpr() {
         mLexer.revertTo(mCurrent);
         return std::make_unique<ExpressionStatement>(expr(), startLocation);
     }
-    auto assignToken = mCurrent;
+    auto assignToken{mCurrent};
 
     advance();
-    auto value = expr();
+    auto value{expr()};
 
     return std::make_unique<Assign>(std::move(name),
                                     std::move(assignToken),
                                     std::move(value),
-                                    SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                                    SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 std::unique_ptr<StatementsBlock> Parser::stmtBlock() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent != LexemType::LeftCurlyBracket) {
-        auto diagnostic = Diagnostic();
-        diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+        auto diagnostic{Diagnostic()};
+        diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                 "expected '{'",
-                                                {mPrevious.getSourceLocation()}));
-        throw ParsingException(std::move(diagnostic));
+                                                {mPrevious.getSourceLocation()}});
+        throw ParsingException{std::move(diagnostic)};
     }
-    Token leftBracket = mCurrent;
+    Token leftBracket{mCurrent};
 
     advance();
     std::vector<std::unique_ptr<Statement>> statements;
     while (mCurrent != LexemType::RightCurlyBracket) {
         if (mCurrent == LexemType::EndOfFile) {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            auto diagnostic{Diagnostic()};
+            diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                     "expected '}'",
-                                                    {mPrevious.getSourceLocation()}));
-            throw ParsingException(std::move(diagnostic));
+                                                    {mPrevious.getSourceLocation()}});
+            throw ParsingException{std::move(diagnostic)};
         }
 
         statements.push_back(stmt());
     }
-    Token rightBracket = mCurrent;
+    Token rightBracket{mCurrent};
     advance();
 
     return std::make_unique<StatementsBlock>(
         std::move(leftBracket),
         std::move(rightBracket),
         std::move(statements),
-        SourceLocation(startLocation, mPrevious.getSourceLocation()));
+        SourceLocation{startLocation, mPrevious.getSourceLocation()});
 }
 
 std::unique_ptr<Expression> Parser::expr() {
@@ -642,123 +642,123 @@ std::unique_ptr<Expression> Parser::expr() {
 }
 std::unique_ptr<Expression> Parser::logicOr() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = logicAnd();
+    auto node{logicAnd()};
 
     while (mCurrent == LexemType::LogicOr) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = logicAnd();
+        auto right{logicAnd()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::logicAnd() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = bitOr();
+    auto node{bitOr()};
 
     while (mCurrent == LexemType::LogicAnd) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = bitOr();
+        auto right{bitOr()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::bitOr() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = bitXor();
+    auto node{bitXor()};
 
     while (mCurrent == LexemType::BitOr) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = bitXor();
+        auto right{bitXor()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::bitXor() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = bitAnd();
+    auto node{bitAnd()};
 
     while (mCurrent == LexemType::BitXor) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = bitAnd();
+        auto right{bitAnd()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::bitAnd() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = equal();
+    auto node{equal()};
 
     while (mCurrent == LexemType::BitAnd) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = equal();
+        auto right{equal()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::equal() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = relat();
+    auto node{relat()};
 
     if (mCurrent == LexemType::Equal || mCurrent == LexemType::Unequal) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = relat();
+        auto right{relat()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::relat() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = term();
+    auto node{term()};
 
     if (mCurrent
         == LexemType::Less
@@ -768,42 +768,42 @@ std::unique_ptr<Expression> Parser::relat() {
         == LexemType::Greater
         || mCurrent
         == LexemType::GreaterEqual) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = relat();
+        auto right{relat()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::term() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = fact();
+    auto node{fact()};
 
     while (mCurrent == LexemType::Plus || mCurrent == LexemType::Minus) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = fact();
+        auto right{fact()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::fact() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
-    auto node = unary();
+    auto node{unary()};
 
     while (mCurrent
            == LexemType::Multiply
@@ -811,31 +811,31 @@ std::unique_ptr<Expression> Parser::fact() {
            == LexemType::Divide
            || mCurrent
            == LexemType::Remainder) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
-        auto right = unary();
+        auto right{unary()};
         node = std::make_unique<BinaryOperation>(
             std::move(operation),
             std::move(node),
             std::move(right),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     }
 
     return node;
 }
 std::unique_ptr<Expression> Parser::unary() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     std::unique_ptr<Expression> node;
 
     if (mCurrent == LexemType::Minus || mCurrent == LexemType::Not) {
-        auto operation = mCurrent;
+        auto operation{mCurrent};
         advance();
         node = std::make_unique<PrefixOperation>(
             std::move(operation),
             unary(),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     } else {
         node = primary();
     }
@@ -844,42 +844,42 @@ std::unique_ptr<Expression> Parser::unary() {
 }
 std::unique_ptr<Expression> Parser::primary() {
     stackGuard();
-    const auto startLocation = mCurrent.getSourceLocation();
+    const auto startLocation{mCurrent.getSourceLocation()};
 
     if (mCurrent == LexemType::Number) {
-        auto number = mCurrent;
+        auto number{mCurrent};
         advance();
         return std::make_unique<Number>(
             std::move(number),
-            SourceLocation(startLocation, mPrevious.getSourceLocation()));
+            SourceLocation{startLocation, mPrevious.getSourceLocation()});
     } else if (mCurrent == LexemType::Identifier) {
-        auto name = mCurrent;
+        auto name{mCurrent};
         advance();
         if (mCurrent != LexemType::LeftRoundBracket) {
             return std::make_unique<Identifier>(
                 std::move(name),
-                SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                SourceLocation{startLocation, mPrevious.getSourceLocation()});
         } else {
-            Token leftBracket = mCurrent;
+            Token leftBracket{mCurrent};
             advance();
             std::vector<std::unique_ptr<Expression>> arguments;
             while (mCurrent != LexemType::RightRoundBracket) {
-                auto expression = expr();
+                auto expression{expr()};
                 arguments.push_back(std::move(expression));
 
                 if (mCurrent == LexemType::EndOfFile) {
-                    auto diagnostic = Diagnostic();
-                    diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                    auto diagnostic{Diagnostic()};
+                    diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                             "expected '}'",
-                                                            {mPrevious.getSourceLocation()}));
-                    throw ParsingException(std::move(diagnostic));
+                                                            {mPrevious.getSourceLocation()}});
+                    throw ParsingException{std::move(diagnostic)};
                 }
 
                 if (mCurrent == LexemType::Comma) {
                     advance();
                 }
             }
-            Token rightBracket = mCurrent;
+            Token rightBracket{mCurrent};
             advance();
 
             return std::make_unique<CallFunction>(
@@ -887,27 +887,27 @@ std::unique_ptr<Expression> Parser::primary() {
                 std::move(leftBracket),
                 std::move(rightBracket),
                 std::move(arguments),
-                SourceLocation(startLocation, mPrevious.getSourceLocation()));
+                SourceLocation{startLocation, mPrevious.getSourceLocation()});
         }
     } else if (mCurrent == LexemType::LeftRoundBracket) {
         advance();
-        auto expression = expr();
+        auto expression{expr()};
 
         if (mCurrent.getType() == LexemType::RightRoundBracket) {
             advance();
             return expression;
         } else {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            auto diagnostic{Diagnostic()};
+            diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                                     "expected '}",
-                                                    {mPrevious.getSourceLocation()}));
-            throw ParsingException(std::move(diagnostic));
+                                                    {mPrevious.getSourceLocation()}});
+            throw ParsingException{std::move(diagnostic)};
         }
     }
 
-    auto diagnostic = Diagnostic();
-    diagnostic.addMessage(DiagnosticMessage(DiagnosticMessage::Severity::Error,
+    auto diagnostic{Diagnostic()};
+    diagnostic.addMessage(DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                             "unexpected token",
-                                            {mPrevious.getSourceLocation()}));
-    throw ParsingException(std::move(diagnostic));
+                                            {mPrevious.getSourceLocation()}});
+    throw ParsingException{std::move(diagnostic)};
 }

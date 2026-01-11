@@ -41,7 +41,7 @@ template <typename T, typename Alloc>
 struct is_vector<std::vector<T, Alloc>> : std::true_type {};
 
 template <typename T>
-inline constexpr bool is_vector_v = is_vector<T>::value;
+inline constexpr bool is_vector_v{is_vector<T>::value};
 
 
 template <typename T>
@@ -58,7 +58,7 @@ template <typename T>
 using vector_value_type_t = typename vector_value_type<T>::type;
 
 template <typename T>
-constexpr bool dependent_false = false;
+inline constexpr bool dependent_false{false};
 
 class CLI {
    public:
@@ -206,8 +206,8 @@ class CLI {
                     auto is_space = [](unsigned char c) {
                         return std::isspace(c);
                     };
-                    auto start = std::ranges::find_if_not(rng, is_space);
-                    auto end = std::ranges::find_if_not(rng | std::views::reverse, is_space).base();
+                    auto start{std::ranges::find_if_not(rng, is_space)};
+                    auto end{std::ranges::find_if_not(rng | std::views::reverse, is_space).base()};
                     return std::ranges::subrange(start, end);
                 };
 
@@ -219,7 +219,7 @@ class CLI {
                                  });
 
                 for (std::string_view element : scalars) {
-                    auto scalar = mParseFunction(element);
+                    auto scalar{mParseFunction(element)};
                     if (scalar.isError()) {
                         return ParseResult::error(scalar.error());
                     }
@@ -227,7 +227,7 @@ class CLI {
                 }
                 mValue.set(vector, getPriority());
             } else {
-                auto scalar = mParseFunction(*value);
+                auto scalar{mParseFunction(*value)};
                 if (scalar.isError()) {
                     return ParseResult::error(scalar.error());
                 }
@@ -244,8 +244,8 @@ class CLI {
         static ParseScalarResult parseScalar(const std::string_view value) {
             if constexpr (std::is_integral_v<ScalarType> && !std::is_same_v<ScalarType, bool>) {
                 ScalarType integer{};
-                const auto result
-                    = std::from_chars(value.data(), value.data() + value.size(), integer);
+                const auto result{
+                    std::from_chars(value.data(), value.data() + value.size(), integer)};
                 if (result.ec != std::errc{}) {
                     return ParseScalarResult::error(ParseError::InvalidValue);
                 }
@@ -268,8 +268,8 @@ class CLI {
 
     template <typename T>
     Value<T>& addValue(T& value) {
-        auto val = std::make_unique<Value<T>>(*this, value);
-        auto& ref = *val;
+        auto val{std::make_unique<Value<T>>(*this, value)};
+        auto& ref{*val};
         mValues.push_back(std::move(val));
         return ref;
     }
@@ -279,46 +279,46 @@ class CLI {
     }
 
     ParseResult parse(const int argc, char* argv[]) {  // NOLINT(*-avoid-c-arrays)
-        std::vector<std::string_view> args(argv + 1, argv + argc);
+        std::vector<std::string_view> args{argv + 1, argv + argc};
 
         for (size_t i = 0; i < args.size(); ++i) {
-            const std::string_view current = args[i];
+            const std::string_view current{args[i]};
 
             if (current.starts_with("--")) {
-                const std::string_view optionStr = current.substr(2);
+                const std::string_view optionStr{current.substr(2)};
 
-                if (const auto pos = optionStr.find('='); pos != std::string_view::npos) {
-                    const auto key = optionStr.substr(0, pos);
-                    const auto value = optionStr.substr(pos + 1);
+                if (const auto pos{optionStr.find('=')}; pos != std::string_view::npos) {
+                    const auto key{optionStr.substr(0, pos)};
+                    const auto value{optionStr.substr(pos + 1)};
 
-                    const auto option = mOptions.find(std::string(key));
+                    const auto option{mOptions.find(std::string(key))};
                     if (option == mOptions.end()) {
                         return ParseResult::error(ParseError::MissingOption);
                     }
 
-                    const auto result = option->second->parse(value);
+                    const auto result{option->second->parse(value)};
                     if (result.isError()) {
                         return result;
                     }
                 } else {
                     if (i + 1 < args.size() && !args[i + 1].starts_with("--")) {
-                        const auto option = mOptions.find(std::string(optionStr));
+                        const auto option{mOptions.find(std::string(optionStr))};
                         if (option == mOptions.end()) {
                             return ParseResult::error(ParseError::MissingOption);
                         }
 
-                        const auto result = option->second->parse(args[i + 1]);
+                        const auto result{option->second->parse(args[i + 1])};
                         i++;
                         if (result.isError()) {
                             return result;
                         }
                     } else {
-                        const auto option = mOptions.find(std::string(optionStr));
+                        const auto option{mOptions.find(std::string(optionStr))};
                         if (option == mOptions.end()) {
                             return ParseResult::error(ParseError::MissingOption);
                         }
 
-                        const auto result = option->second->parse(std::nullopt);
+                        const auto result{option->second->parse(std::nullopt)};
                         if (result.isError()) {
                             return result;
                         }

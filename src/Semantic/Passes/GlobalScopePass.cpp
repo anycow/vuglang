@@ -35,22 +35,22 @@ void GlobalScopePass::visit(ModuleDeclaration& node) {
 
     mContext.getSymbolTable().openScope();
 
-    const auto result = mContext.getSymbolTable().insertSymbol(*node.getSymbolPtr());
+    const auto result{mContext.getSymbolTable().insertSymbol(*node.getSymbolPtr())};
     if (result.isError()) {
         if (result.error().kind == SymbolTable::InsertError::Kind::NameConflict) {
-            auto diagnostic = Diagnostic();
+            Diagnostic diagnostic{};
             diagnostic.addMessage(
-                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                   std::format("redefinition of '{}'", node.getName().getValue()),
-                                  {node.getSourceLocation()}));
+                                  {node.getSourceLocation()}});
             mDiagnosticManager.report(diagnostic);
             return;
         } else if (result.error().kind == SymbolTable::InsertError::Kind::ProhibitedShadowing) {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(
+            Diagnostic diagnostic{};
+            diagnostic.addMessage(DiagnosticMessage{
                 DiagnosticMessage::Severity::Error,
                 std::format("shadowing of '{}' is prohibited", node.getName().getValue()),
-                {node.getSourceLocation()}));
+                {node.getSourceLocation()}});
             mDiagnosticManager.report(diagnostic);
             return;
         }
@@ -67,23 +67,23 @@ void GlobalScopePass::visit(DeclarationsBlock& node) {
             continue;
         }
 
-        const auto result = mContext.getSymbolTable().insertSymbol(*declaration->getSymbolPtr());
+        const auto result{mContext.getSymbolTable().insertSymbol(*declaration->getSymbolPtr())};
         if (result.isError()) {
             if (result.error().kind == SymbolTable::InsertError::Kind::NameConflict) {
-                auto diagnostic = Diagnostic();
-                diagnostic.addMessage(DiagnosticMessage(
+                Diagnostic diagnostic{};
+                diagnostic.addMessage(DiagnosticMessage{
                     DiagnosticMessage::Severity::Error,
                     std::format("redefinition of '{}'", declaration->getSymbolPtr()->getName()),
-                    {node.getSourceLocation()}));
+                    {node.getSourceLocation()}});
                 mDiagnosticManager.report(diagnostic);
                 return;
             } else if (result.error().kind == SymbolTable::InsertError::Kind::ProhibitedShadowing) {
-                auto diagnostic = Diagnostic();
+                Diagnostic diagnostic{};
                 diagnostic.addMessage(
-                    DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                    DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                       std::format("shadowing of '{}' is prohibited",
                                                   declaration->getSymbolPtr()->getName()),
-                                      {node.getSourceLocation()}));
+                                      {node.getSourceLocation()}});
                 mDiagnosticManager.report(diagnostic);
                 return;
             }
@@ -98,17 +98,17 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
 
     node.getSymbolRef()->startDefinition();
     for (const auto& parameter : node.getParameters()) {
-        auto* const parameterSymbol
-            = mContext.addSymbol<LocalVariableSymbol>(parameter->getName().getValue());
+        auto* const parameterSymbol{
+            mContext.addSymbol<LocalVariableSymbol>(parameter->getName().getValue())};
 
         parameterSymbol->startDefinition();
-        const auto result = mContext.getSymbolTable().findSymbol(parameter->getType().getValue());
+        const auto result{mContext.getSymbolTable().findSymbol(parameter->getType().getValue())};
         if (result.isError()) {
-            auto diagnostic = Diagnostic();
-            diagnostic.addMessage(DiagnosticMessage(
+            Diagnostic diagnostic{};
+            diagnostic.addMessage(DiagnosticMessage{
                 DiagnosticMessage::Severity::Error,
                 std::format("Can't find '{}' type", parameter->getType().getValue()),
-                {node.getSourceLocation()}));
+                {node.getSourceLocation()}});
             mDiagnosticManager.report(diagnostic);
             return;
         }
@@ -116,11 +116,11 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         if (result.value()->symbol.getKind() == Symbol::Kind::Type) {
             parameterSymbol->setTypeSymbol(static_cast<TypeSymbol*>(&result.value()->symbol));
         } else {
-            auto diagnostic = Diagnostic();
+            Diagnostic diagnostic{};
             diagnostic.addMessage(
-                DiagnosticMessage(DiagnosticMessage::Severity::Error,
+                DiagnosticMessage{DiagnosticMessage::Severity::Error,
                                   std::format("'{}' isn't type", parameter->getType().getValue()),
-                                  {node.getSourceLocation()}));
+                                  {node.getSourceLocation()}});
             mDiagnosticManager.report(diagnostic);
             return;
         }
@@ -130,14 +130,14 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         node.getSymbolRef()->addArgument(*parameterSymbol);
     }
 
-    const auto returnTypeRecord
-        = mContext.getSymbolTable().findSymbol(node.getReturnType().getValue());
+    const auto returnTypeRecord{
+        mContext.getSymbolTable().findSymbol(node.getReturnType().getValue())};
     if (returnTypeRecord.isError()) {
-        auto diagnostic = Diagnostic();
+        Diagnostic diagnostic{};
         diagnostic.addMessage(
-            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            DiagnosticMessage{DiagnosticMessage::Severity::Error,
                               std::format("Can't find '{}' type", node.getReturnType().getValue()),
-                              {node.getSourceLocation()}));
+                              {node.getSourceLocation()}});
         mDiagnosticManager.report(diagnostic);
         return;
     }
@@ -146,11 +146,11 @@ void GlobalScopePass::visit(FunctionDeclaration& node) {
         node.getSymbolRef()->setTypeSymbol(
             static_cast<TypeSymbol*>(&returnTypeRecord.value()->symbol));
     } else {
-        auto diagnostic = Diagnostic();
+        Diagnostic diagnostic{};
         diagnostic.addMessage(
-            DiagnosticMessage(DiagnosticMessage::Severity::Error,
+            DiagnosticMessage{DiagnosticMessage::Severity::Error,
                               std::format("'{}' isn't type", node.getReturnType().getValue()),
-                              {node.getSourceLocation()}));
+                              {node.getSourceLocation()}});
         mDiagnosticManager.report(diagnostic);
         return;
     }

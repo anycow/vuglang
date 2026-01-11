@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "AST/Declarations.hpp"
-#include "Codegen/LLVMCodegen.hpp"
 #include "Misc/Stack.hpp"
 
 void LLVMDeclarationCodegen::emit(const ModuleDeclaration& node) {
@@ -55,14 +54,14 @@ void LLVMDeclarationCodegen::emit(const FunctionDeclaration& node) {
         parameters.emplace_back(getTypes()[parameter->getSymbolRef()->getTypeSymbol()->getType()]);
     }
 
-    auto* functionType
-        = llvm::FunctionType::get(getTypes()[node.getSymbolRef()->getTypeSymbol()->getType()],
-                                  parameters,
-                                  false);
-    auto* function = llvm::Function::Create(functionType,
-                                            llvm::Function::ExternalLinkage,
-                                            node.getName().getValue(),
-                                            &getModule());
+    auto* functionType{
+        llvm::FunctionType::get(getTypes()[node.getSymbolRef()->getTypeSymbol()->getType()],
+                                parameters,
+                                false)};
+    auto* function{llvm::Function::Create(functionType,
+                                          llvm::Function::ExternalLinkage,
+                                          node.getName().getValue(),
+                                          &getModule())};
 
     getFunctions()[node.getSymbolRef()] = function;
 }

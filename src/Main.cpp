@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     llvm::InitializeAllAsmParsers();
     llvm::InitializeAllAsmPrinters();
 
-    auto cli = CLI();
+    CLI cli{};
 
     std::optional<std::string> inputFile;
     cli.addValue(inputFile).addOption("input");
@@ -169,8 +169,8 @@ int main(int argc, char* argv[]) {
     input.resize(std::filesystem::file_size(*inputFile));
     inputStream.read(input.data(), static_cast<std::streamsize>(input.size()));
 
-    auto file = SourceFile(std::filesystem::path(*inputFile).filename().string(), std::move(input));
-    auto lex = Lexer(file);
+    const SourceFile file{std::filesystem::path(*inputFile).filename().string(), std::move(input)};
+    Lexer lex{file};
 
     std::vector<Token> tokens;
     lex.getTokens(tokens);
@@ -178,7 +178,7 @@ int main(int argc, char* argv[]) {
     //     //std::cout << token.toString() << std::endl;
     // }
 
-    DiagnosticManager diagnosticManager(DiagnosticMessage::Severity::Hint);
+    DiagnosticManager diagnosticManager{DiagnosticMessage::Severity::Hint};
     auto parse = Parser(lex, diagnosticManager);
 
     auto ast = parse.program();
@@ -186,12 +186,12 @@ int main(int argc, char* argv[]) {
     auto printer = Printer(*ast, 2);
     printer.print();
 
-    auto symbolTable = SymbolTable();
+    SymbolTable symbolTable{};
     auto context = SymbolContext(symbolTable);
 
-    auto pass1 = ModuleDefinitionPass(*ast, context, diagnosticManager);
-    auto pass2 = GlobalScopePass(*ast, context, diagnosticManager);
-    auto pass3 = LocalScopePass(*ast, context, diagnosticManager);
+    ModuleDefinitionPass pass1{*ast, context, diagnosticManager};
+    GlobalScopePass pass2{*ast, context, diagnosticManager};
+    LocalScopePass pass3{*ast, context, diagnosticManager};
     pass1.analyze();
     pass2.analyze();
     pass3.analyze();
@@ -217,7 +217,7 @@ int main(int argc, char* argv[]) {
     codegen.emit();
 
     std::error_code errorCode;
-    llvm::raw_fd_ostream dest(outputFile, errorCode, llvm::sys::fs::OF_None);
+    llvm::raw_fd_ostream dest{outputFile, errorCode, llvm::sys::fs::OF_None};
     if (errorCode) {
         std::cerr << "Could not open file: " << errorCode.message() << "\n";
         std::exit(-1);

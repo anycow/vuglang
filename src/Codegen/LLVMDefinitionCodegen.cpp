@@ -112,16 +112,16 @@ void LLVMDefinitionCodegen::emit(const FunctionDeclaration& node) {
     stackGuard();
 
     if (node.getDefinition()) {
-        auto* function = getFunctions()[node.getSymbolRef()];
+        auto* function{getFunctions()[node.getSymbolRef()]};
         if (!function) {
             throw std::logic_error("function not declared");
         }
 
-        llvm::BasicBlock* body = llvm::BasicBlock::Create(getContext(), "", function);
+        llvm::BasicBlock* body{llvm::BasicBlock::Create(getContext(), "", function)};
         getBuilder().SetInsertPoint(body);
 
         for (size_t i = 0; i < node.getParameters().size(); ++i) {
-            auto* parameter = function->getArg(i);
+            auto* parameter{function->getArg(i)};
 
             parameter->setName(node.getParameters()[i]->getName().getValue());
             getObjects()[node.getParameters()[i]->getSymbolRef()]
@@ -133,7 +133,7 @@ void LLVMDefinitionCodegen::emit(const FunctionDeclaration& node) {
 
         emit(*node.getDefinition());
 
-        auto* lastBlock = getBuilder().GetInsertBlock();
+        auto* lastBlock{getBuilder().GetInsertBlock()};
         if (lastBlock->empty()) {
             if (&function->getEntryBlock() != lastBlock && lastBlock->use_empty()) {
                 lastBlock->eraseFromParent();
@@ -169,8 +169,8 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
     stackGuard();
 
     if (node.getLeft()->getExprType()->isInteger() && node.getRight()->getExprType()->isInteger()) {
-        auto* left = emit(*node.getLeft());
-        auto* right = emit(*node.getRight());
+        auto* left{emit(*node.getLeft())};
+        auto* right{emit(*node.getRight())};
 
         if (node.getLeft()->getExprType()->getInteger().isSigned()) {
             switch (node.getOperationType()) {
@@ -243,12 +243,10 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
         }
     } else if (node.getLeft()->getExprType()->isBoolean()
                && node.getRight()->getExprType()->isBoolean()) {
-        if (node.getOperationType()
-            != LexemType::LogicAnd
-            && node.getOperationType()
-            != LexemType::LogicOr) {
-            auto* left = emit(*node.getLeft());
-            auto* right = emit(*node.getRight());
+        if ((node.getOperationType() != LexemType::LogicAnd)
+            && (node.getOperationType() != LexemType::LogicOr)) {
+            auto* left{emit(*node.getLeft())};
+            auto* right{emit(*node.getRight())};
 
             switch (node.getOperationType()) {
                 case LexemType::BitAnd:
@@ -261,44 +259,44 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
                     throw std::logic_error("unreachable");
             }
         } else {
-            auto* left = emit(*node.getLeft());
+            auto* left{emit(*node.getLeft())};
 
             switch (node.getOperationType()) {
                 case LexemType::LogicAnd: {
-                    auto* leftBlock = llvm::BasicBlock::Create(getContext());
-                    auto* rightBlock = llvm::BasicBlock::Create(getContext());
-                    auto* mergeBlock = llvm::BasicBlock::Create(getContext());
+                    auto* leftBlock{llvm::BasicBlock::Create(getContext())};
+                    auto* rightBlock{llvm::BasicBlock::Create(getContext())};
+                    auto* mergeBlock{llvm::BasicBlock::Create(getContext())};
                     getBuilder().CreateBr(leftBlock);
 
                     setBlock(leftBlock);
                     getBuilder().CreateCondBr(left, rightBlock, mergeBlock);
 
                     setBlock(rightBlock);
-                    auto* right = emit(*node.getRight());
+                    auto* right{emit(*node.getRight())};
                     getBuilder().CreateBr(mergeBlock);
 
                     setBlock(mergeBlock);
-                    auto* result = getBuilder().CreatePHI(getTypes()[node.getExprType()], 2);
+                    auto* result{getBuilder().CreatePHI(getTypes()[node.getExprType()], 2)};
                     result->addIncoming(llvm::ConstantInt::getBool(getContext(), false), leftBlock);
                     result->addIncoming(right, rightBlock);
 
                     return result;
                 }
                 case LexemType::LogicOr: {
-                    auto* leftBlock = llvm::BasicBlock::Create(getContext());
-                    auto* rightBlock = llvm::BasicBlock::Create(getContext());
-                    auto* mergeBlock = llvm::BasicBlock::Create(getContext());
+                    auto* leftBlock{llvm::BasicBlock::Create(getContext())};
+                    auto* rightBlock{llvm::BasicBlock::Create(getContext())};
+                    auto* mergeBlock{llvm::BasicBlock::Create(getContext())};
                     getBuilder().CreateBr(leftBlock);
 
                     setBlock(leftBlock);
                     getBuilder().CreateCondBr(left, mergeBlock, rightBlock);
 
                     setBlock(rightBlock);
-                    auto* right = emit(*node.getRight());
+                    auto* right{emit(*node.getRight())};
                     getBuilder().CreateBr(mergeBlock);
 
                     setBlock(mergeBlock);
-                    auto* result = getBuilder().CreatePHI(getTypes()[node.getExprType()], 2);
+                    auto* result{getBuilder().CreatePHI(getTypes()[node.getExprType()], 2)};
                     result->addIncoming(llvm::ConstantInt::getBool(getContext(), true), leftBlock);
                     result->addIncoming(right, rightBlock);
 
@@ -315,7 +313,7 @@ llvm::Value* LLVMDefinitionCodegen::emit(const BinaryOperation& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const PrefixOperation& node) {
     stackGuard();
 
-    auto* right = emit(*node.getRight());
+    auto* right{emit(*node.getRight())};
     switch (node.getOperationType()) {
         case LexemType::Minus:
             return getBuilder().CreateSub(llvm::ConstantInt::get(right->getType(), 0), right);
@@ -328,7 +326,7 @@ llvm::Value* LLVMDefinitionCodegen::emit(const PrefixOperation& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const CallFunction& node) {
     stackGuard();
 
-    auto* function = getFunctions()[node.getSymbolRef()];
+    auto* function{getFunctions()[node.getSymbolRef()]};
 
     std::vector<llvm::Value*> arguments;
     arguments.reserve(node.getArguments().size());
@@ -340,7 +338,7 @@ llvm::Value* LLVMDefinitionCodegen::emit(const CallFunction& node) {
 llvm::Value* LLVMDefinitionCodegen::emit(const Identifier& node) {
     stackGuard();
 
-    auto* var = getObjects()[node.getSymbolRef()];
+    auto* var{getObjects()[node.getSymbolRef()]};
     return getBuilder().CreateLoad(var->getAllocatedType(), var);
 }
 llvm::Value* LLVMDefinitionCodegen::emit(const Number& node) {
@@ -384,7 +382,7 @@ void LLVMDefinitionCodegen::emit(const Statement& node) {
 void LLVMDefinitionCodegen::emit(const Assign& node) {
     stackGuard();
 
-    auto* value = emit(*node.getValue());
+    auto* value{emit(*node.getValue())};
     getBuilder().CreateStore(value, getObjects()[node.getSymbolRef()]);
 }
 void LLVMDefinitionCodegen::emit([[maybe_unused]] const Break& node) {
@@ -395,7 +393,7 @@ void LLVMDefinitionCodegen::emit([[maybe_unused]] const Break& node) {
     }
 
     getBuilder().CreateBr(mCycles.top().getMergeBlock());
-    auto* continueBlock = llvm::BasicBlock::Create(getContext());
+    auto* continueBlock{llvm::BasicBlock::Create(getContext())};
     setBlock(continueBlock);
 }
 void LLVMDefinitionCodegen::emit(const ExpressionStatement& node) {
@@ -406,10 +404,10 @@ void LLVMDefinitionCodegen::emit(const ExpressionStatement& node) {
 void LLVMDefinitionCodegen::emit(const If& node) {
     stackGuard();
 
-    auto* condition = emit(*node.getCondition());
-    auto* thenBlock = llvm::BasicBlock::Create(getContext());
-    auto* mergeBlock = llvm::BasicBlock::Create(getContext());
-    llvm::BasicBlock* elseBlock = nullptr;
+    auto* condition{emit(*node.getCondition())};
+    auto* thenBlock{llvm::BasicBlock::Create(getContext())};
+    auto* mergeBlock{llvm::BasicBlock::Create(getContext())};
+    llvm::BasicBlock* elseBlock{nullptr};
 
     if (node.getElseThen()) {
         elseBlock = llvm::BasicBlock::Create(getContext());
@@ -439,7 +437,7 @@ void LLVMDefinitionCodegen::emit(const LocalVariableDeclaration& node) {
 
     getObjects()[node.getSymbolRef()]
         = getBuilder().CreateAlloca(getTypes()[node.getSymbolRef()->getTypeSymbol()->getType()]);
-    auto* value = emit(*node.getValue());
+    auto* value{emit(*node.getValue())};
     getBuilder().CreateStore(value, getObjects()[node.getSymbolRef()]);
 }
 void LLVMDefinitionCodegen::emit(const Return& node) {
@@ -458,9 +456,9 @@ void LLVMDefinitionCodegen::emit(const StatementsBlock& node) {
 void LLVMDefinitionCodegen::emit(const While& node) {
     stackGuard();
 
-    auto* conditionBlock = llvm::BasicBlock::Create(getContext());
-    auto* bodyBlock = llvm::BasicBlock::Create(getContext());
-    auto* mergeBlock = llvm::BasicBlock::Create(getContext());
+    auto* conditionBlock{llvm::BasicBlock::Create(getContext())};
+    auto* bodyBlock{llvm::BasicBlock::Create(getContext())};
+    auto* mergeBlock{llvm::BasicBlock::Create(getContext())};
 
     getBuilder().CreateBr(conditionBlock);
     setBlock(conditionBlock);

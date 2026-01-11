@@ -9,19 +9,14 @@
 #include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/CodeGen/MachineFunctionAnalysisManager.h>
 #include <llvm/IR/DerivedTypes.h>
-#include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IR/PassManager.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/MC/TargetRegistry.h>
 #include <llvm/Passes/OptimizationLevel.h>
 #include <llvm/Passes/PassBuilder.h>
 #include <llvm/Support/CodeGen.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Target/TargetMachine.h>
-#include <llvm/TargetParser/Host.h>
-#include <llvm/TargetParser/Triple.h>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -61,7 +56,7 @@ void LLVMCodegen::emit() {
     mModule->setPICLevel(mCodegenOptions.picLevel);
     mModule->setPIELevel(mCodegenOptions.pieLevel);
 
-    llvm::TargetLibraryInfoImpl targetLibraryInfo(mTargetTriple);
+    llvm::TargetLibraryInfoImpl targetLibraryInfo{mTargetTriple};
     if (!mCodegenOptions.hasBuiltin) {
         targetLibraryInfo.disableAllFunctions();
     }
@@ -83,10 +78,10 @@ void LLVMCodegen::emit() {
     if (mAST.getKind() != Node::Kind::ModuleDeclaration) {
         throw std::logic_error("unreachable");
     }
-    LLVMDeclarationCodegen declarationCodegen(*this);
+    LLVMDeclarationCodegen declarationCodegen{*this};
     declarationCodegen.emit(static_cast<const ModuleDeclaration&>(mAST));
 
-    LLVMDefinitionCodegen definitionCodegen(*this);
+    LLVMDefinitionCodegen definitionCodegen{*this};
     definitionCodegen.emit(static_cast<const ModuleDeclaration&>(mAST));
 
     if (mCodegenOptions.verify && llvm::verifyModule(*mModule, &llvm::errs())) {
@@ -99,7 +94,7 @@ void LLVMCodegen::emit() {
     llvm::FunctionAnalysisManager functionAnalysisManager;
     llvm::CGSCCAnalysisManager cgsccAnalysisManager;
     llvm::ModuleAnalysisManager moduleAnalysisManager;
-    llvm::PassBuilder passBuilder(mTargetMachine);
+    llvm::PassBuilder passBuilder{mTargetMachine};
     functionAnalysisManager.registerPass([&] {
         return llvm::TargetLibraryAnalysis(targetLibraryInfo);
     });
@@ -114,8 +109,8 @@ void LLVMCodegen::emit() {
                                      moduleAnalysisManager,
                                      &machineFunctionAnalysisManager);
 
-    llvm::ModulePassManager modulePassManager
-        = passBuilder.buildPerModuleDefaultPipeline(mCodegenOptions.optimizationLevel);
+    llvm::ModulePassManager modulePassManager{
+        passBuilder.buildPerModuleDefaultPipeline(mCodegenOptions.optimizationLevel)};
 
     modulePassManager.run(*mModule, moduleAnalysisManager);
 }

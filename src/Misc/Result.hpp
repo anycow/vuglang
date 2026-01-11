@@ -14,10 +14,10 @@ template <typename T, typename E>
 class [[nodiscard]] Result {
    public:
     [[nodiscard]] static constexpr Result ok(T value) {
-        return Result(value);
+        return Result{value};
     }
     [[nodiscard]] static constexpr Result error(E error) {
-        return Result(error);
+        return Result{error};
     }
 
     [[nodiscard]] constexpr bool isOk() const {
@@ -61,10 +61,10 @@ template <typename E>
 class [[nodiscard]] Result<void, E> {
    public:
     [[nodiscard]] static constexpr Result ok() {
-        return Result();
+        return Result{};
     }
     [[nodiscard]] static constexpr Result error(E error) {
-        return Result(error);
+        return Result{error};
     }
 
     [[nodiscard]] constexpr bool isOk() const {

@@ -76,7 +76,7 @@ class ModuleSymbol : public Symbol {
     }
 
     [[nodiscard]] std::vector<Symbol*> findMember(const std::string& name) const {
-        const auto range = mMembers.equal_range(name);
+        const auto range{mMembers.equal_range(name)};
         std::vector<Symbol*> result;
 
         for (auto iter = range.first; iter != range.second; ++iter) {

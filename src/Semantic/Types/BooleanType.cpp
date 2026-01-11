@@ -22,20 +22,20 @@ OperationResultType BooleanType::binaryOperationType(const LexemType opType,
         case LexemType::BitOr:
         case LexemType::BitXor:
             if (*this == rhs) {
-                return OperationResultType(true, this);
+                return OperationResultType{true, this};
             } else {
-                return OperationResultType(false, nullptr);
+                return OperationResultType{false, nullptr};
             }
         default:
-            return OperationResultType(false, nullptr);
+            return OperationResultType{false, nullptr};
     }
 }
 OperationResultType BooleanType::prefixOperationType(const LexemType opType) const {
     switch (opType) {
         case LexemType::Not:
-            return OperationResultType(true, this);
+            return OperationResultType{true, this};
         default:
-            return OperationResultType(false, nullptr);
+            return OperationResultType{false, nullptr};
     }
 }
 

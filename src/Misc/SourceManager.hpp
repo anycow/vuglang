@@ -18,10 +18,10 @@ class SourceFile {
     constexpr SourceFile(std::string name, std::string text)
         : mName(std::move(name)),
           mText(std::move(text)) {
-        size_t start = 0;
+        size_t start{0};
 
         while (start < mText.size()) {
-            size_t end = mText.find_first_of("\r\n", start);
+            size_t end{mText.find_first_of("\r\n", start)};
 
             if (end == std::string::npos) {
                 mTextLines.emplace_back(mText.data() + start, mText.size() - start);

@@ -89,7 +89,7 @@ class LLVMDefinitionCodegen {
     }
 
     void setBlock(llvm::BasicBlock* block) {
-        auto* function = getBuilder().GetInsertBlock()->getParent();
+        auto* function{getBuilder().GetInsertBlock()->getParent()};
         getBuilder().SetInsertPoint(block);
         function->insert(function->end(), block);
     }

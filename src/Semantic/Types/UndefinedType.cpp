@@ -9,11 +9,11 @@
 
 OperationResultType UndefinedType::binaryOperationType([[maybe_unused]] const LexemType opType,
                                                        [[maybe_unused]] const Type& rhs) const {
-    return OperationResultType(true, this);
+    return OperationResultType{true, this};
 }
 OperationResultType UndefinedType::prefixOperationType(
     [[maybe_unused]] const LexemType opType) const {
-    return OperationResultType(true, this);
+    return OperationResultType{true, this};
 }
 
 bool UndefinedType::isUndefined() const {

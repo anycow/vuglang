@@ -19,8 +19,8 @@ SymbolContext::SymbolContext(SymbolTable& table)
 
     const auto bits = {8, 16, 32, 64};
     for (const auto& size : bits) {
-        auto signedInt = std::make_unique<TypeSymbol>("int" + std::to_string(size));
-        auto unsignedInt = std::make_unique<TypeSymbol>("uint" + std::to_string(size));
+        auto signedInt{std::make_unique<TypeSymbol>("int" + std::to_string(size))};
+        auto unsignedInt{std::make_unique<TypeSymbol>("uint" + std::to_string(size))};
 
         mSymbolTable.insertSymbol(*signedInt, false).unwrap();
         mSymbolTable.insertSymbol(*unsignedInt, false).unwrap();
@@ -46,7 +46,7 @@ SymbolContext::SymbolContext(SymbolTable& table)
 
     mType.push_back(std::make_unique<BooleanType>(*this, "bool"));
 
-    auto boolean = std::make_unique<TypeSymbol>("bool");
+    auto boolean{std::make_unique<TypeSymbol>("bool")};
     mSymbolTable.insertSymbol(*boolean, false).unwrap();
 
     boolean->startDefinition();

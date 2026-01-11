@@ -43,9 +43,8 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
             for (const auto& code : message.getRelatedCode()) {
                 if (code.isValid()) {
                     for (int64_t i = code.getStartLine(); i <= code.getEndLine(); ++i) {
-                        auto line = code.getSourceFile()->getLine(i);
-
-                        size_t start = 0;
+                        auto line{code.getSourceFile()->getLine(i)};
+                        size_t start{0};
                         for (; (start < line.size())
                                && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
@@ -60,8 +59,8 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
                 std::cout << "probably fix:" << std::endl;
                 for (const auto& fix : message.getFixes()) {
                     for (const auto& diff : fix.getDiffs()) {
-                        auto line = diff.sourceFile.getLine(diff.sourceLine);
-                        size_t start = 0;
+                        auto line{diff.sourceFile.getLine(diff.sourceLine)};
+                        size_t start{0};
                         for (; (start < line.size())
                                && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {
@@ -76,8 +75,8 @@ void DiagnosticManager::report(const Diagnostic& diagnostic) {
                     }
 
                     for (const auto& diff : fix.getDiffs()) {
-                        auto line = diff.newString;
-                        size_t start = 0;
+                        auto line{diff.newString};
+                        size_t start{0};
                         for (; (start < line.size())
                                && (std::isspace(static_cast<unsigned char>(line[start])) != 0);
                              ++start) {

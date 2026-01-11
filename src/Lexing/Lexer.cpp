@@ -296,7 +296,7 @@ Token Lexer::getToken() {
 }
 void Lexer::getTokens(std::vector<Token>& tokens) {
     while (true) {
-        auto token = getToken();
+        auto token{getToken()};
 
         tokens.emplace_back(token);
 
@@ -316,12 +316,12 @@ void Lexer::revertTo(const Token& token) {
 Token Lexer::getString() {
     std::string string;
 
-    const auto startPos = getPrevPos();
-    const auto startLine = mLine;
-    const auto startColumn = mColumn;
+    const auto startPos{getPrevPos()};
+    const auto startLine{mLine};
+    const auto startColumn{mColumn};
 
     while (true) {
-        const char character = peek();
+        const char character{peek()};
 
         if (character == '\0') {
             throw std::logic_error("Bad lexing");
@@ -351,15 +351,15 @@ Token Lexer::getString() {
             std::move(string)};
 }
 Token Lexer::getIdentifier(const char firstChar) {
-    const auto startPos = getPrevPos();
-    const auto startLine = mLine;
-    const auto startColumn = mColumn;
+    const auto startPos{getPrevPos()};
+    const auto startLine{mLine};
+    const auto startColumn{mColumn};
 
     std::string string;
     string.push_back(firstChar);
 
     while (true) {
-        const char character = peek();
+        const char character{peek()};
 
         if ((std::isalnum(character) == 0) && (character != '_')) {
             mPos--;
@@ -370,7 +370,7 @@ Token Lexer::getIdentifier(const char firstChar) {
         string.push_back(character);
     }
 
-    const auto keyword = mKeywords.find(string);
+    const auto keyword{mKeywords.find(string)};
 
     if (keyword != mKeywords.end()) {
         return {
@@ -399,12 +399,12 @@ Token Lexer::getNumber(const char firstChar) {
     std::string string;
     string.push_back(firstChar);
 
-    const auto startPos = getPrevPos();
-    const auto startLine = mLine;
-    const auto startColumn = mColumn;
+    const auto startPos{getPrevPos()};
+    const auto startLine{mLine};
+    const auto startColumn{mColumn};
 
     while (true) {
-        const char character = peek();
+        const char character{peek()};
 
         if (isdigit(character) == 0) {
             mPos--;

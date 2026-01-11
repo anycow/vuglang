@@ -11,13 +11,13 @@
 
 Result<void, SymbolTable::InsertError> SymbolTable::insertSymbol(Symbol& symbol,
                                                                  const bool canShadowed) {
-    auto& record = mScopes.top().emplace_back(symbol, getDepth(), canShadowed);
-    const auto it = mNames.find(record.symbol.getName());
+    auto& record{mScopes.top().emplace_back(symbol, getDepth(), canShadowed)};
+    const auto it{mNames.find(record.symbol.getName())};
 
     if (it == mNames.end()) {
         mNames.insert({record.symbol.getName(), &record});
     } else {
-        const auto* shadowedRecord = it->second;
+        const auto* shadowedRecord{it->second};
 
         if (shadowedRecord->depth != record.depth) {
             if (shadowedRecord->canShadowed) {
@@ -25,18 +25,18 @@ Result<void, SymbolTable::InsertError> SymbolTable::insertSymbol(Symbol& symbol,
                 record.shadowedRecord = shadowedRecord;
             } else {
                 return InsertResult::error(
-                    InsertError(InsertError::Kind::ProhibitedShadowing, shadowedRecord));
+                    InsertError{InsertError::Kind::ProhibitedShadowing, shadowedRecord});
             }
         } else {
             return InsertResult::error(
-                InsertError(InsertError::Kind::NameConflict, shadowedRecord));
+                InsertError{InsertError::Kind::NameConflict, shadowedRecord});
         }
     }
 
     return InsertResult::ok();
 }
 SymbolTable::FindResult SymbolTable::findSymbol(const std::string& name) {
-    const auto it = mNames.find(name);
+    const auto it{mNames.find(name)};
 
     if (it == mNames.end()) {
         return FindResult::error(FindError::NotFound);
