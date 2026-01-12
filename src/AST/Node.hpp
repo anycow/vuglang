@@ -79,6 +79,7 @@ class Node {
     }
 
    private:
+    /// Explicit type tag used instead of RTTI or virtual methods for fast dispatch.
     const Kind mKind;
     const SourceLocation mSourceLocation;
 };
