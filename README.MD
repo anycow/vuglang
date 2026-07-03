@@ -15,6 +15,25 @@ Vuglang implements a compiler (meaning explicitly building an attributed AST) in
 7) LLVM optimization passes
 8) LLVM compiler
 
+## Example
+
+```
+mod fib_test {
+	import func printNum(int32 n) -> int32;
+
+	func fib(int32 n) -> int32 {
+		if(n < 2) {
+			return n;
+		} else {
+			return fib(n-1) + fib(n-2);		
+		}
+	}
+
+	func main() -> int32 {
+		return fib(100);
+	}
+}```
+
 ## TODO
 
 - [x] Implement LLVM-based compilation
