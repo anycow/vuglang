@@ -13,7 +13,7 @@
 #include <stdexcept>
 
 thread_local inline uintptr_t stackBottom = 0;
-constexpr size_t stackEpsilon = static_cast<const size_t>(128 * 1024);
+constexpr size_t stackEpsilon = 128 * 1024;
 
 void setStackBottom();
 
