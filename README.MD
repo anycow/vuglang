@@ -32,7 +32,8 @@ mod fib_test {
 	func main() -> int32 {
 		return fib(100);
 	}
-}```
+}
+```
 
 ## TODO
 
